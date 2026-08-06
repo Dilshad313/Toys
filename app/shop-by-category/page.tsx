@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -51,7 +51,8 @@ interface Product {
   tags: string[]
 }
 
-export default function ShopByCategoryPage() {
+// ✅ Separate component that uses useSearchParams and useRouter
+function ShopByCategoryContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const categoryId = searchParams.get('category')
@@ -63,7 +64,6 @@ export default function ShopByCategoryPage() {
   const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false)
   const { addToCart } = useCart()
 
-  // Set selected category from URL
   useEffect(() => {
     if (categoryId) {
       const found = categories.find(c => c.id === categoryId)
@@ -71,19 +71,16 @@ export default function ShopByCategoryPage() {
         setSelectedCategory(found)
       }
     } else {
-      // If no category in URL, default to first category
       router.push(`/shop-by-category?category=${categories[0].id}`)
     }
   }, [categoryId, router])
 
-  // Fetch products based on selected category
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true)
       setError(null)
       
       try {
-        // First try: search by tag
         const searchQuery = `tag:${selectedCategory.id}`
         const response = await fetch(`/api/products/search?q=${encodeURIComponent(searchQuery)}&first=20`)
         const result = await response.json()
@@ -91,7 +88,6 @@ export default function ShopByCategoryPage() {
         if (result.success && result.data?.products?.edges && result.data.products.edges.length > 0) {
           setProducts(result.data.products.edges.map((edge: any) => edge.node))
         } else {
-          // Second try: search by category name
           const fallbackResponse = await fetch(`/api/products/search?q=${encodeURIComponent(selectedCategory.name)}&first=20`)
           const fallbackResult = await fallbackResponse.json()
           
@@ -216,7 +212,7 @@ export default function ShopByCategoryPage() {
         <div className="lg:col-span-3">
           <div className="mb-6">
             <h2 className="text-2xl md:text-3xl font-bold font-comic text-gray-800">
-               {selectedCategory.name}
+              {selectedCategory.name}
             </h2>
             <p className="text-gray-500 text-sm mt-1">
               {products.length} products found
@@ -351,5 +347,30 @@ export default function ShopByCategoryPage() {
         }
       `}</style>
     </div>
+  )
+}
+
+// ✅ Main page component with Suspense
+export default function ShopByCategoryPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-8 md:py-16">
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-5xl font-bold font-comic text-[#D32F2F]">
+            🛍️ Shop by Category
+          </h1>
+          <p className="text-gray-600 mt-2 font-comic text-base md:text-lg">
+            Explore our wide range of premium toys
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="bg-gray-100 rounded-2xl h-72 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    }>
+      <ShopByCategoryContent />
+    </Suspense>
   )
 }
