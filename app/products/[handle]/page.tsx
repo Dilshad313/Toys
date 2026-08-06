@@ -77,7 +77,6 @@ async function fetchRelatedProducts(currentProductId: string) {
     const result = await response.json()
     
     if (result.success && result.data?.products?.edges) {
-      // Filter out current product
       const allProducts = result.data.products.edges.map((edge: any) => edge.node)
       return allProducts.filter((p: any) => p.id !== currentProductId).slice(0, 6)
     }
@@ -173,26 +172,59 @@ export default function ProductDetailPage() {
     window.location.href = checkoutUrl
   }
 
-  // Share Product
+  // Share Product - With Image
   const handleShare = async () => {
+    const imageUrl = product?.images?.edges?.[0]?.node?.url || ''
+    const price = parseFloat(product?.priceRange?.minVariantPrice?.amount || '0').toFixed(2)
+    
+    // Create share data with image
     const shareData = {
       title: product?.title || 'Athvi Toys',
-      text: `Check out this amazing toy! ${product?.title}\nPrice: ₹${parseFloat(product?.priceRange?.minVariantPrice?.amount || '0').toFixed(2)}\n\n${product?.description || ''}`,
+      text: `🛍️ Check out this amazing toy!\n\n📦 ${product?.title}\n💰 Price: ₹${price}\n⭐ Rating: 4.9/5\n\n📝 ${product?.description?.substring(0, 100) || ''}...\n\n🛒 Shop now at Athvi Toys!`,
       url: window.location.href,
     }
 
+    // Try native share first (mobile)
     if (navigator.share) {
       try {
-        await navigator.share(shareData)
+        // For mobile, try to share with image if possible
+        if (imageUrl) {
+          // Fetch image and create a File object for sharing
+          const response = await fetch(imageUrl)
+          const blob = await response.blob()
+          const file = new File([blob], 'product-image.jpg', { type: 'image/jpeg' })
+          
+          await navigator.share({
+            title: shareData.title,
+            text: shareData.text,
+            url: shareData.url,
+            files: [file]
+          })
+        } else {
+          await navigator.share(shareData)
+        }
       } catch (error) {
-        console.log('Share cancelled')
+        console.log('Share cancelled or failed')
+        // Fallback to clipboard
+        await fallbackShare(shareData, imageUrl)
       }
     } else {
-      // Fallback - copy to clipboard
-      const text = `${shareData.title}\n${shareData.text}\n${shareData.url}`
-      await navigator.clipboard.writeText(text)
-      alert('Product link copied to clipboard!')
+      // Desktop fallback - copy to clipboard with image link
+      await fallbackShare(shareData, imageUrl)
     }
+  }
+
+  // Fallback share method
+  const fallbackShare = async (shareData: any, imageUrl: string) => {
+    const shareText = `${shareData.title}\n${shareData.text}\n\n🔗 ${shareData.url}`
+    
+    if (imageUrl) {
+      await navigator.clipboard.writeText(`${shareText}\n\n📸 Product Image: ${imageUrl}`)
+    } else {
+      await navigator.clipboard.writeText(shareText)
+    }
+    
+    alert('✅ Product details copied to clipboard!\n\nShare with your friends and family.')
   }
 
   // Get specifications from product data
@@ -406,6 +438,7 @@ export default function ProductDetailPage() {
                 </ul>
               </div>
 
+              {/* Choose Your Option - Variants */}
               {product.options && product.options.length > 0 && (
                 <div className="mb-4">
                   <h3 className="font-semibold text-sm mb-2">Choose Your Option</h3>
@@ -444,6 +477,7 @@ export default function ProductDetailPage() {
                 </div>
               )}
 
+              {/* Quantity */}
               <div className="mb-4">
                 <h3 className="font-semibold text-sm mb-2">Quantity</h3>
                 <div className="flex items-center gap-3">
@@ -468,6 +502,7 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
+              {/* Add to Cart & Buy Now */}
               <div className="flex flex-col sm:flex-row gap-3 mb-4">
                 <button
                   onClick={handleAddToCart}

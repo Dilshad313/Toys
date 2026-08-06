@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -36,7 +36,8 @@ interface Product {
   }
 }
 
-export default function SearchPage() {
+// ✅ Separate component that uses useSearchParams
+function SearchResults() {
   const searchParams = useSearchParams()
   const q = searchParams.get('q') || ''
   const [products, setProducts] = useState<Product[]>([])
@@ -171,5 +172,23 @@ export default function SearchPage() {
         })}
       </div>
     </div>
+  )
+}
+
+// ✅ Main page component with Suspense
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="container mx-auto px-4 py-16">
+        <h1 className="text-2xl font-bold mb-8">Search Results</h1>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-gray-100 rounded-2xl h-80 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    }>
+      <SearchResults />
+    </Suspense>
   )
 }

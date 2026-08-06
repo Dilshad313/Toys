@@ -153,11 +153,10 @@ export default function CategoryBar() {
                     itemsPerPage === 4 ? 'w-28 h-28 md:w-32 md:h-32' :
                     'w-32 h-32 md:w-40 md:h-40'
                   }`}>
-                    <Image
+                    <img
                       src={category.image}
                       alt={category.name}
-                      fill
-                      className="object-cover"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <span className={`mt-2 md:mt-3 text-center font-semibold text-gray-700 group-hover:text-[#FF6B35] transition ${
