@@ -63,12 +63,17 @@ const GET_PRODUCT_BY_HANDLE = `
   }
 `
 
+// ✅ FIX: Use NextRequest and proper params type
+import { NextRequest } from 'next/server'
+
 export async function GET(
-  request: Request,
-  { params }: { params: { handle: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ handle: string }> | { handle: string } }
 ) {
   try {
-    const { handle } = await params
+    // Handle both sync and async params
+    const resolvedParams = await Promise.resolve(params)
+    const { handle } = resolvedParams
     
     console.log('Fetching product by handle:', handle)
 
