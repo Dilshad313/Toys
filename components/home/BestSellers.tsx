@@ -31,6 +31,7 @@ interface Product {
         price: { amount: string }
         compareAtPrice?: { amount: string }
         availableForSale: boolean
+        quantityAvailable?: number
       }
     }>
   }
@@ -78,7 +79,6 @@ export default function BestSellers() {
         
         console.log('🔄 Fetching products...')
         
-        // Fetch 12 products
         let response = await fetch('/api/simple-products?first=12')
         
         if (!response.ok) {
@@ -148,12 +148,19 @@ export default function BestSellers() {
     return wishlist.includes(productId)
   }
 
-  // Buy Now - Redirect to Shopify Checkout
+  // Buy Now - Redirect to Shopify Default Checkout Page
   const handleBuyNow = (variantId: string) => {
-    if (!variantId) return
-    const checkoutUrl = `https://${process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN}/cart/${variantId}:1`
-    window.location.href = checkoutUrl
-  }
+  if (!variantId) return
+
+  const storeDomain = "athvi-toys.myshopify.com"
+
+  // Extract numeric variant ID
+  const numericVariantId = variantId.split("/").pop()
+
+  const checkoutUrl = `https://${storeDomain}/cart/${numericVariantId}:1`
+
+  window.location.href = checkoutUrl
+}
 
   if (loading) {
     return (
@@ -272,7 +279,7 @@ export default function BestSellers() {
                   />
                 </button>
 
-                {/* Product Image - Clickable to detail page */}
+                {/* Product Image */}
                 <Link href={`/products/${product.handle}`}>
                   <div className="relative overflow-hidden cursor-pointer">
                     <img
@@ -288,7 +295,7 @@ export default function BestSellers() {
                   </div>
                 </Link>
 
-                {/* Product Details - Clickable to detail page */}
+                {/* Product Details */}
                 <Link href={`/products/${product.handle}`} className="flex-1">
                   <div className="p-2 flex flex-col flex-1 cursor-pointer">
                     <h3 className="font-semibold text-[11px] line-clamp-2 hover:text-[#FF6B35] transition min-h-[32px] font-comic leading-tight">
@@ -362,7 +369,7 @@ export default function BestSellers() {
                     )}
                   </AnimatePresence>
 
-                  {/* Buy Now Button */}
+                  {/* Buy Now Button - Redirects to Shopify Default Checkout */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
