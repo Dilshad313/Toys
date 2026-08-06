@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, User, Menu, X, Heart, ChevronDown } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, Heart, ChevronDown, Home } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 import SearchBar from './SearchBar'
 
@@ -75,163 +75,209 @@ export default function Header() {
             backgroundImage: `url('/header.png')`,
           }}
         >
-        <div className={`transition-all duration-300 ${
-          isScrolled ? 'bg-white shadow-lg' : 'bg-white/95 backdrop-blur-sm'
-        }`}>
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between py-3">
-              {/* Logo */}
-              <Link href="/" className="flex flex-col items-start flex-shrink-0">
-                <Image 
-                  src="/logo1.png" 
-                  alt="Athvi Toys" 
-                  width={200} 
-                  height={70}
-                  className="h-16 w-auto object-contain"
-                  priority
-                />
-                <span className="text-[#7B2FBE] text-sm font-medium tracking-wider mt-0.5">
-                  Little Joys. Big Smiles.
-                </span>
-              </Link>
-
-              {/* Search Bar */}
-              <div className="hidden md:flex flex-1 max-w-2xl mx-6">
-                <SearchBar />
-              </div>
-
-              {/* Right Icons */}
-              <div className="flex items-center gap-6">
-                <Link href="/wishlist" className="flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
-                  <Heart className="w-6 h-6" />
-                  <span className="text-base font-medium hidden lg:inline">Wishlist</span>
-                </Link>
-
-                <Link href="/account" className="flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
-                  <User className="w-6 h-6" />
-                  <span className="text-base font-medium hidden lg:inline">Account</span>
-                </Link>
-
-                <Link href="/cart" className="flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group relative">
-                  <div className="relative">
-                    <ShoppingCart className="w-6 h-6" />
-                    {totalItems > 0 && (
-                      <span className="absolute -top-2 -right-3 bg-[#FF6B35] text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
-                        {totalItems}
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-base font-medium hidden lg:inline">Cart</span>
-                </Link>
-
-                <button
-                  className="md:hidden"
-                  onClick={() => {
-                    setIsMenuOpen(!isMenuOpen)
-                  }}
-                >
-                  {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Mobile Search */}
-            <div className="md:hidden pb-3">
-              <SearchBar />
-            </div>
-
-            {/* Navigation - Desktop */}
-            <nav className="hidden md:flex items-center justify-between gap-6 py-3 bg-[#7B2FBE] rounded-lg px-6 w-full">
-              {/* Shop by Category */}
-              <div className="flex-shrink-0">
-                <Link href="/shop-by-category">
-                  <button className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white px-6 py-3 rounded-full text-base font-semibold transition flex items-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap">
-                    <svg 
-                      className="w-5 h-5" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                    Shop by Category
-                  </button>
-                </Link>
-              </div>
-
-              <div className="flex items-center gap-6 flex-1 justify-center">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="text-white hover:text-[#FFD700] transition text-[15px] font-medium whitespace-nowrap"
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-            </nav>
-
-            {/* Mobile Menu */}
-            {isMenuOpen && (
-              <div className="md:hidden py-4 border-t border-gray-100 bg-white">
-                {/* Shop by Category - Mobile */}
-                <Link 
-                  href="/shop-by-category"
-                  className="block w-full text-left py-3 px-4 bg-[#FF6B35] text-white font-semibold rounded-lg mb-2"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <span className="flex items-center gap-2">
-                    <svg 
-                      className="w-5 h-5" 
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                    Shop by Category
+          <div className={`transition-all duration-300 ${
+            isScrolled ? 'bg-white shadow-lg' : 'bg-white/95 backdrop-blur-sm'
+          }`}>
+            <div className="container mx-auto px-4">
+              <div className="flex items-center justify-between py-3">
+                {/* Logo */}
+                <Link href="/" className="flex flex-col items-start flex-shrink-0">
+                  <Image 
+                    src="/logo1.png" 
+                    alt="Athvi Toys" 
+                    width={200} 
+                    height={70}
+                    className="h-16 w-auto object-contain"
+                    priority
+                  />
+                  <span className="text-[#7B2FBE] text-sm font-medium tracking-wider mt-0.5">
+                    Little Joys. Big Smiles.
                   </span>
                 </Link>
 
-                {/* Home Link */}
-                <Link 
-                  href="/" 
-                  className="block py-3 transition px-4 text-[#FF6B35] font-semibold border-b border-gray-50"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Home
-                </Link>
+                {/* Search Bar */}
+                <div className="hidden md:flex flex-1 max-w-2xl mx-6">
+                  <SearchBar />
+                </div>
 
-                {/* Other Nav Items */}
-                {navItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="block py-3 transition px-4 text-gray-700 hover:text-[#FF6B35]"
+                {/* Right Icons - Account removed, only Wishlist & Cart */}
+                <div className="flex items-center gap-6">
+                  <Link href="/wishlist" className="flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
+                    <Heart className="w-6 h-6" />
+                    <span className="text-base font-medium hidden lg:inline">Wishlist</span>
+                  </Link>
+
+                  <Link href="/cart" className="flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group relative">
+                    <div className="relative">
+                      <ShoppingCart className="w-6 h-6" />
+                      {totalItems > 0 && (
+                        <span className="absolute -top-2 -right-3 bg-[#FF6B35] text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                          {totalItems}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-base font-medium hidden lg:inline">Cart</span>
+                  </Link>
+
+                  <button
+                    className="md:hidden"
+                    onClick={() => {
+                      setIsMenuOpen(!isMenuOpen)
+                    }}
+                  >
+                    {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Mobile Search */}
+              <div className="md:hidden pb-3">
+                <SearchBar />
+              </div>
+
+              {/* Navigation - Desktop */}
+              <nav className="hidden md:flex items-center justify-between gap-6 py-3 bg-[#7B2FBE] rounded-lg px-6 w-full">
+                {/* Shop by Category */}
+                <div className="flex-shrink-0">
+                  <Link href="/shop-by-category">
+                    <button className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white px-6 py-3 rounded-full text-base font-semibold transition flex items-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap">
+                      <svg 
+                        className="w-5 h-5" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                      </svg>
+                      Shop by Category
+                    </button>
+                  </Link>
+                </div>
+
+                <div className="flex items-center gap-6 flex-1 justify-center">
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className="text-white hover:text-[#FFD700] transition text-[15px] font-medium whitespace-nowrap"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              </nav>
+
+              {/* Mobile Menu */}
+              {isMenuOpen && (
+                <div className="md:hidden py-4 border-t border-gray-100 bg-white">
+                  {/* Shop by Category - Mobile */}
+                  <Link 
+                    href="/shop-by-category"
+                    className="block w-full text-left py-3 px-4 bg-[#FF6B35] text-white font-semibold rounded-lg mb-2"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    {item.name}
+                    <span className="flex items-center gap-2">
+                      <svg 
+                        className="w-5 h-5" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                      </svg>
+                      Shop by Category
+                    </span>
                   </Link>
-                ))}
-              </div>
-            )}
+
+                  {/* Home Link */}
+                  <Link 
+                    href="/" 
+                    className="block py-3 transition px-4 text-[#FF6B35] font-semibold border-b border-gray-50"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Home
+                  </Link>
+
+                  {/* Other Nav Items */}
+                  {navItems.map((item) => (
+                    <Link
+                      key={item.name}
+                      href={item.href}
+                      className="block py-3 transition px-4 text-gray-700 hover:text-[#FF6B35]"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
+        </div>
+
+        {/* ✅ Marquee Animation - Moved outside header */}
+      </header>
+
+      {/* ✅ Mobile Bottom Navigation - Fixed position */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+        <div className="flex items-center justify-around py-2">
+          <Link href="/" className="flex flex-col items-center gap-0.5 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
+            <Home className="w-6 h-6" />
+            <span className="text-[10px] font-medium">Home</span>
+          </Link>
+
+          <Link href="/shop-by-category" className="flex flex-col items-center gap-0.5 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <span className="text-[10px] font-medium">Shop</span>
+          </Link>
+
+          <Link href="/cart" className="flex flex-col items-center gap-0.5 text-[#7B2FBE] hover:text-[#6A1FB3] transition group relative">
+            <div className="relative">
+              <ShoppingCart className="w-6 h-6" />
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-2 bg-[#FF6B35] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </div>
+            <span className="text-[10px] font-medium">Cart</span>
+          </Link>
+
+          <Link href="/wishlist" className="flex flex-col items-center gap-0.5 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
+            <Heart className="w-6 h-6" />
+            <span className="text-[10px] font-medium">Wishlist</span>
+          </Link>
         </div>
       </div>
 
-      <style jsx global>{`
-        @keyframes marquee {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 25s linear infinite;
-          display: inline-flex;
-          width: fit-content;
-        }
-      `}</style>
-      </header>
+      {/* ✅ Global styles - Moved outside the component return */}
     </>
   )
+}
+
+// ✅ Global styles - Defined outside the component
+const globalStyles = `
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    animation: marquee 25s linear infinite;
+    display: inline-flex;
+    width: fit-content;
+  }
+  @media (max-width: 767px) {
+    body {
+      padding-bottom: 70px;
+    }
+  }
+`
+
+// ✅ Inject global styles
+if (typeof window !== 'undefined') {
+  const style = document.createElement('style')
+  style.textContent = globalStyles
+  document.head.appendChild(style)
 }
