@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import { ShoppingCart, Star, Filter, Grid, List } from 'lucide-react'
+import { ShoppingCart, Star, Filter, Grid, List, Heart } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 
 interface Product {
@@ -87,6 +87,26 @@ export default function CollectionsPage() {
       console.error('Error adding to cart:', error)
       setAddingToCart(null)
     }
+  }
+
+  // Buy Now - Redirect to Shopify Checkout
+  const handleBuyNow = (variantId: string) => {
+    if (!variantId) {
+      console.error('No variant ID available for Buy Now')
+      return
+    }
+
+    const storeDomain = "athvi-toys.myshopify.com"
+    const numericVariantId = variantId.split("/").pop()
+
+    if (!numericVariantId) {
+      console.error('Invalid variant ID format')
+      return
+    }
+
+    const checkoutUrl = `https://${storeDomain}/cart/${numericVariantId}:1`
+    console.log('🛒 Redirecting to checkout:', checkoutUrl)
+    window.location.href = checkoutUrl
   }
 
   // Filter products by search term
@@ -229,8 +249,9 @@ export default function CollectionsPage() {
                 transition={{ delay: (i % 4) * 0.1 }}
                 className="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden group border border-gray-100 hover:border-[#FF6B35] flex flex-col"
               >
+                {/* Product Image - Clickable */}
                 <Link href={`/products/${product.handle}`}>
-                  <div className="relative overflow-hidden">
+                  <div className="relative overflow-hidden cursor-pointer">
                     <img
                       src={imageUrl}
                       alt={product.title}
@@ -250,8 +271,9 @@ export default function CollectionsPage() {
                 </Link>
 
                 <div className="p-4 flex flex-col flex-1">
+                  {/* Product Title - Clickable */}
                   <Link href={`/products/${product.handle}`}>
-                    <h3 className="font-semibold text-base line-clamp-2 hover:text-[#FF6B35] transition min-h-[48px]">
+                    <h3 className="font-semibold text-base line-clamp-2 hover:text-[#FF6B35] transition min-h-[48px] cursor-pointer">
                       {product.title}
                     </h3>
                   </Link>
@@ -275,23 +297,36 @@ export default function CollectionsPage() {
                     )}
                   </div>
 
-                  <button
-                    onClick={() => handleAddToCart(variantId, product.id)}
-                    disabled={!variantId || isAdding}
-                    className="w-full mt-3 py-2 rounded-full bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-sm font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isAdding ? (
-                      <>
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Adding...
-                      </>
-                    ) : (
-                      <>
-                        <ShoppingCart className="w-4 h-4" />
-                        Add to Cart
-                      </>
-                    )}
-                  </button>
+                  {/* Two Buttons - Add to Cart & Buy Now */}
+                  <div className="grid grid-cols-2 gap-2 mt-3">
+                    {/* Add to Cart Button */}
+                    <button
+                      onClick={() => handleAddToCart(variantId, product.id)}
+                      disabled={!variantId || isAdding}
+                      className="py-2 rounded-full bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-xs font-semibold transition flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isAdding ? (
+                        <>
+                          <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          Adding...
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingCart className="w-3.5 h-3.5" />
+                          Add
+                        </>
+                      )}
+                    </button>
+
+                    {/* Buy Now Button */}
+                    <button
+                      onClick={() => handleBuyNow(variantId)}
+                      disabled={!variantId}
+                      className="py-2 rounded-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-xs font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Buy Now
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             )

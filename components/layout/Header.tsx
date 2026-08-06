@@ -84,7 +84,7 @@ export default function Header() {
               {/* Logo */}
               <Link href="/" className="flex flex-col items-start flex-shrink-0">
                 <Image 
-                  src="/logo.png" 
+                  src="/logo1.png" 
                   alt="Athvi Toys" 
                   width={200} 
                   height={70}

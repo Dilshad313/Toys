@@ -11,8 +11,7 @@ const categories = [
     title: 'Educational Toys',
     subtitle: 'Starting from ₹499',
     image: 'https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?w=400&h=400&fit=crop&q=80',
-    href: '/products?category=educational',
-    badge: '📚'
+    href: '/shop-by-category?category=educational'
   },
   {
     id: 2,
@@ -20,8 +19,7 @@ const categories = [
     title: 'RC Cars',
     subtitle: 'Starting from ₹899',
     image: 'https://images.unsplash.com/photo-1594787318286-3d835c1d207f?w=400&h=400&fit=crop&q=80',
-    href: '/products?category=rc-cars',
-    badge: '🚗'
+    href: '/shop-by-category?category=rc-cars',
   },
   {
     id: 3,
@@ -29,8 +27,7 @@ const categories = [
     title: 'Soft Toys',
     subtitle: 'Starting from ₹299',
     image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=400&h=400&fit=crop&q=80',
-    href: '/products?category=soft-toys',
-    badge: '🧸'
+    href: '/shop-by-category?category=soft-toys'
   },
   {
     id: 4,
@@ -38,8 +35,7 @@ const categories = [
     title: 'Combo Offer',
     subtitle: 'Starting from ₹699',
     image: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&h=400&fit=crop&q=80',
-    href: '/offers',
-    badge: '🔥'
+    href: '/shop-by-category?category=offers'
   },
 ]
 
@@ -72,56 +68,55 @@ export default function CategoryCards() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1, duration: 0.6 }}
               viewport={{ once: true }}
-              className="group"
+              className="group cursor-default"
             >
-              <Link href={category.href}>
-                <div className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 bg-white">
-                  {/* Image - Full size, no background */}
-                  <div className="relative h-80 w-full overflow-hidden">
-                    <Image
-                      src={category.image}
-                      alt={category.name}
-                      fill
-                      className="object-cover group-hover:scale-110 transition duration-700"
-                    />
-                  </div>
-
-                  {/* Content Overlay - Bottom */}
-                  <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/70 via-black/40 to-transparent">
-                    {/* Badge/Icon */}
-                    <div className="text-2xl mb-1">
-                      {category.badge}
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="text-xl font-bold text-white font-comic">
-                      {category.title}
-                    </h3>
-
-                    {/* Subtitle/Price */}
-                    <p className="text-white/90 text-sm font-medium">
-                      {category.subtitle}
-                    </p>
-
-                    {/* Shop Now - Shows on Hover */}
-                    <div className="mt-3 opacity-0 group-hover:opacity-100 transform group-hover:translate-y-0 translate-y-2 transition-all duration-500">
-                      <span className="inline-block bg-[#D32F2F] text-white px-5 py-1.5 rounded-full text-sm font-semibold hover:bg-[#B71C1C] transition">
-                        Shop Now →
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Corner Badge */}
-                  <div className="absolute top-4 right-4 bg-[#D32F2F] text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-10">
-                    New
-                  </div>
+              {/* Removed Link - no navigation on click */}
+              <div className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 bg-white">
+                {/* Image - Full size, no background */}
+                <div className="relative h-80 w-full overflow-hidden">
+                  <Image
+                    src={category.image}
+                    alt={category.name}
+                    fill
+                    className="object-cover group-hover:scale-110 transition duration-700"
+                  />
                 </div>
-              </Link>
+
+                {/* Content Overlay - Bottom */}
+                <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/70 via-black/40 to-transparent">
+                  {/* Badge/Icon */}
+                  <div className="text-2xl mb-1">
+                    
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-white font-comic">
+                    {category.title}
+                  </h3>
+
+                  {/* Subtitle/Price */}
+                  <p className="text-white/90 text-sm font-medium">
+                    {category.subtitle}
+                  </p>
+
+                  {/* Shop Now - Shows on Hover - No navigation */}
+                  {/* <div className="mt-3 opacity-0 group-hover:opacity-100 transform group-hover:translate-y-0 translate-y-2 transition-all duration-500">
+                    <span className="inline-block bg-[#D32F2F] text-white px-5 py-1.5 rounded-full text-sm font-semibold cursor-default">
+                      Shop Now →
+                    </span>
+                  </div> */}
+                </div>
+
+                {/* Corner Badge */}
+                <div className="absolute top-4 right-4 bg-[#D32F2F] text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-10">
+                  New
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
 
-        {/* View All Button */}
+        {/* View All Button - Navigates to shop-by-category */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -130,7 +125,7 @@ export default function CategoryCards() {
           className="text-center mt-12"
         >
           <Link
-            href="/products"
+            href="/shop-by-category"
             className="inline-block bg-[#D32F2F] hover:bg-[#B71C1C] text-white px-10 py-3 rounded-full font-semibold transition shadow-lg hover:shadow-xl"
           >
             View All Categories →

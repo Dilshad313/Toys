@@ -177,19 +177,15 @@ export default function ProductDetailPage() {
     const imageUrl = product?.images?.edges?.[0]?.node?.url || ''
     const price = parseFloat(product?.priceRange?.minVariantPrice?.amount || '0').toFixed(2)
     
-    // Create share data with image
     const shareData = {
       title: product?.title || 'Athvi Toys',
       text: `🛍️ Check out this amazing toy!\n\n📦 ${product?.title}\n💰 Price: ₹${price}\n⭐ Rating: 4.9/5\n\n📝 ${product?.description?.substring(0, 100) || ''}...\n\n🛒 Shop now at Athvi Toys!`,
       url: window.location.href,
     }
 
-    // Try native share first (mobile)
     if (navigator.share) {
       try {
-        // For mobile, try to share with image if possible
         if (imageUrl) {
-          // Fetch image and create a File object for sharing
           const response = await fetch(imageUrl)
           const blob = await response.blob()
           const file = new File([blob], 'product-image.jpg', { type: 'image/jpeg' })
@@ -205,16 +201,13 @@ export default function ProductDetailPage() {
         }
       } catch (error) {
         console.log('Share cancelled or failed')
-        // Fallback to clipboard
         await fallbackShare(shareData, imageUrl)
       }
     } else {
-      // Desktop fallback - copy to clipboard with image link
       await fallbackShare(shareData, imageUrl)
     }
   }
 
-  // Fallback share method
   const fallbackShare = async (shareData: any, imageUrl: string) => {
     const shareText = `${shareData.title}\n${shareData.text}\n\n🔗 ${shareData.url}`
     
@@ -227,7 +220,6 @@ export default function ProductDetailPage() {
     alert('✅ Product details copied to clipboard!\n\nShare with your friends and family.')
   }
 
-  // Get specifications from product data
   const getSpecifications = () => {
     const specs = []
     if (product?.productType) {
@@ -245,7 +237,6 @@ export default function ProductDetailPage() {
     return specs
   }
 
-  // Get additional details
   const getAdditionalDetails = () => {
     const details = []
     if (product?.variants?.edges?.length) {
@@ -327,7 +318,7 @@ export default function ProductDetailPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="container mx-auto px-4 py-8">
-        {/* Breadcrumb - No click navigation */}
+        {/* Breadcrumb */}
         <div className="text-sm text-gray-500 mb-6 flex items-center gap-2">
           <span className="hover:text-[#D32F2F] cursor-default">Home</span>
           <ChevronRight className="w-4 h-4" />
@@ -438,7 +429,7 @@ export default function ProductDetailPage() {
                 </ul>
               </div>
 
-              {/* Choose Your Option - Variants */}
+              {/* Choose Your Option - Variants - ✅ Fixed "Price" label */}
               {product.options && product.options.length > 0 && (
                 <div className="mb-4">
                   <h3 className="font-semibold text-sm mb-2">Choose Your Option</h3>
@@ -458,7 +449,8 @@ export default function ProductDetailPage() {
                             isSelected ? 'border-[#D32F2F] bg-red-50' : 'border-gray-200 hover:border-gray-300'
                           }`}
                         >
-                          <div className="text-sm font-medium">{v.title}</div>
+                          {/* ✅ Show "Price" instead of variant title */}
+                          <div className="text-sm font-medium text-gray-500">Price</div>
                           <div className="flex items-center gap-2 mt-0.5">
                             <span className="text-[#D32F2F] font-bold">₹{parseFloat(vPrice).toFixed(2)}</span>
                             {vCompare && (

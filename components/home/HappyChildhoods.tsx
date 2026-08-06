@@ -14,6 +14,20 @@ export default function HappyChildhoods() {
     seconds: 13
   })
 
+  // Mobile detection
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -42,18 +56,30 @@ export default function HappyChildhoods() {
     return () => clearInterval(timer)
   }, [])
 
+  // Features list - Mobile version (shorter)
+  const features = isMobile ? [
+    { text: 'Premium quality toys for all ages' },
+    { text: 'Safe and certified materials' },
+    { text: 'Fast and reliable shipping' },
+  ] : [
+    { text: 'Premium quality toys for all ages' },
+    { text: 'Safe and certified materials' },
+    { text: 'Educational and fun designs' },
+    { text: 'Fast and reliable shipping' },
+    { text: 'Gift-ready packaging available' },
+  ]
+
   return (
     <section className="py-16 relative overflow-hidden min-h-[500px] flex items-center">
-      {/* Background Image - Original color, no overlay */}
+      {/* Background Image - Desktop: baby.png, Mobile: baby-mobile.png */}
       <div className="absolute inset-0">
         <Image
-          src="/baby.png"
+          src={isMobile ? '/baby-mobile.png' : '/baby.png'}
           alt="Happy Childhood"
           fill
           className="object-cover object-center"
           priority
         />
-        {/* No overlay - removed */}
       </div>
 
       <div className="container mx-auto px-4 relative z-10 w-full">
@@ -80,15 +106,9 @@ export default function HappyChildhoods() {
               <span className="text-[#FFD700]">Childhoods</span>
             </h2>
 
-            {/* Features List */}
+            {/* Features List - Mobile: 3 items, Desktop: 5 items */}
             <div className="mt-6 space-y-2 max-w-lg">
-              {[
-                { text: 'Premium quality toys for all ages' },
-                { text: 'Safe and certified materials' },
-                { text: 'Educational and fun designs' },
-                { text: 'Fast and reliable shipping' },
-                { text: 'Gift-ready packaging available' },
-              ].map((item, i) => (
+              {features.map((item, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: -20 }}
@@ -143,9 +163,9 @@ export default function HappyChildhoods() {
                 </div>
               </div>
 
-              {/* Shop Now Button - Larger */}
+              {/* Shop Now Button - Navigates to All Products */}
               <Link
-                href="/products"
+                href="/collections"
                 className="inline-flex items-center gap-2 bg-white hover:bg-gray-100 text-[#D32F2F] px-6 py-2.5 rounded-full font-bold transition shadow-lg hover:shadow-xl text-sm md:text-base flex-shrink-0"
               >
                 <ShoppingBag className="w-5 h-5" />

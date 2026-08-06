@@ -22,10 +22,11 @@ export default function OfferBanner() {
             {/* Background Image */}
             <div className="absolute inset-0">
               <Image
-                src="https://images.unsplash.com/photo-1558060370-d6443d52468c?w=800&h=500&fit=crop&q=80"
+                src="/offer-bg.png"
                 alt="Offer Background"
                 fill
                 className="object-cover group-hover:scale-110 transition duration-700"
+                priority
               />
               {/* Dark Overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
@@ -55,32 +56,23 @@ export default function OfferBanner() {
 
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link
-                  href="/products"
+                  href="/collections"
                   className="inline-flex items-center gap-2 bg-[#D32F2F] hover:bg-[#B71C1C] text-white px-6 py-2.5 rounded-full font-semibold transition shadow-lg hover:shadow-xl"
                 >
                   <ShoppingBag className="w-4 h-4" />
                   Shop Now →
-                </Link>
-                <Link
-                  href="/offers"
-                  className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-6 py-2.5 rounded-full font-semibold transition border border-white/30"
-                >
-                  View All Offers →
                 </Link>
               </div>
 
               {/* Trust Badges */}
               <div className="flex flex-wrap gap-4 mt-4">
                 <div className="flex items-center gap-2 text-xs text-white/70">
-                  <span>✅</span>
                   <span>Limited Time</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-white/70">
-                  <span>🛡️</span>
                   <span>Secure Checkout</span>
                 </div>
                 <div className="flex items-center gap-2 text-xs text-white/70">
-                  <span>🚚</span>
                   <span>Free Shipping</span>
                 </div>
               </div>
@@ -140,7 +132,7 @@ export default function OfferBanner() {
 
               <div className="mt-4">
                 <Link
-                  href="/products?category=rc-cars"
+                  href="/shop-by-category?category=rc-cars"
                   className="inline-flex items-center gap-2 bg-[#FFD700] hover:bg-[#FFC107] text-black px-6 py-2.5 rounded-full font-semibold transition shadow-lg hover:shadow-xl"
                 >
                   Explore Collection →

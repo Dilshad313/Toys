@@ -163,9 +163,6 @@ export default function WatchAndBuy() {
     }
 
     const storeDomain = "athvi-toys.myshopify.com"
-
-    // Extract numeric variant ID from the full ID
-    // Example: "gid://shopify/ProductVariant/123456789" -> "123456789"
     const numericVariantId = variantId.split("/").pop()
 
     if (!numericVariantId) {
@@ -173,12 +170,8 @@ export default function WatchAndBuy() {
       return
     }
 
-    // Shopify checkout URL format
     const checkoutUrl = `https://${storeDomain}/cart/${numericVariantId}:1`
-
     console.log('🛒 Redirecting to checkout:', checkoutUrl)
-
-    // Open in same window (redirect to Shopify checkout)
     window.location.href = checkoutUrl
   }
 
@@ -242,7 +235,7 @@ export default function WatchAndBuy() {
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Video Section - Left Side */}
+          {/* Video Section - Left Side (3 columns) */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -250,16 +243,16 @@ export default function WatchAndBuy() {
             viewport={{ once: true }}
             className="lg:col-span-3"
           >
-            <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl aspect-video group">
-              {/* Video Element */}
+            <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl aspect-video group h-full">
               <video
                 ref={videoRef}
                 className="w-full h-full object-cover"
-                poster="/video-poster.jpg"
+                poster="/videos/toys.mp4"
                 onTimeUpdate={handleTimeUpdate}
                 onClick={togglePlay}
                 playsInline
                 preload="metadata"
+                muted
               >
                 <source src="/videos/toys.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
@@ -271,7 +264,7 @@ export default function WatchAndBuy() {
               {/* Center Play Button */}
               <button
                 onClick={togglePlay}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/40 transition-all duration-300 hover:scale-110 group-hover:scale-105 border border-white/30"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/40 transition-all duration-300 hover:scale-110 group-hover:scale-105 border border-white/30 z-10"
               >
                 {isPlaying ? (
                   <Pause className="w-10 h-10 text-white ml-0.5" />
@@ -281,19 +274,19 @@ export default function WatchAndBuy() {
               </button>
 
               {/* Play Badge */}
-              <div className="absolute top-4 left-4 bg-[#D32F2F] text-white px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2 shadow-lg">
+              <div className="absolute top-4 left-4 bg-[#D32F2F] text-white px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2 shadow-lg z-10">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
                 <Play className="w-3 h-3" />
                 Watch Now
               </div>
 
               {/* Duration Badge */}
-              <div className="absolute top-4 right-4 bg-black/60 backdrop-blur text-white px-3 py-1 rounded-full text-xs font-medium">
+              <div className="absolute top-4 right-4 bg-black/60 backdrop-blur text-white px-3 py-1 rounded-full text-xs font-medium z-10">
                 {videoRef.current ? formatTime(videoRef.current.duration) : '0:00'}
               </div>
 
               {/* Bottom Controls */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                 <div 
                   className="w-full h-1.5 bg-white/30 rounded-full cursor-pointer mb-3 hover:h-2 transition-all"
                   onClick={handleProgressClick}
@@ -326,7 +319,7 @@ export default function WatchAndBuy() {
             </div>
           </motion.div>
 
-          {/* Products Section - Right Side */}
+          {/* Products Section - Right Side (2 columns) */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -334,7 +327,7 @@ export default function WatchAndBuy() {
             viewport={{ once: true }}
             className="lg:col-span-2"
           >
-            <div className="grid grid-cols-2 gap-4 h-full">
+            <div className="grid grid-cols-2 gap-3 h-full">
               {products.slice(0, 4).map((product, i) => {
                 const { price, compareAt, imageUrl, variantId, discount } = getProductDetails(product)
                 const isAdding = addingToCart === product.id
@@ -347,7 +340,7 @@ export default function WatchAndBuy() {
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.1 }}
                     viewport={{ once: true }}
-                    className="bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-gray-100 hover:border-[#D32F2F] relative"
+                    className="bg-white rounded-xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden group border border-gray-100 hover:border-[#D32F2F] relative flex flex-col h-full"
                   >
                     {/* Wishlist Button */}
                     <button
@@ -363,12 +356,12 @@ export default function WatchAndBuy() {
                       />
                     </button>
 
-                    <Link href={`/products/${product.handle}`}>
+                    <Link href={`/products/${product.handle}`} className="flex-1">
                       <div className="relative overflow-hidden">
                         <img
                           src={imageUrl}
                           alt={product.title}
-                          className="w-full h-36 object-cover group-hover:scale-110 transition duration-500"
+                          className="w-full h-32 object-cover group-hover:scale-110 transition duration-500"
                         />
                         {discount > 0 && (
                           <span className="absolute top-2 left-2 bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
@@ -376,23 +369,23 @@ export default function WatchAndBuy() {
                           </span>
                         )}
                       </div>
-                      <div className="p-3">
-                        <h4 className="font-semibold text-sm line-clamp-1 font-comic group-hover:text-[#D32F2F] transition">
+                      <div className="p-2.5">
+                        <h4 className="font-semibold text-xs line-clamp-2 font-comic group-hover:text-[#D32F2F] transition leading-tight min-h-[32px]">
                           {product.title}
                         </h4>
                         <div className="flex items-center gap-1 mt-1">
                           <div className="flex items-center text-yellow-400">
-                            <Star className="w-3 h-3 fill-current" />
-                            <span className="text-gray-700 text-xs ml-1">4.8</span>
+                            <Star className="w-2.5 h-2.5 fill-current" />
+                            <span className="text-gray-700 text-[10px] ml-0.5">4.8</span>
                           </div>
-                          <span className="text-gray-400 text-[10px]">(245)</span>
+                          <span className="text-gray-400 text-[9px]">(245)</span>
                         </div>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-base font-bold text-[#D32F2F] font-comic">
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className="text-sm font-bold text-[#D32F2F] font-comic">
                             ₹{parseFloat(price).toFixed(2)}
                           </span>
                           {compareAt && (
-                            <span className="text-gray-400 line-through text-[10px]">
+                            <span className="text-gray-400 line-through text-[9px]">
                               ₹{parseFloat(compareAt).toFixed(2)}
                             </span>
                           )}
@@ -400,32 +393,29 @@ export default function WatchAndBuy() {
                       </div>
                     </Link>
 
-                    {/* Two Buttons - Add to Cart & Buy Now */}
-                    <div className="p-3 pt-0 grid grid-cols-2 gap-2">
-                      {/* Add to Cart Button - Larger */}
+                    {/* Two Buttons */}
+                    <div className="p-2.5 pt-0 grid grid-cols-2 gap-1.5 mt-auto">
                       <button
                         onClick={() => handleAddToCart(variantId, product.id)}
                         disabled={!variantId || isAdding}
-                        className="py-2 rounded-lg bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-xs font-semibold transition flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="py-1.5 rounded-lg bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-[10px] font-semibold transition flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isAdding ? (
                           <>
-                            <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            Adding...
+                            <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
                           </>
                         ) : (
                           <>
-                            <ShoppingCart className="w-3.5 h-3.5" />
-                            Add to Cart
+                            <ShoppingCart className="w-3 h-3" />
+                            Add
                           </>
                         )}
                       </button>
 
-                      {/* Buy Now Button */}
                       <button
                         onClick={() => handleBuyNow(variantId)}
                         disabled={!variantId}
-                        className="py-2 rounded-lg bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-xs font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="py-1.5 rounded-lg bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-[10px] font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Buy Now
                       </button>
