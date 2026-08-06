@@ -31,51 +31,50 @@ export default function Header() {
   }, [])
 
   return (
-    <header className="sticky top-0 z-50">
+    <>
       {/* Top Bar - Marquee with Free Shipping & Support */}
-      {!isScrolled && (
-        <div className="bg-[#7B2FBE] text-white overflow-hidden" style={{ height: '70px' }}>
-          <div className="h-full flex items-center">
-            <div className="animate-marquee whitespace-nowrap flex items-center gap-16">
-              <span className="inline-flex items-center gap-2 text-sm font-medium">
-                🚚 Free Shipping on Orders above ₹499
-              </span>
-              <span className="inline-flex items-center gap-2 text-sm font-medium">
-                🇮🇳 Shipping Across India
-              </span>
-              <span className="inline-flex items-center gap-2 text-sm font-medium">
-                💬 24/7 WhatsApp Support
-              </span>
-              <span className="inline-flex items-center gap-2 text-sm font-medium">
-                🚚 Free Shipping on Orders above ₹499
-              </span>
-              <span className="inline-flex items-center gap-2 text-sm font-medium">
-                🇮🇳 Shipping Across India
-              </span>
-              <span className="inline-flex items-center gap-2 text-sm font-medium">
-                💬 24/7 WhatsApp Support
-              </span>
-              <span className="inline-flex items-center gap-2 text-sm font-medium">
-                🚚 Free Shipping on Orders above ₹499
-              </span>
-              <span className="inline-flex items-center gap-2 text-sm font-medium">
-                🇮🇳 Shipping Across India
-              </span>
-              <span className="inline-flex items-center gap-2 text-sm font-medium">
-                💬 24/7 WhatsApp Support
-              </span>
-            </div>
+      <div className="bg-[#7B2FBE] text-white overflow-hidden" style={{ height: '70px' }}>
+        <div className="h-full flex items-center">
+          <div className="animate-marquee whitespace-nowrap flex items-center gap-16">
+            <span className="inline-flex items-center gap-2 text-sm font-medium">
+              🚚 Free Shipping on Orders above ₹499
+            </span>
+            <span className="inline-flex items-center gap-2 text-sm font-medium">
+              🇮🇳 Shipping Across India
+            </span>
+            <span className="inline-flex items-center gap-2 text-sm font-medium">
+              💬 24/7 WhatsApp Support
+            </span>
+            <span className="inline-flex items-center gap-2 text-sm font-medium">
+              🚚 Free Shipping on Orders above ₹499
+            </span>
+            <span className="inline-flex items-center gap-2 text-sm font-medium">
+              🇮🇳 Shipping Across India
+            </span>
+            <span className="inline-flex items-center gap-2 text-sm font-medium">
+              💬 24/7 WhatsApp Support
+            </span>
+            <span className="inline-flex items-center gap-2 text-sm font-medium">
+              🚚 Free Shipping on Orders above ₹499
+            </span>
+            <span className="inline-flex items-center gap-2 text-sm font-medium">
+              🇮🇳 Shipping Across India
+            </span>
+            <span className="inline-flex items-center gap-2 text-sm font-medium">
+              💬 24/7 WhatsApp Support
+            </span>
           </div>
         </div>
-      )}
+      </div>
 
-      {/* Main Header */}
-      <div 
-        className="bg-cover bg-center bg-no-repeat transition-all duration-300"
-        style={{
-          backgroundImage: `url('/header.png')`,
-        }}
-      >
+      <header className="sticky top-0 z-50">
+        {/* Main Header */}
+        <div 
+          className="bg-cover bg-center bg-no-repeat transition-all duration-300"
+          style={{
+            backgroundImage: `url('/header.png')`,
+          }}
+        >
         <div className={`transition-all duration-300 ${
           isScrolled ? 'bg-white shadow-lg' : 'bg-white/95 backdrop-blur-sm'
         }`}>
@@ -232,6 +231,7 @@ export default function Header() {
           width: fit-content;
         }
       `}</style>
-    </header>
+      </header>
+    </>
   )
 }
