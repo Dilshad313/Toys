@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { shopifyFetch } from '@/lib/shopify/client'
+import { shopifyAdminFetch } from '@/lib/shopify/client'
 
 const GET_ORDERS = `
   query GetOrders($first: Int!) {
@@ -9,9 +9,11 @@ const GET_ORDERS = `
           id
           orderNumber
           createdAt
-          totalPrice {
-            amount
-            currencyCode
+          totalPriceSet {
+            shopMoney {
+              amount
+              currencyCode
+            }
           }
           fulfillmentStatus
           financialStatus
@@ -21,9 +23,7 @@ const GET_ORDERS = `
                 title
                 quantity
                 variant {
-                  price {
-                    amount
-                  }
+                  price
                 }
               }
             }
@@ -49,10 +49,9 @@ const GET_ORDERS = `
 
 export async function GET() {
   try {
-    console.log('📦 Fetching orders from Shopify...')
+    console.log('📦 Fetching orders from Shopify Admin API...')
 
-    // Try to fetch orders using Storefront API
-    const data = await shopifyFetch<any>({
+    const data = await shopifyAdminFetch<any>({
       query: GET_ORDERS,
       variables: { first: 20 }
     })
@@ -68,7 +67,7 @@ export async function GET() {
   } catch (error: any) {
     console.error('❌ Orders API error:', error)
     
-    // Return empty orders instead of error for demo
+    // Return empty orders if error
     return NextResponse.json({
       success: true,
       data: {
@@ -77,7 +76,7 @@ export async function GET() {
         }
       },
       orderCount: 0,
-      message: 'No orders found. Make a purchase to see your order history.',
+      message: error.message || 'No orders found',
     })
   }
 }

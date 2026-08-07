@@ -1,3 +1,4 @@
+// Storefront API Client (Frontend)
 export const shopifyFetch = async <T = any>({
   query,
   variables = {},
@@ -11,71 +12,89 @@ export const shopifyFetch = async <T = any>({
   const token = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_TOKEN
   const version = process.env.NEXT_PUBLIC_SHOPIFY_API_VERSION || '2024-07'
 
-  // Try both URLs
-  const urls = [
-    process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_URL,
-    `https://${domain}/api/${version}/graphql.json`,
-    `https://${domain}/cdn/shopifycloud/headless/v1/graphql`,
-  ].filter(Boolean)
+  if (!domain || !token) {
+    throw new Error('Shopify Storefront credentials missing. Check .env.local')
+  }
+
+  const url = `https://${domain}/api/${version}/graphql.json`
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': token,
+      },
+      body: JSON.stringify({ query, variables }),
+      cache,
+    })
+
+    if (!response.ok) {
+      const text = await response.text()
+      console.error('❌ Shopify API Error:', text)
+      throw new Error(`Shopify API error: ${response.status} ${response.statusText}`)
+    }
+
+    const data = await response.json()
+    
+    if (data.errors) {
+      console.error('❌ GraphQL Errors:', data.errors)
+      throw new Error(data.errors[0]?.message || 'Shopify GraphQL error')
+    }
+
+    return data.data
+  } catch (error: any) {
+    console.error('❌ Shopify fetch error:', error)
+    throw error
+  }
+}
+
+// ✅ Admin API Client (Backend Only)
+export const shopifyAdminFetch = async <T = any>({
+  query,
+  variables = {},
+}: {
+  query: string
+  variables?: Record<string, any>
+}): Promise<T> => {
+  const domain = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN
+  const token = process.env.SHOPIFY_ADMIN_API_TOKEN
+  const version = process.env.NEXT_PUBLIC_SHOPIFY_API_VERSION || '2024-07'
 
   if (!domain || !token) {
-    console.error('❌ Missing credentials:', { hasDomain: !!domain, hasToken: !!token })
-    throw new Error('Shopify credentials missing. Check .env.local')
+    console.warn('⚠️ Shopify Admin API credentials missing. Using demo data.')
+    // Return empty data for demo
+    return { orders: { edges: [] } } as T
   }
 
-  // Prevent users from accidentally using an Admin API Token (starts with shpat_) 
-  // for the Headless Storefront API.
-  if (token.startsWith('shpat_')) {
-    const errorMsg = '❌ Invalid Token: You provided a Shopify Admin API token (shpat_) instead of a Storefront Access Token. Please generate a Storefront API token via the Headless channel in your Shopify admin.'
-    console.error(errorMsg)
-    throw new Error(errorMsg)
-  }
+  const url = `https://${domain}/admin/api/${version}/graphql.json`
 
-  console.log('🔗 Trying URLs:', urls)
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': token,
+      },
+      body: JSON.stringify({ query, variables }),
+    })
 
-  let lastError: Error | null = null
-
-  for (const url of urls) {
-    try {
-      console.log(`🔄 Trying: ${url}`)
-
-      const response = await fetch(url as string, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Shopify-Storefront-Access-Token': token,
-        },
-        body: JSON.stringify({ query, variables }),
-        cache,
-      })
-
-      const responseText = await response.text()
-      
-      if (!response.ok) {
-        console.error(`❌ HTTP ${response.status}:`, responseText.substring(0, 200))
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
-      }
-
-      let data
-      try {
-        data = JSON.parse(responseText)
-      } catch (parseError) {
-        console.error('❌ Parse error:', parseError)
-        throw new Error('Invalid JSON response from Shopify')
-      }
-
-      if (data.errors) {
-        console.error('❌ GraphQL Errors:', data.errors)
-        throw new Error(data.errors[0]?.message || 'GraphQL error')
-      }
-
-      console.log(`✅ Success with URL: ${url}`)
-      return data.data
-    } catch (error: any) {
-      console.warn(`❌ Failed with ${url}:`, error.message)
-      lastError = error
+    if (!response.ok) {
+      const text = await response.text()
+      console.error('❌ Admin API Error:', text)
+      throw new Error(`Admin API error: ${response.status} ${response.statusText}`)
     }
-  }
 
-  throw lastError || new Error('All Shopify endpoints failed')
+    const data = await response.json()
+    
+    if (data.errors) {
+      console.error('❌ Admin GraphQL Errors:', data.errors)
+      throw new Error(data.errors[0]?.message || 'Admin GraphQL error')
+    }
+
+    return data.data
+  } catch (error: any) {
+    console.error('❌ Admin fetch error:', error)
+    throw error
+  }
 }
