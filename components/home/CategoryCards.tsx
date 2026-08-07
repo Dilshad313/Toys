@@ -11,6 +11,7 @@ const categories = [
     title: 'Educational Toys',
     subtitle: 'Starting from ₹499',
     image: 'https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?w=400&h=400&fit=crop&q=80',
+    bgColor: 'bg-[#F5E6D3]', // warm beige
     href: '/shop-by-category?category=educational'
   },
   {
@@ -19,6 +20,7 @@ const categories = [
     title: 'RC Cars',
     subtitle: 'Starting from ₹899',
     image: 'https://images.unsplash.com/photo-1594787318286-3d835c1d207f?w=400&h=400&fit=crop&q=80',
+    bgColor: 'bg-[#D4DDE8]', // light blue-gray
     href: '/shop-by-category?category=rc-cars',
   },
   {
@@ -27,6 +29,7 @@ const categories = [
     title: 'Soft Toys',
     subtitle: 'Starting from ₹299',
     image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=400&h=400&fit=crop&q=80',
+    bgColor: 'bg-[#E8F0F0]', // light mint
     href: '/shop-by-category?category=soft-toys'
   },
   {
@@ -35,34 +38,17 @@ const categories = [
     title: 'Combo Offer',
     subtitle: 'Starting from ₹699',
     image: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&h=400&fit=crop&q=80',
+    bgColor: 'bg-[#E0D8D0]', // warm gray
     href: '/shop-by-category?category=offers'
   },
 ]
 
 export default function CategoryCards() {
   return (
-    <section className="py-16">
+    <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
-        {/* Section Header - Removed */}
-        {/* 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl md:text-5xl font-bold font-comic text-[#D32F2F]">
-            🛍️ Shop by Category
-          </h2>
-          <p className="text-gray-600 mt-2 font-medium font-comic text-base md:text-lg">
-            Find the perfect toy for every occasion
-          </p>
-        </motion.div>
-        */}
-
-        {/* Category Cards Grid - 4 Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Category Cards Grid - 2x2 Horizontal Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
           {categories.map((category, i) => (
             <motion.div
               key={category.id}
@@ -70,37 +56,30 @@ export default function CategoryCards() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1, duration: 0.6 }}
               viewport={{ once: true }}
-              className="group cursor-default"
             >
-              <div className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 bg-white">
-                {/* Image */}
-                <div className="relative h-80 w-full overflow-hidden">
-                  <Image
-                    src={category.image}
-                    alt={category.name}
-                    fill
-                    className="object-cover group-hover:scale-110 transition duration-700"
-                  />
+              <Link href={category.href} className="group block">
+                <div className={`relative overflow-hidden rounded-2xl shadow-md hover:shadow-xl transition-all duration-500 ${category.bgColor} flex items-center h-32 sm:h-36 md:h-40`}>
+                  {/* Image - Left Side */}
+                  <div className="relative w-28 sm:w-32 md:w-40 h-full flex-shrink-0 overflow-hidden rounded-l-2xl">
+                    <Image
+                      src={category.image}
+                      alt={category.name}
+                      fill
+                      className="object-cover group-hover:scale-110 transition duration-700"
+                    />
+                  </div>
+
+                  {/* Content - Right Side */}
+                  <div className="flex-1 px-4 md:px-6 py-4">
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-[#2C3E50] font-comic group-hover:text-[#D32F2F] transition">
+                      {category.title}
+                    </h3>
+                    <p className="text-[#5D6D7E] text-sm md:text-base font-medium mt-1">
+                      {category.subtitle}
+                    </p>
+                  </div>
                 </div>
-
-                {/* Content Overlay - Bottom */}
-                <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/70 via-black/40 to-transparent">
-                  {/* Title */}
-                  <h3 className="text-xl font-bold text-white font-comic">
-                    {category.title}
-                  </h3>
-
-                  {/* Subtitle/Price */}
-                  <p className="text-white/90 text-sm font-medium">
-                    {category.subtitle}
-                  </p>
-                </div>
-
-                {/* ❌ Corner Badge - Removed */}
-                {/* <div className="absolute top-4 right-4 bg-[#D32F2F] text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-10">
-                  New
-                </div> */}
-              </div>
+              </Link>
             </motion.div>
           ))}
         </div>
@@ -111,7 +90,7 @@ export default function CategoryCards() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
           viewport={{ once: true }}
-          className="text-center mt-12"
+          className="text-center mt-10"
         >
           <Link
             href="/shop-by-category"

@@ -5,8 +5,10 @@ import Categories from '@/components/home/Categories'
 import BestSellers from '@/components/home/BestSellers'
 import WatchAndBuy from '@/components/home/WatchAndBuy'
 import CategoryCards from '@/components/home/CategoryCards'
+import WoodenToys from '@/components/home/WoodenToys'
 import OfferBanner from '@/components/home/OfferBanner'
 import HappyChildhoods from '@/components/home/HappyChildhoods'
+import Reviews from '@/components/home/Reviews'
 import Testimonials from '@/components/home/Testimonials'
 
 export default function HomePage() {
@@ -18,8 +20,10 @@ export default function HomePage() {
       <BestSellers />
       <WatchAndBuy />
       <CategoryCards />
+      <WoodenToys />
       <OfferBanner />
       <HappyChildhoods />
+      <Reviews />
       <Testimonials />
       <Features />
     </>

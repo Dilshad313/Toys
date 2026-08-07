@@ -3,21 +3,16 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ShoppingCart, Star, ChevronRight, ChevronDown } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 
-const categories = [
-  { id: 'educational', name: 'Educational Toys' },
-  { id: 'rc-cars', name: 'RC & Remote Control' },
-  { id: 'ride-on', name: 'Ride-on Toys' },
-  { id: 'musical', name: 'Musical Toys' },
-  { id: 'soft-toys', name: 'Soft Toys' },
-  { id: 'wooden', name: 'Wooden Toys' },
-  { id: 'activity', name: 'Activity Toys' },
-  { id: 'outdoor', name: 'Outdoor Toys' },
-]
+interface Collection {
+  id: string
+  title: string
+  handle: string
+  description?: string
+}
 
 interface Product {
   id: string
@@ -51,69 +46,99 @@ interface Product {
   tags: string[]
 }
 
-// ✅ Separate component that uses useSearchParams and useRouter
 function ShopByCategoryContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const categoryId = searchParams.get('category')
-  const [selectedCategory, setSelectedCategory] = useState(categories[0])
+  const categoryHandle = searchParams.get('category')
+
+  const [collections, setCollections] = useState<Collection[]>([])
+  const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null)
   const [products, setProducts] = useState<Product[]>([])
-  const [loading, setLoading] = useState(true)
+  
+  const [loadingCollections, setLoadingCollections] = useState(true)
+  const [loadingProducts, setLoadingProducts] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [addingToCart, setAddingToCart] = useState<string | null>(null)
   const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false)
   const { addToCart } = useCart()
 
+  // 1. Fetch all collections from Shopify on mount
   useEffect(() => {
-    if (categoryId) {
-      const found = categories.find(c => c.id === categoryId)
-      if (found) {
-        setSelectedCategory(found)
-      }
-    } else {
-      router.push(`/shop-by-category?category=${categories[0].id}`)
-    }
-  }, [categoryId, router])
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true)
-      setError(null)
-      
+    const fetchCollections = async () => {
       try {
-        const searchQuery = `tag:${selectedCategory.id}`
-        const response = await fetch(`/api/products/search?q=${encodeURIComponent(searchQuery)}&first=20`)
+        setLoadingCollections(true)
+        const response = await fetch('/api/collections?first=50')
         const result = await response.json()
-        
-        if (result.success && result.data?.products?.edges && result.data.products.edges.length > 0) {
-          setProducts(result.data.products.edges.map((edge: any) => edge.node))
-        } else {
-          const fallbackResponse = await fetch(`/api/products/search?q=${encodeURIComponent(selectedCategory.name)}&first=20`)
-          const fallbackResult = await fallbackResponse.json()
-          
-          if (fallbackResult.success && fallbackResult.data?.products?.edges) {
-            setProducts(fallbackResult.data.products.edges.map((edge: any) => edge.node))
-          } else {
-            setProducts([])
+
+        if (result.success && result.data?.collections?.edges) {
+          const list = result.data.collections.edges.map((edge: any) => ({
+            id: edge.node.id,
+            title: edge.node.title,
+            handle: edge.node.handle,
+            description: edge.node.description,
+          }))
+          setCollections(list)
+
+          // Determine selected category/collection from searchParams
+          if (list.length > 0) {
+            let found = list[0]
+            if (categoryHandle) {
+              const matched = list.find((c: Collection) => c.handle === categoryHandle)
+              if (matched) {
+                found = matched
+              }
+            }
+            setSelectedCollection(found)
+            if (!categoryHandle) {
+              router.push(`/shop-by-category?category=${found.handle}`)
+            }
           }
+        } else {
+          setError('Failed to fetch categories from store.')
         }
-      } catch (error) {
-        console.error('Error fetching products:', error)
-        setError('Failed to load products')
+      } catch (err) {
+        console.error('Error fetching collections:', err)
+        setError('Failed to load categories.')
       } finally {
-        setLoading(false)
+        setLoadingCollections(false)
       }
     }
 
-    if (selectedCategory) {
-      fetchProducts()
-    }
-  }, [selectedCategory])
+    fetchCollections()
+  }, [categoryHandle, router])
 
-  const handleCategorySelect = (category: typeof categories[0]) => {
-    setSelectedCategory(category)
+  // 2. Fetch products inside the selected collection
+  useEffect(() => {
+    const fetchProductsForCollection = async () => {
+      if (!selectedCollection) return
+
+      try {
+        setLoadingProducts(true)
+        setError(null)
+        const response = await fetch(`/api/collections/${selectedCollection.handle}?first=50`)
+        const result = await response.json()
+
+        if (result.success && result.data?.collectionByHandle?.products?.edges) {
+          const fetchedProducts = result.data.collectionByHandle.products.edges.map((edge: any) => edge.node)
+          setProducts(fetchedProducts)
+        } else {
+          setProducts([])
+        }
+      } catch (err) {
+        console.error('Error fetching products for collection:', err)
+        setError('Failed to load products for this category.')
+      } finally {
+        setLoadingProducts(false)
+      }
+    }
+
+    fetchProductsForCollection()
+  }, [selectedCollection])
+
+  const handleCategorySelect = (collection: Collection) => {
+    setSelectedCollection(collection)
     setIsMobileDropdownOpen(false)
-    router.push(`/shop-by-category?category=${category.id}`)
+    router.push(`/shop-by-category?category=${collection.handle}`)
   }
 
   const handleAddToCart = async (variantId: string, productId: string) => {
@@ -129,6 +154,26 @@ function ShopByCategoryContent() {
     }
   }
 
+  if (loadingCollections) {
+    return (
+      <div className="container mx-auto px-4 py-8 md:py-16">
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-5xl font-bold font-comic text-[#D32F2F]">
+            🛍️ Shop by Category
+          </h1>
+          <p className="text-gray-600 mt-2 font-comic text-base md:text-lg">
+            Loading our curated collections...
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div key={i} className="bg-gray-100 rounded-2xl h-72 animate-pulse" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 md:py-16">
       <div className="mb-8">
@@ -136,7 +181,7 @@ function ShopByCategoryContent() {
           🛍️ Shop by Category
         </h1>
         <p className="text-gray-600 mt-2 font-comic text-base md:text-lg">
-          Explore our wide range of premium toys
+          Explore our wide range of premium toys by Shopify collection
         </p>
       </div>
 
@@ -146,18 +191,18 @@ function ShopByCategoryContent() {
           <div className="bg-white rounded-2xl shadow-md p-4 sticky top-24">
             <h3 className="font-bold text-lg mb-4 text-gray-800 font-comic">Categories</h3>
             <div className="space-y-1">
-              {categories.map((category) => (
+              {collections.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => handleCategorySelect(category)}
                   className={`w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-3 ${
-                    selectedCategory.id === category.id
+                    selectedCollection?.id === category.id
                       ? 'bg-[#FF6B35] text-white shadow-md'
                       : 'hover:bg-gray-100 text-gray-700'
                   }`}
                 >
-                  <span className="text-sm font-medium flex-1">{category.name}</span>
-                  {selectedCategory.id === category.id && (
+                  <span className="text-sm font-medium flex-1">{category.title}</span>
+                  {selectedCollection?.id === category.id && (
                     <ChevronRight className="w-4 h-4" />
                   )}
                 </button>
@@ -173,7 +218,7 @@ function ShopByCategoryContent() {
             className="w-full flex items-center justify-between px-4 py-3 bg-white rounded-xl shadow-md border border-gray-200"
           >
             <span className="font-semibold text-gray-800">
-              {selectedCategory.name}
+              {selectedCollection?.title || 'Select Category'}
             </span>
             <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${isMobileDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
@@ -187,18 +232,18 @@ function ShopByCategoryContent() {
                 transition={{ duration: 0.2 }}
                 className="mt-2 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden"
               >
-                {categories.map((category) => (
+                {collections.map((category) => (
                   <button
                     key={category.id}
                     onClick={() => handleCategorySelect(category)}
                     className={`w-full text-left px-4 py-3 transition flex items-center gap-3 ${
-                      selectedCategory.id === category.id
+                      selectedCollection?.id === category.id
                         ? 'bg-[#FF6B35] text-white'
                         : 'hover:bg-gray-50 text-gray-700'
                     }`}
                   >
-                    <span className="text-sm font-medium flex-1">{category.name}</span>
-                    {selectedCategory.id === category.id && (
+                    <span className="text-sm font-medium flex-1">{category.title}</span>
+                    {selectedCollection?.id === category.id && (
                       <ChevronRight className="w-4 h-4" />
                     )}
                   </button>
@@ -212,14 +257,14 @@ function ShopByCategoryContent() {
         <div className="lg:col-span-3">
           <div className="mb-6">
             <h2 className="text-2xl md:text-3xl font-bold font-comic text-gray-800">
-              {selectedCategory.name}
+              {selectedCollection?.title}
             </h2>
             <p className="text-gray-500 text-sm mt-1">
               {products.length} products found
             </p>
           </div>
 
-          {loading ? (
+          {loadingProducts ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {[1, 2, 3, 4, 5, 6].map((i) => (
                 <div key={i} className="bg-gray-100 rounded-2xl h-72 animate-pulse" />
@@ -350,7 +395,6 @@ function ShopByCategoryContent() {
   )
 }
 
-// ✅ Main page component with Suspense
 export default function ShopByCategoryPage() {
   return (
     <Suspense fallback={
