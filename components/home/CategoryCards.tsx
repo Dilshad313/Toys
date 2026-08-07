@@ -43,7 +43,8 @@ export default function CategoryCards() {
   return (
     <section className="py-16">
       <div className="container mx-auto px-4">
-        {/* Section Header */}
+        {/* Section Header - Removed */}
+        {/* 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -58,8 +59,9 @@ export default function CategoryCards() {
             Find the perfect toy for every occasion
           </p>
         </motion.div>
+        */}
 
-        {/* Category Cards Grid - 4 Cards - Clean with Images Only */}
+        {/* Category Cards Grid - 4 Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {categories.map((category, i) => (
             <motion.div
@@ -70,9 +72,8 @@ export default function CategoryCards() {
               viewport={{ once: true }}
               className="group cursor-default"
             >
-              {/* Removed Link - no navigation on click */}
               <div className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 bg-white">
-                {/* Image - Full size, no background */}
+                {/* Image */}
                 <div className="relative h-80 w-full overflow-hidden">
                   <Image
                     src={category.image}
@@ -84,11 +85,6 @@ export default function CategoryCards() {
 
                 {/* Content Overlay - Bottom */}
                 <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/70 via-black/40 to-transparent">
-                  {/* Badge/Icon */}
-                  <div className="text-2xl mb-1">
-                    
-                  </div>
-
                   {/* Title */}
                   <h3 className="text-xl font-bold text-white font-comic">
                     {category.title}
@@ -98,25 +94,18 @@ export default function CategoryCards() {
                   <p className="text-white/90 text-sm font-medium">
                     {category.subtitle}
                   </p>
-
-                  {/* Shop Now - Shows on Hover - No navigation */}
-                  {/* <div className="mt-3 opacity-0 group-hover:opacity-100 transform group-hover:translate-y-0 translate-y-2 transition-all duration-500">
-                    <span className="inline-block bg-[#D32F2F] text-white px-5 py-1.5 rounded-full text-sm font-semibold cursor-default">
-                      Shop Now →
-                    </span>
-                  </div> */}
                 </div>
 
-                {/* Corner Badge */}
-                <div className="absolute top-4 right-4 bg-[#D32F2F] text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-10">
+                {/* ❌ Corner Badge - Removed */}
+                {/* <div className="absolute top-4 right-4 bg-[#D32F2F] text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-10">
                   New
-                </div>
+                </div> */}
               </div>
             </motion.div>
           ))}
         </div>
 
-        {/* View All Button - Navigates to shop-by-category */}
+        {/* View All Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

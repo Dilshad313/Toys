@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { Play, Pause, Volume2, VolumeX, Maximize, ShoppingCart, Star, Heart } from 'lucide-react'
 import Link from 'next/link'
@@ -40,10 +40,13 @@ export default function WatchAndBuy() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isMuted, setIsMuted] = useState(false)
   const [progress, setProgress] = useState(0)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [addingToCart, setAddingToCart] = useState<string | null>(null)
   const [wishlist, setWishlist] = useState<string[]>([])
+  const [showPoster, setShowPoster] = useState(true)
   const videoRef = useRef<HTMLVideoElement>(null)
   const { addToCart } = useCart()
 
@@ -91,29 +94,61 @@ export default function WatchAndBuy() {
     fetchProducts()
   }, [])
 
+  // Extract first frame as poster when video loads
+  const handleLoadedMetadata = useCallback(() => {
+    if (videoRef.current) {
+      setDuration(videoRef.current.duration)
+      videoRef.current.currentTime = 0.1
+    }
+  }, [])
+
+  const handleCanPlay = useCallback(() => {
+    if (videoRef.current && showPoster) {
+      const canvas = document.createElement('canvas')
+      canvas.width = videoRef.current.videoWidth || 720
+      canvas.height = videoRef.current.videoHeight || 1280
+      const ctx = canvas.getContext('2d')
+      if (ctx && videoRef.current) {
+        ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height)
+        const posterUrl = canvas.toDataURL('image/jpeg')
+        if (videoRef.current) {
+          videoRef.current.poster = posterUrl
+        }
+      }
+      videoRef.current.currentTime = 0
+    }
+  }, [showPoster])
+
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause()
+        setIsPlaying(false)
       } else {
-        videoRef.current.play()
+        setShowPoster(false)
+        videoRef.current.play().then(() => {
+          setIsPlaying(true)
+        }).catch((err) => {
+          console.error('Play error:', err)
+        })
       }
-      setIsPlaying(!isPlaying)
     }
   }
 
   const toggleMute = () => {
     if (videoRef.current) {
-      videoRef.current.muted = !isMuted
-      setIsMuted(!isMuted)
+      const newMuted = !isMuted
+      videoRef.current.muted = newMuted
+      setIsMuted(newMuted)
     }
   }
 
   const handleTimeUpdate = () => {
     if (videoRef.current) {
-      const currentTime = videoRef.current.currentTime
-      const duration = videoRef.current.duration
-      setProgress((currentTime / duration) * 100)
+      const current = videoRef.current.currentTime
+      const dur = videoRef.current.duration || 1
+      setCurrentTime(current)
+      setProgress((current / dur) * 100)
     }
   }
 
@@ -234,8 +269,8 @@ export default function WatchAndBuy() {
           <div className="w-20 h-1 bg-[#D32F2F] mx-auto mt-4 rounded-full" />
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          {/* Video Section - Left Side (3 columns) */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-start">
+          {/* ✅ Video Section - Left Side (3 columns) - Wider */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -243,50 +278,83 @@ export default function WatchAndBuy() {
             viewport={{ once: true }}
             className="lg:col-span-3"
           >
-            <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl aspect-video group h-full">
-              <video
-                ref={videoRef}
-                className="w-full h-full object-cover"
-                poster="/videos/toys.mp4"
-                onTimeUpdate={handleTimeUpdate}
-                onClick={togglePlay}
-                playsInline
-                preload="metadata"
-                muted
-              >
-                <source src="/videos/toys.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+            <div className="relative bg-black rounded-2xl overflow-hidden shadow-2xl aspect-video max-h-[450px] mx-auto lg:mx-0 group">
+              {/* Poster Image Overlay (shown before play) */}
+              {showPoster && (
+                <div className="absolute inset-0 z-20">
+                  <video
+                    ref={videoRef}
+                    className="w-full h-full object-cover"
+                    onLoadedMetadata={handleLoadedMetadata}
+                    onCanPlay={handleCanPlay}
+                    onTimeUpdate={handleTimeUpdate}
+                    onEnded={() => {
+                      setIsPlaying(false)
+                      setShowPoster(true)
+                      if (videoRef.current) videoRef.current.currentTime = 0
+                    }}
+                    playsInline
+                    preload="auto"
+                    muted={isMuted}
+                  >
+                    <source src="/videos/toys.mp4" type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                  
+                  {/* Dark overlay on poster */}
+                  <div className="absolute inset-0 bg-black/20" />
+                </div>
+              )}
+
+              {/* Actual playing video (hidden when poster shown) */}
+              {!showPoster && (
+                <video
+                  ref={videoRef}
+                  className="w-full h-full object-cover"
+                  onTimeUpdate={handleTimeUpdate}
+                  onEnded={() => {
+                    setIsPlaying(false)
+                    setShowPoster(true)
+                    if (videoRef.current) videoRef.current.currentTime = 0
+                  }}
+                  playsInline
+                  preload="auto"
+                  muted={isMuted}
+                >
+                  <source src="/videos/toys.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              )}
 
               {/* Gradient Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none z-10" />
 
               {/* Center Play Button */}
               <button
                 onClick={togglePlay}
-                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/40 transition-all duration-300 hover:scale-110 group-hover:scale-105 border border-white/30 z-10"
+                className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 md:w-20 md:h-20 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/40 transition-all duration-300 hover:scale-110 border border-white/30 z-30"
               >
                 {isPlaying ? (
-                  <Pause className="w-10 h-10 text-white ml-0.5" />
+                  <Pause className="w-8 h-8 md:w-10 md:h-10 text-white" />
                 ) : (
-                  <Play className="w-10 h-10 text-white ml-1" />
+                  <Play className="w-8 h-8 md:w-10 md:h-10 text-white ml-1" />
                 )}
               </button>
 
               {/* Play Badge */}
-              <div className="absolute top-4 left-4 bg-[#D32F2F] text-white px-4 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2 shadow-lg z-10">
+              <div className="absolute top-4 left-4 bg-[#D32F2F] text-white px-3 py-1.5 rounded-full text-xs font-semibold flex items-center gap-2 shadow-lg z-30">
                 <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
                 <Play className="w-3 h-3" />
                 Watch Now
               </div>
 
               {/* Duration Badge */}
-              <div className="absolute top-4 right-4 bg-black/60 backdrop-blur text-white px-3 py-1 rounded-full text-xs font-medium z-10">
-                {videoRef.current ? formatTime(videoRef.current.duration) : '0:00'}
+              <div className="absolute top-4 right-4 bg-black/60 backdrop-blur text-white px-3 py-1 rounded-full text-xs font-medium z-30">
+                {formatTime(duration)}
               </div>
 
               {/* Bottom Controls */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent z-30">
                 <div 
                   className="w-full h-1.5 bg-white/30 rounded-full cursor-pointer mb-3 hover:h-2 transition-all"
                   onClick={handleProgressClick}
@@ -308,10 +376,21 @@ export default function WatchAndBuy() {
                       {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
                     </button>
                     <span className="text-white text-xs font-medium">
-                      {videoRef.current ? formatTime(videoRef.current.currentTime) : '0:00'}
+                      {formatTime(currentTime)} / {formatTime(duration)}
                     </span>
                   </div>
-                  <button className="text-white hover:text-[#D32F2F] transition p-1">
+                  <button 
+                    onClick={() => {
+                      if (videoRef.current) {
+                        if (document.fullscreenElement) {
+                          document.exitFullscreen()
+                        } else {
+                          videoRef.current.requestFullscreen()
+                        }
+                      }
+                    }}
+                    className="text-white hover:text-[#D32F2F] transition p-1"
+                  >
                     <Maximize className="w-5 h-5" />
                   </button>
                 </div>
@@ -319,7 +398,7 @@ export default function WatchAndBuy() {
             </div>
           </motion.div>
 
-          {/* Products Section - Right Side (2 columns) */}
+          {/* ✅ Products Section - Right Side (2 columns) */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -401,9 +480,7 @@ export default function WatchAndBuy() {
                         className="py-1.5 rounded-lg bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-[10px] font-semibold transition flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isAdding ? (
-                          <>
-                            <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          </>
+                          <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         ) : (
                           <>
                             <ShoppingCart className="w-3 h-3" />
@@ -426,23 +503,6 @@ export default function WatchAndBuy() {
             </div>
           </motion.div>
         </div>
-
-        {/* Bottom CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="text-center mt-12"
-        >
-          <Link
-            href="/collections"
-            className="inline-flex items-center gap-2 bg-[#D32F2F] hover:bg-[#B71C1C] text-white px-8 py-3 rounded-full font-bold transition shadow-lg hover:shadow-xl"
-          >
-            View All Products
-            <span className="text-xl">→</span>
-          </Link>
-        </motion.div>
       </div>
 
       <style jsx global>{`

@@ -1,168 +1,177 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { 
-  Mail, 
-  Send,
-  MapPin,
-  Phone,
-  Clock,
-  CreditCard,
-  Shield,
-  Truck,
-  RotateCcw,
   ShoppingBag
 } from 'lucide-react'
 import { 
   FaFacebook, 
   FaInstagram, 
-  FaTwitter, 
-  FaYoutube
+  FaTwitter,
+  FaYoutube,
+  FaWhatsapp
 } from 'react-icons/fa'
 
 export default function Footer() {
   return (
-    <footer className="bg-[#1a1a2e] text-gray-300">
-      {/* Newsletter Section */}
-      <div className="border-b border-gray-800">
-        <div className="container mx-auto px-4 py-8 md:py-12">
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-center text-center lg:text-left">
-            <div className="flex-1">
-              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-white font-comic">
-                Get <span className="text-[#FFD700]">₹100 OFF</span> on your first order!
-              </h3>
-              <p className="text-gray-400 mt-1 md:mt-2 text-sm md:text-base">
-                Join our newsletter and get exclusive offers.
-              </p>
-            </div>
-            <div className="flex-shrink-0">
-              <Link
-                href="/collections"
-                className="bg-[#FFD700] hover:bg-[#FFC107] text-[#1a1a2e] px-6 py-2.5 md:px-8 md:py-3 rounded-full font-bold transition flex items-center justify-center gap-2 text-sm md:text-base w-full sm:w-auto"
-              >
-                <ShoppingBag className="w-4 h-4" />
-                Shop Now
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Footer */}
-      <div className="container mx-auto px-4 py-8 md:py-12">
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-8">
-          
-          {/* Brand Column */}
-          <div className="col-span-2 sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-3 md:mb-4">
-              <Image 
-                src="/logo1.png" 
-                alt="Athvi Toys" 
-                width={140} 
-                height={50}
-                className="h-12 md:h-14 w-auto object-contain"
-                priority
-              />
-            </Link>
-            <p className="text-xs md:text-sm text-gray-400 mb-3 md:mb-4 max-w-xs">
-              Premium toys for happy learning and endless fun!
-            </p>
-            
-            {/* Social Icons */}
-            <div className="flex gap-2 md:gap-3">
-              <a href="#" className="bg-white/10 hover:bg-[#FFD700] text-gray-400 hover:text-[#1a1a2e] p-1.5 md:p-2 rounded-full transition w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
-                <FaFacebook className="w-3.5 h-3.5 md:w-4 md:h-4" />
-              </a>
-              <a href="#" className="bg-white/10 hover:bg-[#FFD700] text-gray-400 hover:text-[#1a1a2e] p-1.5 md:p-2 rounded-full transition w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
-                <FaInstagram className="w-3.5 h-3.5 md:w-4 md:h-4" />
-              </a>
-              <a href="#" className="bg-white/10 hover:bg-[#FFD700] text-gray-400 hover:text-[#1a1a2e] p-1.5 md:p-2 rounded-full transition w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
-                <FaTwitter className="w-3.5 h-3.5 md:w-4 md:h-4" />
-              </a>
-              <a href="#" className="bg-white/10 hover:bg-[#FFD700] text-gray-400 hover:text-[#1a1a2e] p-1.5 md:p-2 rounded-full transition w-8 h-8 md:w-10 md:h-10 flex items-center justify-center">
-                <FaYoutube className="w-3.5 h-3.5 md:w-4 md:h-4" />
-              </a>
-            </div>
-
-            <p className="text-xs md:text-sm text-gray-500 mt-3 md:mt-4">Follow Us</p>
-          </div>
-
-          {/* Shop Links */}
-          <div>
-            <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Shop</h4>
-            <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
-              <li><Link href="/collections" className="hover:text-[#FFD700] transition">All Toys</Link></li>
-              <li><Link href="/category-cards" className="hover:text-[#FFD700] transition">New Arrivals</Link></li>
-              <li><Link href="/best-sellers" className="hover:text-[#FFD700] transition">Best Sellers</Link></li>
-            </ul>
-          </div>
-
-          {/* Customer Service */}
-          <div>
-            <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Customer Service</h4>
-            <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
-              <li><Link href="/contact" className="hover:text-[#FFD700] transition">Contact Us</Link></li>
-              <li><Link href="/track-order" className="hover:text-[#FFD700] transition">Track Order</Link></li>
-              <li><Link href="/shipping-policy" className="hover:text-[#FFD700] transition">Shipping Policy</Link></li>
-              <li><Link href="/returns" className="hover:text-[#FFD700] transition">Returns & Refunds</Link></li>
-              <li><Link href="/faqs" className="hover:text-[#FFD700] transition">FAQs</Link></li>
-            </ul>
-          </div>
-
-          {/* Information */}
-          <div>
-            <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Information</h4>
-            <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
-              <li><Link href="/privacy" className="hover:text-[#FFD700] transition">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="hover:text-[#FFD700] transition">Terms & Conditions</Link></li>
-              <li><Link href="/blog" className="hover:text-[#FFD700] transition">Blog</Link></li>
-            </ul>
-          </div>
-
-          {/* Help & Support */}
-          <div className="col-span-2 sm:col-span-1">
-            <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Help & Support</h4>
-            <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
-              <li><Link href="/wishlist" className="hover:text-[#FFD700] transition">Wishlist</Link></li>
-              <li><Link href="/order-history" className="hover:text-[#FFD700] transition">Order History</Link></li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      {/* Payment Methods & Bottom Bar */}
-      <div className="border-t border-gray-800">
-        <div className="container mx-auto px-4 py-4 md:py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            {/* Payment Methods */}
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-              <span className="text-xs md:text-sm text-gray-400">Payment Methods:</span>
-              <div className="flex flex-wrap items-center justify-center gap-1.5 md:gap-2">
-                <span className="bg-[#FFD700]/10 text-[#FFD700] px-2.5 py-1 md:px-4 md:py-1.5 rounded-full text-[10px] md:text-xs font-semibold border border-[#FFD700]/20">VISA</span>
-                <span className="bg-[#FFD700]/10 text-[#FFD700] px-2.5 py-1 md:px-4 md:py-1.5 rounded-full text-[10px] md:text-xs font-semibold border border-[#FFD700]/20">RuPay</span>
-                <span className="bg-[#FFD700]/10 text-[#FFD700] px-2.5 py-1 md:px-4 md:py-1.5 rounded-full text-[10px] md:text-xs font-semibold border border-[#FFD700]/20">UPI</span>
-                <span className="bg-[#FFD700]/10 text-[#FFD700] px-2.5 py-1 md:px-4 md:py-1.5 rounded-full text-[10px] md:text-xs font-semibold border border-[#FFD700]/20">COD</span>
+    <footer className="text-gray-300">
+      {/* Newsletter Section - Yellow Background */}
+      <div className="bg-[#FAC310]">
+        <div className="container mx-auto px-4 py-6 md:py-8">
+          <div className="flex flex-col lg:flex-row gap-4 lg:gap-8 items-center justify-between">
+            <div className="flex items-center gap-4">
+              {/* Mail Icon */}
+              <div className="bg-white/20 p-3 rounded-full">
+                <svg className="w-6 h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-[#1a1a2e] font-comic">
+                  Get <span className="text-[#E21923]">₹100 OFF</span> on your first order!
+                </h3>
+                <p className="text-[#1a1a2e]/70 mt-0.5 text-sm md:text-base">
+                  Join our newsletter and get exclusive offers.
+                </p>
               </div>
             </div>
+            
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <input
+                type="email"
+                placeholder="Enter your email address"
+                className="flex-1 px-4 py-2.5 md:px-6 md:py-3 rounded-full bg-white border border-white text-[#1a1a2e] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E21923] transition text-sm md:text-base min-w-[250px]"
+              />
+              <button className="bg-[#E21923] hover:bg-[#c41720] text-white px-6 py-2.5 md:px-8 md:py-3 rounded-full font-bold transition text-sm md:text-base whitespace-nowrap">
+                Subscribe
+              </button>
+            </div>
 
-            {/* Footer Links */}
-            <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 text-[10px] md:text-xs">
-              <Link href="/privacy" className="text-gray-500 hover:text-[#FFD700] transition">Privacy Policy</Link>
-              <span className="text-gray-700">|</span>
-              <Link href="/terms" className="text-gray-500 hover:text-[#FFD700] transition">Terms</Link>
-              <span className="text-gray-700">|</span>
-              <Link href="/sitemap" className="text-gray-500 hover:text-[#FFD700] transition">Sitemap</Link>
+            {/* Follow Us - Right Side */}
+            <div className="flex flex-col items-center lg:items-end gap-2">
+              <p className="text-[#1a1a2e] font-semibold text-sm">Follow Us</p>
+              <div className="flex gap-2">
+                <a href="#" className="bg-white hover:bg-[#E21923] text-[#E21923] hover:text-white p-2 rounded-full transition w-9 h-9 flex items-center justify-center">
+                  <FaInstagram className="w-4 h-4" />
+                </a>
+                <a href="#" className="bg-white hover:bg-[#045EE6] text-[#045EE6] hover:text-white p-2 rounded-full transition w-9 h-9 flex items-center justify-center">
+                  <FaFacebook className="w-4 h-4" />
+                </a>
+                <a href="#" className="bg-white hover:bg-[#E21923] text-[#E21923] hover:text-white p-2 rounded-full transition w-9 h-9 flex items-center justify-center">
+                  <FaYoutube className="w-4 h-4" />
+                </a>
+                <a href="#" className="bg-white hover:bg-[#25D366] text-[#25D366] hover:text-white p-2 rounded-full transition w-9 h-9 flex items-center justify-center">
+                  <FaWhatsapp className="w-4 h-4" />
+                </a>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Copyright */}
-          <div className="text-center mt-3 md:mt-4">
-            <p className="text-[10px] md:text-sm text-gray-500">
-              © 2025 Athvi Toys. All Rights Reserved.
-            </p>
+      {/* Main Footer - Blue Background */}
+      <div className="bg-[#045EE6]">
+        <div className="container mx-auto px-4 py-8 md:py-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8">
+            
+            {/* Brand Column */}
+            <div className="col-span-2 sm:col-span-3 lg:col-span-1">
+              <Link href="/" className="flex items-center gap-2 mb-3 md:mb-4">
+                <Image 
+                  src="/logo1.png" 
+                  alt="Athvi Toys" 
+                  width={160} 
+                  height={55}
+                  className="h-25 md:h-20 w-33 "
+                  priority
+                />
+              </Link>
+              <p className="text-xs md:text-sm text-white/80 mb-3 md:mb-4 max-w-xs leading-relaxed">
+                Athvi Toys is your one-stop shop for premium quality toys for kids of all ages.
+              </p>
+            </div>
+
+            {/* Shop Links */}
+            <div>
+              <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Shop</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/collections" className="text-white/80 hover:text-[#FAC310] transition">All Toys</Link></li>
+                <li><Link href="/category-cards" className="text-white/80 hover:text-[#FAC310] transition">New Arrivals</Link></li>
+                <li><Link href="/best-sellers" className="text-white/80 hover:text-[#FAC310] transition">Best Sellers</Link></li>
+              </ul>
+            </div>
+
+            {/* Customer Service */}
+            <div>
+              <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Customer Service</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/contact" className="text-white/80 hover:text-[#FAC310] transition">Contact Us</Link></li>
+                <li><Link href="/track-order" className="text-white/80 hover:text-[#FAC310] transition">Track Order</Link></li>
+                <li><Link href="/shipping-policy" className="text-white/80 hover:text-[#FAC310] transition">Shipping Policy</Link></li>
+                <li><Link href="/returns" className="text-white/80 hover:text-[#FAC310] transition">Returns & Refunds</Link></li>
+                <li><Link href="/faqs" className="text-white/80 hover:text-[#FAC310] transition">FAQs</Link></li>
+              </ul>
+            </div>
+
+            {/* Information */}
+            <div>
+              <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Information</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/privacy" className="text-white/80 hover:text-[#FAC310] transition">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="text-white/80 hover:text-[#FAC310] transition">Terms & Conditions</Link></li>
+                <li><Link href="/blog" className="text-white/80 hover:text-[#FAC310] transition">Blog</Link></li>
+              </ul>
+            </div>
+
+            {/* Help & Support */}
+            <div>
+              <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Help & Support</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/wishlist" className="text-white/80 hover:text-[#FAC310] transition">Wishlist</Link></li>
+                <li><Link href="/order-history" className="text-white/80 hover:text-[#FAC310] transition">Order History</Link></li>
+              </ul>
+            </div>
+
+            {/* Payment Methods Column */}
+            <div className="col-span-2 sm:col-span-3 lg:col-span-1">
+              <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Payment Methods</h4>
+              <div className="flex flex-wrap gap-2">
+                {/* VISA */}
+                <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
+                  <span className="text-[#1A1F71] font-bold text-xs italic tracking-wider">VISA</span>
+                </div>
+                {/* Mastercard */}
+                <div className="bg-white rounded-md px-2 py-1 flex items-center justify-center">
+                  <div className="flex">
+                    <div className="w-4 h-4 bg-[#EB001B] rounded-full"></div>
+                    <div className="w-4 h-4 bg-[#F79E1B] rounded-full -ml-1.5"></div>
+                  </div>
+                </div>
+                {/* RuPay */}
+                <div className="bg-white rounded-md px-2 py-1 flex items-center justify-center">
+                  <span className="text-[#1A1A2E] font-bold text-[10px]">RuPay</span>
+                </div>
+                {/* UPI */}
+                <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
+                  <span className="text-[#097939] font-bold text-xs">UPI</span>
+                </div>
+                {/* COD */}
+                <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
+                  <span className="text-[#1A1A2E] font-bold text-[10px]">COD Available</span>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+      </div>
+
+      {/* Copyright Bar */}
+      <div className="bg-[#045EE6] border-t border-white/10">
+        <div className="container mx-auto px-4 py-3 md:py-4">
+          <p className="text-center text-xs md:text-sm text-white/60">
+            © 2025 Athvi Toys. All Rights Reserved.
+          </p>
         </div>
       </div>
 

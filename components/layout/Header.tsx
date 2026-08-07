@@ -100,14 +100,22 @@ export default function Header() {
                   <SearchBar />
                 </div>
 
-                {/* Right Icons - Account removed, only Wishlist & Cart */}
+                {/* Right Icons - Hide Wishlist & Cart on Mobile */}
                 <div className="flex items-center gap-6">
-                  <Link href="/wishlist" className="flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
+                  {/* ✅ Wishlist - Hidden on mobile */}
+                  <Link 
+                    href="/wishlist" 
+                    className="hidden lg:flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group"
+                  >
                     <Heart className="w-6 h-6" />
                     <span className="text-base font-medium hidden lg:inline">Wishlist</span>
                   </Link>
 
-                  <Link href="/cart" className="flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group relative">
+                  {/* ✅ Cart - Hidden on mobile (shown in bottom nav) */}
+                  <Link 
+                    href="/cart" 
+                    className="hidden lg:flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group relative"
+                  >
                     <div className="relative">
                       <ShoppingCart className="w-6 h-6" />
                       {totalItems > 0 && (
@@ -214,11 +222,9 @@ export default function Header() {
             </div>
           </div>
         </div>
-
-        {/* ✅ Marquee Animation - Moved outside header */}
       </header>
 
-      {/* ✅ Mobile Bottom Navigation - Fixed position */}
+      {/* ✅ Mobile Bottom Navigation - Fixed position (Shows Cart & Wishlist) */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
         <div className="flex items-center justify-around py-2">
           <Link href="/" className="flex flex-col items-center gap-0.5 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
@@ -251,8 +257,6 @@ export default function Header() {
           </Link>
         </div>
       </div>
-
-      {/* ✅ Global styles - Moved outside the component return */}
     </>
   )
 }

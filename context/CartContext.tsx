@@ -42,23 +42,33 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const fetchCart = async (id: string) => {
+    setIsLoading(true)
     try {
       const response = await cartService.getCart(id)
       if (response.cart) {
-        const cartItems = response.cart.lines.edges.map((edge) => ({
-          id: edge.node.id,
-          variantId: edge.node.merchandise.id,
-          title: edge.node.merchandise.product.title,
-          quantity: edge.node.quantity,
-          price: edge.node.merchandise.price.amount,
-          currencyCode: edge.node.merchandise.price.currencyCode,
-          image: edge.node.merchandise.product.images.edges[0]?.node.url || '',
-          handle: edge.node.merchandise.product.handle,
-        }))
+        const cartItems = response.cart.lines.edges.map((edge: any) => {
+          const product = edge.node.merchandise.product
+          const imageUrl = product?.images?.edges?.[0]?.node?.url || 
+                          product?.featuredImage?.url || 
+                          '/placeholder.jpg'
+          
+          return {
+            id: edge.node.id,
+            variantId: edge.node.merchandise.id,
+            title: product?.title || 'Product',
+            quantity: edge.node.quantity,
+            price: edge.node.merchandise.price.amount,
+            currencyCode: edge.node.merchandise.price.currencyCode,
+            image: imageUrl,
+            handle: product?.handle || '',
+          }
+        })
         setItems(cartItems)
       }
     } catch (error) {
       console.error('Error fetching cart:', error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -67,7 +77,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     try {
       let currentCartId = cartId
 
-      // Create new cart if none exists
       if (!currentCartId) {
         const newCart = await cartService.createCart()
         currentCartId = newCart.cartCreate.cart.id
@@ -75,25 +84,32 @@ export function CartProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('cartId', currentCartId)
       }
 
-      // Add item to cart
       const result = await cartService.addToCart({
         cartId: currentCartId,
         variantId,
         quantity,
       })
 
-      // Update items
-      const cartItems = result.cartLinesAdd.cart.lines.edges.map((edge) => ({
-        id: edge.node.id,
-        variantId: edge.node.merchandise.id,
-        title: edge.node.merchandise.product.title,
-        quantity: edge.node.quantity,
-        price: edge.node.merchandise.price.amount,
-        currencyCode: edge.node.merchandise.price.currencyCode,
-        image: edge.node.merchandise.product.images.edges[0]?.node.url || '',
-        handle: edge.node.merchandise.product.handle,
-      }))
-      setItems(cartItems)
+      // Preserve existing items and update without refresh
+      const updatedItems = result.cartLinesAdd?.cart?.lines?.edges?.map((edge: any) => {
+        const product = edge.node.merchandise.product
+        const imageUrl = product?.images?.edges?.[0]?.node?.url || 
+                        product?.featuredImage?.url || 
+                        '/placeholder.jpg'
+        
+        return {
+          id: edge.node.id,
+          variantId: edge.node.merchandise.id,
+          title: product?.title || 'Product',
+          quantity: edge.node.quantity,
+          price: edge.node.merchandise.price.amount,
+          currencyCode: edge.node.merchandise.price.currencyCode,
+          image: imageUrl,
+          handle: product?.handle || '',
+        }
+      }) || []
+      
+      setItems(updatedItems)
     } catch (error) {
       console.error('Error adding to cart:', error)
       throw error
@@ -105,61 +121,84 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const removeFromCart = async (lineId: string) => {
     if (!cartId) return
 
-    setIsLoading(true)
+    // ❌ Don't set global isLoading — prevents full-page skeleton
     try {
       const result = await cartService.removeFromCart({
         cartId,
         lineIds: [lineId],
       })
 
-      const cartItems = result.cartLinesRemove.cart.lines.edges.map((edge) => ({
-        id: edge.node.id,
-        variantId: edge.node.merchandise.id,
-        title: edge.node.merchandise.product.title,
-        quantity: edge.node.quantity,
-        price: edge.node.merchandise.price.amount,
-        currencyCode: edge.node.merchandise.price.currencyCode,
-        image: edge.node.merchandise.product.images.edges[0]?.node.url || '',
-        handle: edge.node.merchandise.product.handle,
-      }))
-      setItems(cartItems)
+      const updatedLines = result.cartLinesRemove?.cart?.lines?.edges || []
+
+      // ✅ Merge: keep existing items, only remove the deleted one
+      setItems((prevItems) => {
+        const remainingIds = new Set(updatedLines.map((edge: any) => edge.node.id))
+        return prevItems.filter((item) => remainingIds.has(item.id))
+      })
     } catch (error) {
       console.error('Error removing from cart:', error)
       throw error
-    } finally {
-      setIsLoading(false)
     }
   }
 
   const updateQuantity = async (lineId: string, quantity: number) => {
     if (!cartId) return
 
-    setIsLoading(true)
+    // ❌ Don't set global isLoading — prevents full-page skeleton refresh feel
     try {
       const result = await cartService.updateCart({
         cartId,
         lines: [{ id: lineId, quantity }],
       })
 
-      const cartItems = result.cartLinesUpdate.cart.lines.edges.map((edge) => ({
-        id: edge.node.id,
-        variantId: edge.node.merchandise.id,
-        title: edge.node.merchandise.product.title,
-        quantity: edge.node.quantity,
-        price: edge.node.merchandise.price.amount,
-        currencyCode: edge.node.merchandise.price.currencyCode,
-        image: edge.node.merchandise.product.images.edges[0]?.node.url || '',
-        handle: edge.node.merchandise.product.handle,
-      }))
-      setItems(cartItems)
+      const updatedLines = result.cartLinesUpdate?.cart?.lines?.edges || []
+
+      // ✅ Merge with existing items: preserve images and all data, only update quantity/price
+      setItems((prevItems) => {
+        // Create a map of updated items from API response
+        const updatedMap = new Map()
+        updatedLines.forEach((edge: any) => {
+          const node = edge.node
+          const product = node.merchandise.product
+          updatedMap.set(node.id, {
+            id: node.id,
+            variantId: node.merchandise.id,
+            title: product?.title || 'Product',
+            quantity: node.quantity,
+            price: node.merchandise.price.amount,
+            currencyCode: node.merchandise.price.currencyCode,
+            // Try to get image from API, but we'll prefer existing if null
+            image: product?.images?.edges?.[0]?.node?.url ||
+                   product?.featuredImage?.url ||
+                   null,
+            handle: product?.handle || '',
+          })
+        })
+
+        // Merge: keep existing item data (especially image), update only changed fields
+        return prevItems.map((prevItem) => {
+          const updated = updatedMap.get(prevItem.id)
+          if (updated) {
+            return {
+              ...prevItem,                    // ✅ Keep ALL existing data (image, title, etc.)
+              quantity: updated.quantity,     // Update quantity
+              price: updated.price,             // Update price if changed
+              title: updated.title || prevItem.title,  // Update title if available
+            }
+          }
+          return prevItem
+        }).filter((item) => {
+          // Remove items that no longer exist in the cart
+          return updatedMap.has(item.id)
+        })
+      })
     } catch (error) {
       console.error('Error updating cart:', error)
       throw error
-    } finally {
-      setIsLoading(false)
     }
   }
 
+  // Clear Cart - Remove all items
   const clearCart = () => {
     setItems([])
     setCartId(null)

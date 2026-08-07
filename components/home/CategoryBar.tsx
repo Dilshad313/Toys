@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 // Map category names to their IDs for shop-by-category page
 const categoryMap: Record<string, string> = {
@@ -71,6 +71,16 @@ const allCategories = [
 export default function CategoryBar() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [itemsPerPage, setItemsPerPage] = useState(6)
+  const containerRef = useRef<HTMLDivElement>(null)
+  
+  // Touch states
+  const [touchStartX, setTouchStartX] = useState(0)
+  const [touchEndX, setTouchEndX] = useState(0)
+  
+  // Mouse drag states
+  const [isDragging, setIsDragging] = useState(false)
+  const [dragStartX, setDragStartX] = useState(0)
+  const [dragEndX, setDragEndX] = useState(0)
 
   useEffect(() => {
     const handleResize = () => {
@@ -88,6 +98,11 @@ export default function CategoryBar() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
+  // Reset current index when itemsPerPage changes
+  useEffect(() => {
+    setCurrentIndex(0)
+  }, [itemsPerPage])
+
   const totalPages = Math.ceil(allCategories.length / itemsPerPage)
 
   const startIndex = currentIndex * itemsPerPage
@@ -104,15 +119,103 @@ export default function CategoryBar() {
     setCurrentIndex((prev) => (prev - 1 + totalPages) % totalPages)
   }
 
+  // ============ TOUCH / SWIPE HANDLERS ============
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEndX(e.targetTouches[0].clientX)
+  }
+
+  const handleTouchEnd = () => {
+    if (touchStartX - touchEndX > 50) {
+      // Swipe left - go to next
+      if (currentIndex < totalPages - 1) {
+        nextSlide()
+      }
+    }
+
+    if (touchStartX - touchEndX < -50) {
+      // Swipe right - go to previous
+      if (currentIndex > 0) {
+        prevSlide()
+      }
+    }
+
+    // Reset touch values
+    setTouchStartX(0)
+    setTouchEndX(0)
+  }
+
+  // ============ MOUSE DRAG HANDLERS ============
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true)
+    setDragStartX(e.clientX)
+    setDragEndX(e.clientX)
+    // Prevent text selection during drag
+    e.preventDefault()
+  }
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return
+    setDragEndX(e.clientX)
+  }
+
+  const handleMouseUp = () => {
+    if (!isDragging) return
+    
+    const dragDistance = dragStartX - dragEndX
+    
+    if (dragDistance > 50) {
+      // Drag left - go to next
+      if (currentIndex < totalPages - 1) {
+        nextSlide()
+      }
+    }
+
+    if (dragDistance < -50) {
+      // Drag right - go to previous
+      if (currentIndex > 0) {
+        prevSlide()
+      }
+    }
+
+    setIsDragging(false)
+    setDragStartX(0)
+    setDragEndX(0)
+  }
+
+  // Handle mouse leave during drag
+  const handleMouseLeave = () => {
+    if (isDragging) {
+      handleMouseUp()
+    }
+  }
+
   return (
     <section className="py-4 md:py-8 bg-white border-b border-gray-100">
       <div className="container mx-auto px-2 md:px-4">
-        <div className="relative flex items-center">
+        <div 
+          ref={containerRef}
+          className="relative flex items-center touch-pan-y select-none"
+          // Touch handlers
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          // Mouse drag handlers
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+        >
           {/* Left Arrow - Hide on mobile when on first page */}
           {currentIndex > 0 && (
             <button
               onClick={prevSlide}
               className="absolute left-0 z-10 bg-white shadow-lg rounded-full p-2 md:p-3 border border-gray-200 hover:shadow-xl transition hover:scale-105 -ml-2 md:-ml-4"
+              aria-label="Previous"
             >
               <svg
                 className="w-4 h-4 md:w-6 md:h-6 text-gray-600"
@@ -176,6 +279,7 @@ export default function CategoryBar() {
             <button
               onClick={nextSlide}
               className="absolute right-0 z-10 bg-white shadow-lg rounded-full p-2 md:p-3 border border-gray-200 hover:shadow-xl transition hover:scale-105 -mr-2 md:-mr-4"
+              aria-label="Next"
             >
               <svg
                 className="w-4 h-4 md:w-6 md:h-6 text-gray-600"
@@ -206,6 +310,7 @@ export default function CategoryBar() {
                     ? 'w-6 md:w-8 h-1.5 md:h-2 bg-[#FF6B35]'
                     : 'w-1.5 md:w-2 h-1.5 md:h-2 bg-gray-300 hover:bg-gray-400'
                 }`}
+                aria-label={`Go to slide ${index + 1}`}
               />
             ))}
           </div>
