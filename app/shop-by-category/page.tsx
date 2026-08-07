@@ -12,6 +12,10 @@ interface Collection {
   title: string
   handle: string
   description?: string
+  image?: {
+    url: string
+    altText: string | null
+  }
 }
 
 interface Product {
@@ -49,7 +53,7 @@ interface Product {
 function ShopByCategoryContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const categoryHandle = searchParams?.get('category')
+  const categoryHandle = searchParams.get('category')
 
   const [collections, setCollections] = useState<Collection[]>([])
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null)
@@ -67,51 +71,55 @@ function ShopByCategoryContent() {
     const fetchCollections = async () => {
       try {
         setLoadingCollections(true)
-        setError(null)
-        
-        console.log('🔄 Fetching collections...')
         const response = await fetch('/api/collections?first=50')
         const result = await response.json()
-        console.log('📦 Collections API Response:', result)
 
-        if (result.success && result.data?.collections?.edges) {
-          const list = result.data.collections.edges.map((edge: any) => ({
+        console.log('Collections API response:', result)
+
+        // ✅ FIX: API returns data.collections as array of { node: {...} } edges
+        // OR it might return data directly — handle both
+        let list: Collection[] = []
+        
+        if (result.success && result.data?.collections) {
+          // API returns edges format: [ { node: { id, title, handle, ... } }, ... ]
+          list = result.data.collections.map((edge: any) => ({
+            id: edge.node?.id || edge.id,
+            title: edge.node?.title || edge.title,
+            handle: edge.node?.handle || edge.handle,
+            description: edge.node?.description || edge.description,
+            image: edge.node?.image || edge.image,
+          }))
+        } else if (result.data?.collections?.edges) {
+          // Fallback if API still returns nested edges
+          list = result.data.collections.edges.map((edge: any) => ({
             id: edge.node.id,
             title: edge.node.title,
             handle: edge.node.handle,
-            description: edge.node.description || '',
+            description: edge.node.description,
+            image: edge.node.image,
           }))
-          
-          console.log('✅ Collections found:', list.length)
-          setCollections(list)
+        }
 
-          // ✅ Determine selected category/collection from searchParams
-          if (list.length > 0) {
-            let found = list[0]
-            if (categoryHandle && categoryHandle !== 'undefined') {
-              const matched = list.find((c: Collection) => c.handle === categoryHandle)
-              if (matched) {
-                found = matched
-                console.log('✅ Found matching collection:', found.title)
-              } else {
-                console.log('⚠️ No matching collection for handle:', categoryHandle)
-              }
-            } else {
-              console.log('ℹ️ No category handle provided, using first collection')
-            }
-            
-            setSelectedCollection(found)
-            
-            // ✅ Only redirect if no categoryHandle or if it's undefined
-            if (!categoryHandle || categoryHandle === 'undefined') {
-              router.push(`/shop-by-category?category=${found.handle}`)
+        setCollections(list)
+
+        // Determine selected category/collection from searchParams
+        if (list.length > 0) {
+          let found = list[0]
+          if (categoryHandle) {
+            const matched = list.find((c: Collection) => c.handle === categoryHandle)
+            if (matched) {
+              found = matched
             }
           }
+          setSelectedCollection(found)
+          if (!categoryHandle) {
+            router.push(`/shop-by-category?category=${found.handle}`, { scroll: false })
+          }
         } else {
-          setError('Failed to fetch categories from store.')
+          setError('No collections found in your Shopify store.')
         }
       } catch (err) {
-        console.error('❌ Error fetching collections:', err)
+        console.error('Error fetching collections:', err)
         setError('Failed to load categories.')
       } finally {
         setLoadingCollections(false)
@@ -124,40 +132,29 @@ function ShopByCategoryContent() {
   // 2. Fetch products inside the selected collection
   useEffect(() => {
     const fetchProductsForCollection = async () => {
-      if (!selectedCollection) {
-        setProducts([])
-        return
-      }
+      if (!selectedCollection) return
 
       try {
         setLoadingProducts(true)
         setError(null)
-        
-        console.log(`📦 Fetching products for collection: ${selectedCollection.handle}`)
-        
         const response = await fetch(`/api/collections/${selectedCollection.handle}?first=50`)
         const result = await response.json()
-        console.log('📦 Products API Response:', result)
 
-        if (result.success) {
-          let fetchedProducts: Product[] = []
-          
-          if (result.data?.collectionByHandle?.products?.edges) {
-            fetchedProducts = result.data.collectionByHandle.products.edges.map((edge: any) => edge.node)
-          } else if (result.data?.products?.edges) {
-            fetchedProducts = result.data.products.edges.map((edge: any) => edge.node)
-          } else if (result.data?.collection?.products?.edges) {
-            fetchedProducts = result.data.collection.products.edges.map((edge: any) => edge.node)
-          }
-          
-          console.log('✅ Products found:', fetchedProducts.length)
-          setProducts(fetchedProducts)
-        } else {
-          setProducts([])
-          setError(result.error || 'Failed to load products for this category.')
+        console.log('Products API response:', result)
+
+        // ✅ FIX: Handle the API response structure properly
+        let fetchedProducts: Product[] = []
+        
+        if (result.success && result.data?.products?.edges) {
+          fetchedProducts = result.data.products.edges.map((edge: any) => edge.node)
+        } else if (result.data?.collectionByHandle?.products?.edges) {
+          // Fallback for nested structure
+          fetchedProducts = result.data.collectionByHandle.products.edges.map((edge: any) => edge.node)
         }
+
+        setProducts(fetchedProducts)
       } catch (err) {
-        console.error('❌ Error fetching products for collection:', err)
+        console.error('Error fetching products for collection:', err)
         setError('Failed to load products for this category.')
       } finally {
         setLoadingProducts(false)
@@ -170,7 +167,7 @@ function ShopByCategoryContent() {
   const handleCategorySelect = (collection: Collection) => {
     setSelectedCollection(collection)
     setIsMobileDropdownOpen(false)
-    router.push(`/shop-by-category?category=${collection.handle}`)
+    router.push(`/shop-by-category?category=${collection.handle}`, { scroll: false })
   }
 
   const handleAddToCart = async (variantId: string, productId: string) => {
@@ -206,30 +203,6 @@ function ShopByCategoryContent() {
     )
   }
 
-  if (collections.length === 0 && !loadingCollections) {
-    return (
-      <div className="container mx-auto px-4 py-8 md:py-16">
-        <div className="mb-8">
-          <h1 className="text-3xl md:text-5xl font-bold font-comic text-[#D32F2F]">
-            🛍️ Shop by Category
-          </h1>
-          <p className="text-gray-600 mt-2 font-comic text-base md:text-lg">
-            No collections found.
-          </p>
-        </div>
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-8 text-center">
-          <div className="text-6xl mb-4">📦</div>
-          <h3 className="text-xl font-bold text-gray-700 mb-2">No Categories Found</h3>
-          <p className="text-gray-500">
-            We couldn't find any collections in your Shopify store.
-            <br />
-            Please add collections and make sure they are published.
-          </p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="container mx-auto px-4 py-8 md:py-16">
       <div className="mb-8">
@@ -237,7 +210,7 @@ function ShopByCategoryContent() {
           🛍️ Shop by Category
         </h1>
         <p className="text-gray-600 mt-2 font-comic text-base md:text-lg">
-          Explore our wide range of premium toys by Shopify collection
+          Explore our wide range of premium toys by collection
         </p>
       </div>
 
@@ -313,7 +286,7 @@ function ShopByCategoryContent() {
         <div className="lg:col-span-3">
           <div className="mb-6">
             <h2 className="text-2xl md:text-3xl font-bold font-comic text-gray-800">
-              {selectedCollection?.title || 'Select a Category'}
+              {selectedCollection?.title}
             </h2>
             <p className="text-gray-500 text-sm mt-1">
               {products.length} products found
@@ -346,7 +319,7 @@ function ShopByCategoryContent() {
                 Check back soon for new arrivals!
               </p>
               <Link 
-                href="/collections" 
+                href="/products" 
                 className="inline-block mt-4 bg-[#FF6B35] text-white px-6 py-2 rounded-full hover:bg-[#e55a2b] transition"
               >
                 Browse All Products
