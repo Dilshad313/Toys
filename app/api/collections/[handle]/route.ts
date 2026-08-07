@@ -8,9 +8,12 @@ const GET_COLLECTION_BY_HANDLE = `
       title
       handle
       description
+      descriptionHtml
       image {
         url
         altText
+        width
+        height
       }
       products(first: $first) {
         edges {
@@ -19,6 +22,7 @@ const GET_COLLECTION_BY_HANDLE = `
             title
             handle
             description
+            descriptionHtml
             priceRange {
               minVariantPrice {
                 amount
@@ -30,10 +34,12 @@ const GET_COLLECTION_BY_HANDLE = `
                 node {
                   url
                   altText
+                  width
+                  height
                 }
               }
             }
-            variants(first: 5) {
+            variants(first: 10) {
               edges {
                 node {
                   id
@@ -47,10 +53,31 @@ const GET_COLLECTION_BY_HANDLE = `
                     currencyCode
                   }
                   availableForSale
+                  quantityAvailable
+                  selectedOptions {
+                    name
+                    value
+                  }
+                  image {
+                    url
+                    altText
+                  }
                 }
               }
             }
+            options {
+              name
+              values
+            }
+            tags
+            productType
+            vendor
+            availableForSale
           }
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
         }
       }
     }
@@ -62,19 +89,21 @@ export async function GET(
   { params }: { params: Promise<{ handle: string }> | { handle: string } }
 ) {
   try {
+    const { searchParams } = new URL(request.url)
+    const first = Number(searchParams.get('first')) || 12
+    const after = searchParams.get('after') || null
+
     const resolvedParams = await Promise.resolve(params)
     const { handle } = resolvedParams
-    
-    const { searchParams } = new URL(request.url)
-    const first = Number(searchParams.get('first')) || 50
 
-    console.log(`📦 Fetching collection "${handle}" with ${first} products...`)
+    console.log(`📦 Fetching collection by handle: ${handle}, first: ${first}`)
 
     const data = await shopifyFetch<any>({
       query: GET_COLLECTION_BY_HANDLE,
       variables: { handle, first },
     })
 
+    // Check if collection exists
     if (!data.collectionByHandle) {
       return NextResponse.json(
         { 
@@ -86,12 +115,36 @@ export async function GET(
       )
     }
 
+    const collection = data.collectionByHandle
+    const products = collection.products?.edges || []
+    const productCount = products.length
+
+    console.log(`✅ Found collection "${collection.title}" with ${productCount} products`)
+
+    // Return complete collection data with products
     return NextResponse.json({ 
-      success: true, 
-      data,
+      success: true,
+      data: {
+        collection: {
+          id: collection.id,
+          title: collection.title,
+          handle: collection.handle,
+          description: collection.description,
+          descriptionHtml: collection.descriptionHtml,
+          image: collection.image,
+        },
+        products: {
+          edges: products,
+          pageInfo: collection.products?.pageInfo || {
+            hasNextPage: false,
+            endCursor: null
+          }
+        }
+      },
+      productCount,
     })
   } catch (error: any) {
-    console.error('Collection API error:', error)
+    console.error('❌ Collection API error:', error)
     return NextResponse.json(
       { 
         success: false, 
