@@ -78,32 +78,43 @@ export default function WoodenToys() {
     }
   }, [wishlist])
 
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true)
         setError(null)
         
-        console.log('🔄 Fetching products...')
+        console.log('🔄 Fetching Wooden Toys...')
         
-        let response = await fetch('/api/collections/wooden-toys?first=12')
-        
-        if (!response.ok) {
-          console.log('⚠️ collection fetch failed, trying test API...')
-          response = await fetch('/api/test')
-        }
-        
+        const response = await fetch('/api/collections/wooden-toys?first=12')
         const result = await response.json()
         console.log('📦 Response:', result)
         
-        if (response.ok && result.success) {
+        if (result.success) {
+          let productsList = []
+          
+          // ✅ Check all possible response formats
           if (result.data?.products?.edges) {
-            const productsList = result.data.products.edges.map((edge: any) => edge.node)
+            productsList = result.data.products.edges.map((edge: any) => edge.node)
+          } else if (result.data?.collectionByHandle?.products?.edges) {
+            productsList = result.data.collectionByHandle.products.edges.map((edge: any) => edge.node)
+          } else if (result.data?.collection?.products?.edges) {
+            productsList = result.data.collection.products.edges.map((edge: any) => edge.node)
+          } else if (result.products && Array.isArray(result.products)) {
+            productsList = result.products
+          } else if (result.data?.products && Array.isArray(result.data.products)) {
+            productsList = result.data.products
+          }
+          
+          console.log('✅ Products found:', productsList.length)
+          
+          if (productsList.length > 0) {
             setProducts(productsList)
             setDebugInfo({ message: 'Products loaded', count: productsList.length })
           } else {
+            setError('No products found in this collection')
             setDebugInfo(result)
-            setError('No products found in response')
           }
         } else {
           setError(result.error || 'Failed to fetch products')
@@ -153,12 +164,10 @@ export default function WoodenToys() {
 
   const handleTouchEnd = () => {
     if (touchStartX - touchEndX > 50) {
-      // Swipe left - scroll right
       scrollRight()
     }
 
     if (touchStartX - touchEndX < -50) {
-      // Swipe right - scroll left
       scrollLeft()
     }
 
@@ -214,6 +223,32 @@ export default function WoodenToys() {
     const numericVariantId = variantId.split("/").pop()
     const checkoutUrl = `https://${storeDomain}/cart/${numericVariantId}:1`
     window.location.href = checkoutUrl
+  }
+
+  // Helper function to get product image URL
+  const getProductImage = (product: Product) => {
+    if (product.images?.edges?.length > 0) {
+      return product.images.edges[0].node.url
+    }
+    return '/placeholder.jpg'
+  }
+
+  // Helper function to get product price
+  const getProductPrice = (product: Product) => {
+    const variant = product.variants?.edges?.[0]?.node
+    return variant?.price?.amount || '0'
+  }
+
+  // Helper function to get compare at price
+  const getCompareAtPrice = (product: Product) => {
+    const variant = product.variants?.edges?.[0]?.node
+    return variant?.compareAtPrice?.amount || null
+  }
+
+  // Helper function to get variant ID
+  const getVariantId = (product: Product) => {
+    const variant = product.variants?.edges?.[0]?.node
+    return variant?.id || ''
   }
 
   if (loading) {
@@ -285,6 +320,12 @@ export default function WoodenToys() {
                 Our premium collection loved by kids everywhere! 🎉
               </p>
             </div>
+            <Link 
+              href="/collections"
+              className="text-[#FF6B35] font-semibold hover:underline font-comic text-sm md:text-base"
+            >
+              View All →
+            </Link>
           </div>
 
           {/* Horizontal Scroll Container */}
@@ -319,11 +360,10 @@ export default function WoodenToys() {
               onTouchEnd={handleTouchEnd}
             >
               {products.slice(0, 12).map((product, i) => {
-                const variant = product.variants?.edges?.[0]?.node
-                const price = variant?.price?.amount || '0'
-                const compareAt = variant?.compareAtPrice?.amount || null
-                const imageUrl = product.images?.edges?.[0]?.node?.url || '/placeholder.jpg'
-                const variantId = variant?.id || ''
+                const price = getProductPrice(product)
+                const compareAt = getCompareAtPrice(product)
+                const imageUrl = getProductImage(product)
+                const variantId = getVariantId(product)
                 const isAdding = addingToCart === product.id
                 const isAdded = addedToCart === product.id
                 const inWishlist = isInWishlist(product.id)
@@ -366,6 +406,9 @@ export default function WoodenToys() {
                             src={imageUrl}
                             alt={product.title}
                             className="w-full h-36 object-cover group-hover:scale-110 transition duration-500"
+                            onError={(e) => {
+                              e.currentTarget.src = '/placeholder.jpg'
+                            }}
                           />
                           {discount > 0 && (
                             <span className="absolute top-1.5 left-1.5 bg-green-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full">
@@ -491,7 +534,7 @@ export default function WoodenToys() {
         `}</style>
       </section>
 
-      {/* ✅ Cart Popup */}
+      {/* Cart Popup */}
       <AnimatePresence>
         {showPopup && popupProduct && (
           <motion.div

@@ -1,109 +1,84 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { shopifyFetch } from '@/lib/shopify/client'
 
-const GET_COLLECTION_BY_HANDLE = `
-  query GetCollectionByHandle($handle: String!, $first: Int!) {
-    collectionByHandle(handle: $handle) {
-      id
-      title
-      handle
-      description
-      descriptionHtml
-      image {
-        url
-        altText
-        width
-        height
-      }
-      products(first: $first) {
-        edges {
-          node {
-            id
-            title
-            handle
-            description
-            descriptionHtml
-            priceRange {
-              minVariantPrice {
-                amount
-                currencyCode
-              }
-            }
-            images(first: 5) {
-              edges {
-                node {
-                  url
-                  altText
-                  width
-                  height
-                }
-              }
-            }
-            variants(first: 10) {
-              edges {
-                node {
-                  id
-                  title
-                  price {
-                    amount
-                    currencyCode
-                  }
-                  compareAtPrice {
-                    amount
-                    currencyCode
-                  }
-                  availableForSale
-                  quantityAvailable
-                  selectedOptions {
-                    name
-                    value
-                  }
-                  image {
-                    url
-                    altText
-                  }
-                }
-              }
-            }
-            options {
-              name
-              values
-            }
-            tags
-            productType
-            vendor
-            availableForSale
-          }
-        }
-        pageInfo {
-          hasNextPage
-          endCursor
-        }
-      }
-    }
-  }
-`
-
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ handle: string }> | { handle: string } }
 ) {
   try {
     const { searchParams } = new URL(request.url)
-    const first = Number(searchParams.get('first')) || 12
-    const after = searchParams.get('after') || null
+    const first = Number(searchParams.get('first')) || 50
 
     const resolvedParams = await Promise.resolve(params)
     const { handle } = resolvedParams
 
-    console.log(`📦 Fetching collection by handle: ${handle}, first: ${first}`)
+    console.log(`📦 Fetching collection: ${handle}, first: ${first}`)
+
+    const GET_COLLECTION_BY_HANDLE = `
+      query GetCollectionByHandle($handle: String!, $first: Int!) {
+        collectionByHandle(handle: $handle) {
+          id
+          title
+          handle
+          description
+          image {
+            url
+            altText
+          }
+          products(first: $first) {
+            edges {
+              node {
+                id
+                title
+                handle
+                description
+                priceRange {
+                  minVariantPrice {
+                    amount
+                    currencyCode
+                  }
+                }
+                images(first: 5) {
+                  edges {
+                    node {
+                      url
+                      altText
+                    }
+                  }
+                }
+                variants(first: 5) {
+                  edges {
+                    node {
+                      id
+                      title
+                      price {
+                        amount
+                        currencyCode
+                      }
+                      compareAtPrice {
+                        amount
+                        currencyCode
+                      }
+                      availableForSale
+                    }
+                  }
+                }
+                tags
+                productType
+                vendor
+                availableForSale
+              }
+            }
+          }
+        }
+      }
+    `
 
     const data = await shopifyFetch<any>({
       query: GET_COLLECTION_BY_HANDLE,
       variables: { handle, first },
     })
 
-    // Check if collection exists
     if (!data.collectionByHandle) {
       return NextResponse.json(
         { 
@@ -121,7 +96,6 @@ export async function GET(
 
     console.log(`✅ Found collection "${collection.title}" with ${productCount} products`)
 
-    // Return complete collection data with products
     return NextResponse.json({ 
       success: true,
       data: {
@@ -130,7 +104,6 @@ export async function GET(
           title: collection.title,
           handle: collection.handle,
           description: collection.description,
-          descriptionHtml: collection.descriptionHtml,
           image: collection.image,
         },
         products: {

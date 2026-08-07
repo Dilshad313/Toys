@@ -49,7 +49,7 @@ interface Product {
 function ShopByCategoryContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const categoryHandle = searchParams.get('category')
+  const categoryHandle = searchParams?.get('category')
 
   const [collections, setCollections] = useState<Collection[]>([])
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null)
@@ -67,29 +67,43 @@ function ShopByCategoryContent() {
     const fetchCollections = async () => {
       try {
         setLoadingCollections(true)
+        setError(null)
+        
+        console.log('🔄 Fetching collections...')
         const response = await fetch('/api/collections?first=50')
         const result = await response.json()
+        console.log('📦 Collections API Response:', result)
 
         if (result.success && result.data?.collections?.edges) {
           const list = result.data.collections.edges.map((edge: any) => ({
             id: edge.node.id,
             title: edge.node.title,
             handle: edge.node.handle,
-            description: edge.node.description,
+            description: edge.node.description || '',
           }))
+          
+          console.log('✅ Collections found:', list.length)
           setCollections(list)
 
-          // Determine selected category/collection from searchParams
+          // ✅ Determine selected category/collection from searchParams
           if (list.length > 0) {
             let found = list[0]
-            if (categoryHandle) {
+            if (categoryHandle && categoryHandle !== 'undefined') {
               const matched = list.find((c: Collection) => c.handle === categoryHandle)
               if (matched) {
                 found = matched
+                console.log('✅ Found matching collection:', found.title)
+              } else {
+                console.log('⚠️ No matching collection for handle:', categoryHandle)
               }
+            } else {
+              console.log('ℹ️ No category handle provided, using first collection')
             }
+            
             setSelectedCollection(found)
-            if (!categoryHandle) {
+            
+            // ✅ Only redirect if no categoryHandle or if it's undefined
+            if (!categoryHandle || categoryHandle === 'undefined') {
               router.push(`/shop-by-category?category=${found.handle}`)
             }
           }
@@ -97,7 +111,7 @@ function ShopByCategoryContent() {
           setError('Failed to fetch categories from store.')
         }
       } catch (err) {
-        console.error('Error fetching collections:', err)
+        console.error('❌ Error fetching collections:', err)
         setError('Failed to load categories.')
       } finally {
         setLoadingCollections(false)
@@ -110,22 +124,40 @@ function ShopByCategoryContent() {
   // 2. Fetch products inside the selected collection
   useEffect(() => {
     const fetchProductsForCollection = async () => {
-      if (!selectedCollection) return
+      if (!selectedCollection) {
+        setProducts([])
+        return
+      }
 
       try {
         setLoadingProducts(true)
         setError(null)
+        
+        console.log(`📦 Fetching products for collection: ${selectedCollection.handle}`)
+        
         const response = await fetch(`/api/collections/${selectedCollection.handle}?first=50`)
         const result = await response.json()
+        console.log('📦 Products API Response:', result)
 
-        if (result.success && result.data?.collectionByHandle?.products?.edges) {
-          const fetchedProducts = result.data.collectionByHandle.products.edges.map((edge: any) => edge.node)
+        if (result.success) {
+          let fetchedProducts: Product[] = []
+          
+          if (result.data?.collectionByHandle?.products?.edges) {
+            fetchedProducts = result.data.collectionByHandle.products.edges.map((edge: any) => edge.node)
+          } else if (result.data?.products?.edges) {
+            fetchedProducts = result.data.products.edges.map((edge: any) => edge.node)
+          } else if (result.data?.collection?.products?.edges) {
+            fetchedProducts = result.data.collection.products.edges.map((edge: any) => edge.node)
+          }
+          
+          console.log('✅ Products found:', fetchedProducts.length)
           setProducts(fetchedProducts)
         } else {
           setProducts([])
+          setError(result.error || 'Failed to load products for this category.')
         }
       } catch (err) {
-        console.error('Error fetching products for collection:', err)
+        console.error('❌ Error fetching products for collection:', err)
         setError('Failed to load products for this category.')
       } finally {
         setLoadingProducts(false)
@@ -169,6 +201,30 @@ function ShopByCategoryContent() {
           {[1, 2, 3, 4, 5, 6].map((i) => (
             <div key={i} className="bg-gray-100 rounded-2xl h-72 animate-pulse" />
           ))}
+        </div>
+      </div>
+    )
+  }
+
+  if (collections.length === 0 && !loadingCollections) {
+    return (
+      <div className="container mx-auto px-4 py-8 md:py-16">
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-5xl font-bold font-comic text-[#D32F2F]">
+            🛍️ Shop by Category
+          </h1>
+          <p className="text-gray-600 mt-2 font-comic text-base md:text-lg">
+            No collections found.
+          </p>
+        </div>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-8 text-center">
+          <div className="text-6xl mb-4">📦</div>
+          <h3 className="text-xl font-bold text-gray-700 mb-2">No Categories Found</h3>
+          <p className="text-gray-500">
+            We couldn't find any collections in your Shopify store.
+            <br />
+            Please add collections and make sure they are published.
+          </p>
         </div>
       </div>
     )
@@ -257,7 +313,7 @@ function ShopByCategoryContent() {
         <div className="lg:col-span-3">
           <div className="mb-6">
             <h2 className="text-2xl md:text-3xl font-bold font-comic text-gray-800">
-              {selectedCollection?.title}
+              {selectedCollection?.title || 'Select a Category'}
             </h2>
             <p className="text-gray-500 text-sm mt-1">
               {products.length} products found
@@ -290,7 +346,7 @@ function ShopByCategoryContent() {
                 Check back soon for new arrivals!
               </p>
               <Link 
-                href="/products" 
+                href="/collections" 
                 className="inline-block mt-4 bg-[#FF6B35] text-white px-6 py-2 rounded-full hover:bg-[#e55a2b] transition"
               >
                 Browse All Products
