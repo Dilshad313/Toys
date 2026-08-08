@@ -320,12 +320,6 @@ export default function WoodenToys() {
                 Our premium collection loved by kids everywhere! 🎉
               </p>
             </div>
-            <Link 
-              href="/collections"
-              className="text-[#FF6B35] font-semibold hover:underline font-comic text-sm md:text-base"
-            >
-              View All →
-            </Link>
           </div>
 
           {/* Horizontal Scroll Container */}
@@ -512,10 +506,10 @@ export default function WoodenToys() {
           {/* ✅ View All Button */}
           <div className="flex justify-center mt-8">
             <Link 
-              href="/collections"
+              href="/shop-by-category?category=wooden-toys"
               className="inline-block bg-[#D32F2F] hover:bg-[#B71C1C] text-white px-8 py-3 rounded-full font-semibold transition shadow-md hover:shadow-lg text-sm md:text-base"
             >
-              View All Products →
+              View All Wooden Toys →
             </Link>
           </div>
         </div>

@@ -5,70 +5,19 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useEffect, useRef } from 'react'
 
-// Map category names to their IDs for shop-by-category page
-const categoryMap: Record<string, string> = {
-  'Educational Toys': 'educational',
-  'RC & Remote Control': 'rc-cars',
-  'Ride-on Toys': 'ride-on',
-  'Musical Toys': 'musical',
-  'Soft Toys': 'soft-toys',
-  'Wooden Toys': 'wooden',
-  'Activity Toys': 'activity',
-  'Outdoor Toys': 'outdoor',
+interface Collection {
+  id: string
+  title: string
+  handle: string
+  image?: {
+    url: string
+    altText: string | null
+  }
 }
 
-const allCategories = [
-  {
-    name: 'Educational Toys',
-    image:
-      'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&h=400&fit=crop&q=80',
-    href: '/shop-by-category?category=educational',
-  },
-  {
-    name: 'RC & Remote Control',
-    image:
-      'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=400&h=400&fit=crop&q=80',
-    href: '/shop-by-category?category=rc-cars',
-  },
-  {
-    name: 'Ride-on Toys',
-    image:
-      'https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=400&h=400&fit=crop&q=80',
-    href: '/shop-by-category?category=ride-on',
-  },
-  {
-    name: 'Musical Toys',
-    image:
-      'https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?w=400&h=400&fit=crop&q=80',
-    href: '/shop-by-category?category=musical',
-  },
-  {
-    name: 'Soft Toys',
-    image:
-      'https://images.unsplash.com/photo-1594787318286-3d835c1d207f?w=400&h=400&fit=crop&q=80',
-    href: '/shop-by-category?category=soft-toys',
-  },
-  {
-    name: 'Wooden Toys',
-    image:
-      'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=400&h=400&fit=crop&q=80',
-    href: '/shop-by-category?category=wooden',
-  },
-  {
-    name: 'Activity Toys',
-    image:
-      'https://images.unsplash.com/photo-1587654780291-39c9404d746b?w=400&h=400&fit=crop&q=80',
-    href: '/shop-by-category?category=activity',
-  },
-  {
-    name: 'Outdoor Toys',
-    image:
-      'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=400&h=400&fit=crop&q=80',
-    href: '/shop-by-category?category=outdoor',
-  },
-]
-
 export default function CategoryBar() {
+  const [collections, setCollections] = useState<Collection[]>([])
+  const [loading, setLoading] = useState(true)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [itemsPerPage, setItemsPerPage] = useState(6)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -82,14 +31,55 @@ export default function CategoryBar() {
   const [dragStartX, setDragStartX] = useState(0)
   const [dragEndX, setDragEndX] = useState(0)
 
+  // Fetch collections from Shopify
+  useEffect(() => {
+    const fetchCollections = async () => {
+      try {
+        setLoading(true)
+        const response = await fetch('/api/collections?first=20')
+        const result = await response.json()
+        console.log('📦 CategoryBar API Response:', result)
+
+        let collectionsList: Collection[] = []
+        
+        // ✅ FIX: Your API returns { success: true, data: { collections: [ { node: {...} }, ... ] } }
+        // The collections array already contains edges with node property
+        if (result.success && result.data?.collections) {
+          collectionsList = result.data.collections.map((edge: any) => ({
+            id: edge.node?.id || edge.id || String(Math.random()),
+            title: edge.node?.title || edge.title || 'Untitled',
+            handle: edge.node?.handle || edge.handle || '',
+            image: edge.node?.image || edge.image || null,
+          }))
+        }
+        
+        console.log('✅ Collections parsed:', collectionsList.length)
+        console.log('📋 Collections:', collectionsList.map(c => ({ 
+          title: c.title, 
+          handle: c.handle,
+          hasImage: !!c.image?.url,
+          imageUrl: c.image?.url
+        })))
+        
+        setCollections(collectionsList)
+      } catch (error) {
+        console.error('❌ Error fetching collections:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchCollections()
+  }, [])
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 640) {
-        setItemsPerPage(3) // Mobile: 3 items per page
+        setItemsPerPage(3)
       } else if (window.innerWidth < 1024) {
-        setItemsPerPage(4) // Tablet: 4 items per page
+        setItemsPerPage(4)
       } else {
-        setItemsPerPage(6) // Desktop: 6 items per page
+        setItemsPerPage(6)
       }
     }
 
@@ -103,10 +93,10 @@ export default function CategoryBar() {
     setCurrentIndex(0)
   }, [itemsPerPage])
 
-  const totalPages = Math.ceil(allCategories.length / itemsPerPage)
+  const totalPages = Math.max(1, Math.ceil(collections.length / itemsPerPage))
 
   const startIndex = currentIndex * itemsPerPage
-  const visibleCategories = allCategories.slice(
+  const visibleCategories = collections.slice(
     startIndex,
     startIndex + itemsPerPage
   )
@@ -119,7 +109,7 @@ export default function CategoryBar() {
     setCurrentIndex((prev) => (prev - 1 + totalPages) % totalPages)
   }
 
-  // ============ TOUCH / SWIPE HANDLERS ============
+  // Touch/Swipe handlers
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStartX(e.targetTouches[0].clientX)
   }
@@ -130,31 +120,26 @@ export default function CategoryBar() {
 
   const handleTouchEnd = () => {
     if (touchStartX - touchEndX > 50) {
-      // Swipe left - go to next
       if (currentIndex < totalPages - 1) {
         nextSlide()
       }
     }
 
     if (touchStartX - touchEndX < -50) {
-      // Swipe right - go to previous
       if (currentIndex > 0) {
         prevSlide()
       }
     }
 
-    // Reset touch values
     setTouchStartX(0)
     setTouchEndX(0)
   }
 
-  // ============ MOUSE DRAG HANDLERS ============
+  // Mouse drag handlers
   const handleMouseDown = (e: React.MouseEvent) => {
     setIsDragging(true)
     setDragStartX(e.clientX)
     setDragEndX(e.clientX)
-    // Prevent text selection during drag
-    e.preventDefault()
   }
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -168,14 +153,12 @@ export default function CategoryBar() {
     const dragDistance = dragStartX - dragEndX
     
     if (dragDistance > 50) {
-      // Drag left - go to next
       if (currentIndex < totalPages - 1) {
         nextSlide()
       }
     }
 
     if (dragDistance < -50) {
-      // Drag right - go to previous
       if (currentIndex > 0) {
         prevSlide()
       }
@@ -186,11 +169,37 @@ export default function CategoryBar() {
     setDragEndX(0)
   }
 
-  // Handle mouse leave during drag
   const handleMouseLeave = () => {
     if (isDragging) {
       handleMouseUp()
     }
+  }
+
+  if (loading) {
+    return (
+      <section className="py-4 md:py-8 bg-white border-b border-gray-100">
+        <div className="container mx-auto px-2 md:px-4">
+          <div className="flex items-center justify-center gap-2 py-8">
+            <div className="w-4 h-4 border-2 border-[#FF6B35] border-t-transparent rounded-full animate-spin" />
+            <span className="text-gray-500 text-sm">Loading categories...</span>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  // No collections found
+  if (collections.length === 0) {
+    return (
+      <section className="py-4 md:py-8 bg-white border-b border-gray-100">
+        <div className="container mx-auto px-2 md:px-4">
+          <div className="text-center py-6">
+            <p className="text-gray-500 text-sm">No collections found. Add collections in Shopify Admin.</p>
+            <p className="text-gray-400 text-xs mt-1">Go to Shopify → Products → Collections</p>
+          </div>
+        </div>
+      </section>
+    )
   }
 
   return (
@@ -199,18 +208,16 @@ export default function CategoryBar() {
         <div 
           ref={containerRef}
           className="relative flex items-center touch-pan-y select-none"
-          // Touch handlers
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          // Mouse drag handlers
           onMouseDown={handleMouseDown}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseLeave}
           style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
         >
-          {/* Left Arrow - Hide on mobile when on first page */}
+          {/* Left Arrow */}
           {currentIndex > 0 && (
             <button
               onClick={prevSlide}
@@ -239,42 +246,55 @@ export default function CategoryBar() {
             itemsPerPage === 4 ? 'grid-cols-4' : 
             'grid-cols-6'
           }`}>
-            {visibleCategories.map((category, i) => (
-              <motion.div
-                key={category.name}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.05 }}
-                className="flex justify-center"
-              >
-                <Link
-                  href={category.href}
-                  className="flex flex-col items-center group w-full"
+            {visibleCategories.map((category, i) => {
+              const imageUrl = category.image?.url || ''
+
+              return (
+                <motion.div
+                  key={category.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="flex justify-center"
                 >
-                  <div className={`relative rounded-full overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:scale-110 border-2 border-gray-100 group-hover:border-[#FF6B35] ${
-                    itemsPerPage === 3 ? 'w-24 h-24 md:w-28 md:h-28' :
-                    itemsPerPage === 4 ? 'w-28 h-28 md:w-32 md:h-32' :
-                    'w-32 h-32 md:w-40 md:h-40'
-                  }`}>
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <span className={`mt-2 md:mt-3 text-center font-semibold text-gray-700 group-hover:text-[#FF6B35] transition ${
-                    itemsPerPage === 3 ? 'text-xs md:text-sm' :
-                    itemsPerPage === 4 ? 'text-sm md:text-base' :
-                    'text-sm md:text-base'
-                  }`}>
-                    {category.name}
-                  </span>
-                </Link>
-              </motion.div>
-            ))}
+                  <Link
+                    href={`/shop-by-category?category=${category.handle}`}
+                    className="flex flex-col items-center group w-full"
+                  >
+                    <div className={`relative rounded-full overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:scale-110 border-2 border-gray-100 group-hover:border-[#FF6B35] ${
+                      itemsPerPage === 3 ? 'w-24 h-24 md:w-28 md:h-28' :
+                      itemsPerPage === 4 ? 'w-28 h-28 md:w-32 md:h-32' :
+                      'w-32 h-32 md:w-40 md:h-40'
+                    }`}>
+                      {imageUrl ? (
+                        <Image
+                          src={imageUrl}
+                          alt={category.title}
+                          fill
+                          className="object-cover group-hover:scale-110 transition duration-500"
+                          sizes="(max-width: 640px) 33vw, (max-width: 1024px) 25vw, 16vw"
+                          priority={i < 3}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-[#D32F2F]/20 to-[#FF6B35]/20 flex items-center justify-center">
+                          <span className="text-3xl">🧸</span>
+                        </div>
+                      )}
+                    </div>
+                    <span className={`mt-2 md:mt-3 text-center font-semibold text-gray-700 group-hover:text-[#FF6B35] transition line-clamp-1 ${
+                      itemsPerPage === 3 ? 'text-xs md:text-sm' :
+                      itemsPerPage === 4 ? 'text-sm md:text-base' :
+                      'text-sm md:text-base'
+                    }`}>
+                      {category.title}
+                    </span>
+                  </Link>
+                </motion.div>
+              )
+            })}
           </div>
 
-          {/* Right Arrow - Hide on mobile when on last page */}
+          {/* Right Arrow */}
           {currentIndex < totalPages - 1 && (
             <button
               onClick={nextSlide}
@@ -298,7 +318,7 @@ export default function CategoryBar() {
           )}
         </div>
 
-        {/* Dots - Show only if more than 1 page */}
+        {/* Dots */}
         {totalPages > 1 && (
           <div className="flex justify-center mt-4 md:mt-6 gap-1.5 md:gap-2">
             {Array.from({ length: totalPages }).map((_, index) => (

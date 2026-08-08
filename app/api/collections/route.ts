@@ -32,14 +32,11 @@ export async function GET(request: Request) {
       variables: { first },
     })
 
-    console.log('📦 Shopify Response:', JSON.stringify(data, null, 2))
-
     if (!data.collections) {
       return NextResponse.json(
         { 
           success: false, 
           error: 'Collections not found',
-          data: data 
         },
         { status: 404 }
       )
@@ -60,7 +57,6 @@ export async function GET(request: Request) {
       { 
         success: false, 
         error: error.message || 'Failed to fetch collections',
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       },
       { status: 500 }
     )

@@ -10,6 +10,7 @@ import OfferBanner from '@/components/home/OfferBanner'
 import HappyChildhoods from '@/components/home/HappyChildhoods'
 import Reviews from '@/components/home/Reviews'
 import Testimonials from '@/components/home/Testimonials'
+import SoftToys from '@/components/home/SoftToys'
 
 export default function HomePage() {
   return (
@@ -19,8 +20,9 @@ export default function HomePage() {
       <Categories />
       <BestSellers />
       <WatchAndBuy />
-      <CategoryCards />
       <WoodenToys />
+      <CategoryCards />
+      <SoftToys />
       <OfferBanner />
       <HappyChildhoods />
       <Reviews />

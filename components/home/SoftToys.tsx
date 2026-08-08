@@ -37,7 +37,7 @@ interface Product {
   }
 }
 
-export default function BestSellers() {
+export default function SoftToys() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -85,9 +85,9 @@ export default function BestSellers() {
         setLoading(true)
         setError(null)
         
-        console.log('🔄 Fetching Educational Toys...')
+        console.log('🔄 Fetching Soft Toys...')
         
-        const response = await fetch('/api/collections/educational-toys?first=12')
+        const response = await fetch('/api/collections/soft-toys?first=12')
         const result = await response.json()
         console.log('📦 Response:', result)
         
@@ -255,7 +255,7 @@ export default function BestSellers() {
     return (
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6 font-comic text-[#D32F2F]">🧠 Educational Toys</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 font-comic text-[#D32F2F]">🧸 Soft Toys</h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div key={i} className="bg-white rounded-xl h-56 animate-pulse shadow-md" />
@@ -270,7 +270,7 @@ export default function BestSellers() {
     return (
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-comic text-[#D32F2F]">🧠 Educational Toys</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-comic text-[#D32F2F]">🧸 Soft Toys</h2>
           <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center max-w-2xl mx-auto">
             <p className="text-red-600 font-medium text-lg">⚠️ Error loading products</p>
             <p className="text-gray-600 text-sm mt-2">{error}</p>
@@ -295,7 +295,7 @@ export default function BestSellers() {
     return (
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-comic text-[#D32F2F]">🧠 Educational Toys</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 font-comic text-[#D32F2F]">🧸 Soft Toys</h2>
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center max-w-2xl mx-auto">
             <p className="text-yellow-600 font-medium">📦 No products found</p>
             <p className="text-gray-600 text-sm mt-2">
@@ -314,7 +314,7 @@ export default function BestSellers() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold font-comic text-[#D32F2F]">
-                🧠 Educational Toys
+                🧸 Soft Toys
               </h2>
               <p className="text-gray-600 mt-1 font-medium font-comic text-sm md:text-base">
                 Our premium collection loved by kids everywhere! 🎉
@@ -503,13 +503,13 @@ export default function BestSellers() {
             </div>
           </div>
 
-          {/* ✅ View All Educational Toys Button - Redirects to Shop by Category with Educational filter */}
+          {/* View All Button */}
           <div className="flex justify-center mt-8">
             <Link 
-              href="/shop-by-category?category=educational-toys"
-              className="inline-block bg-[#D32F2F] hover:bg-[#B71C1C] text-white px-8 py-3 rounded-full font-semibold transition shadow-md hover:shadow-lg text-sm md:text-base"
+                href="/shop-by-category?category=soft-toys"
+                className="inline-block bg-[#D32F2F] hover:bg-[#B71C1C] text-white px-8 py-3 rounded-full font-semibold transition shadow-md hover:shadow-lg text-sm md:text-base"
             >
-              View All Educational Toys →
+                View All Soft Toys →
             </Link>
           </div>
         </div>
