@@ -1,253 +1,421 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import Image from 'next/image'
+import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
+import { ShoppingCart, Star, Sparkles, Clock, Trophy } from 'lucide-react'
+import { useCart } from '@/context/CartContext'
 
-interface Collection {
+interface Product {
   id: string
   title: string
   handle: string
-  image?: {
-    url: string
-    altText: string | null
+  description: string
+  priceRange: {
+    minVariantPrice: {
+      amount: string
+      currencyCode: string
+    }
   }
+  images: {
+    edges: Array<{
+      node: {
+        url: string
+        altText: string | null
+      }
+    }>
+  }
+  variants: {
+    edges: Array<{
+      node: {
+        id: string
+        price: { amount: string }
+        compareAtPrice?: { amount: string }
+        availableForSale: boolean
+      }
+    }>
+  }
+  tags: string[]
+  createdAt?: string
+  totalInventory?: number
+  availableForSale?: boolean
 }
 
-// ✅ Fallback categories if no collections from Shopify
-const fallbackCategories = [
-  { name: 'RC Cars', image: '/cat1.png' },
-  { name: 'Educational Toys', image: '/cat2.png' },
-  { name: 'Building Kits', image: '/cat3.png' },
-  { name: 'Animal Toys', image: '/cat4.png' },
-  { name: 'STEM Toys', image: '/cat5.png' },
-]
-
-const ageCategories = [
-  { name: '0-2 Years', image: '/age1.png' },
-  { name: '2-4 Years', image: '/age2.png' },
-  { name: '4-6 Years', image: '/age3.png' },
-  { name: '6-8 Years', image: '/age4.png' },
-  { name: '8+ Years', image: '/age5.png' },
-]
+type TabType = 'trending' | 'new-arrivals' | 'best-sellers'
 
 export default function Categories() {
-  const [collections, setCollections] = useState<Collection[]>([])
+  const [activeTab, setActiveTab] = useState<TabType>('trending')
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [addingToCart, setAddingToCart] = useState<string | null>(null)
+  const { addToCart } = useCart()
 
-  // Fetch collections from Shopify
+  // Fetch products based on active tab
   useEffect(() => {
-    const fetchCollections = async () => {
+    const fetchProducts = async () => {
       try {
         setLoading(true)
-        setError(null)
         
-        console.log('🔄 Fetching collections for Special Products...')
+        console.log(`Fetching ${activeTab} products...`)
         
-        const response = await fetch('/api/collections?first=10')
-        const result = await response.json()
-        console.log('📦 Full API Response:', result)
-
-        if (result.success) {
-          let collectionsList: Collection[] = []
-          
-          // ✅ Check all possible response formats
-          if (result.data?.collections?.edges) {
-            collectionsList = result.data.collections.edges.map((edge: any) => ({
-              id: edge.node.id,
-              title: edge.node.title,
-              handle: edge.node.handle,
-              image: edge.node.image,
-            }))
-          } else if (result.data?.collections && Array.isArray(result.data.collections)) {
-            collectionsList = result.data.collections.map((node: any) => ({
-              id: node.id || node.node?.id,
-              title: node.title || node.node?.title,
-              handle: node.handle || node.node?.handle,
-              image: node.image || node.node?.image,
-            }))
-          } else if (result.collections && Array.isArray(result.collections)) {
-            collectionsList = result.collections.map((node: any) => ({
-              id: node.id,
-              title: node.title,
-              handle: node.handle,
-              image: node.image,
-            }))
-          }
-          
-          console.log('✅ Collections found:', collectionsList.length)
-          console.log('📋 Collections list:', collectionsList)
-          
-          setCollections(collectionsList)
-          
-          if (collectionsList.length === 0) {
-            setError('No collections found in your Shopify store')
-          }
-        } else {
-          console.error('❌ API Error:', result.error)
-          setError(result.error || 'Failed to fetch collections')
+        // First, fetch all products
+        const allResponse = await fetch('/api/products?first=50')
+        const allResult = await allResponse.json()
+        
+        let allProducts: Product[] = []
+        if (allResult.success && allResult.data?.products?.edges) {
+          allProducts = allResult.data.products.edges.map((edge: any) => edge.node)
         }
+
+        let filteredProducts: Product[] = []
+
+        switch (activeTab) {
+          case 'trending':
+            filteredProducts = allProducts
+              .filter(p => p.availableForSale !== false)
+              .sort((a, b) => {
+                const aHasTag = a.tags?.some(tag => 
+                  ['trending', 'popular', 'hot', 'viral'].includes(tag.toLowerCase())
+                ) || false
+                const bHasTag = b.tags?.some(tag => 
+                  ['trending', 'popular', 'hot', 'viral'].includes(tag.toLowerCase())
+                ) || false
+                
+                if (aHasTag && !bHasTag) return -1
+                if (!aHasTag && bHasTag) return 1
+                
+                const aInventory = a.totalInventory || 0
+                const bInventory = b.totalInventory || 0
+                return bInventory - aInventory
+              })
+            break
+
+          case 'new-arrivals':
+            filteredProducts = allProducts
+              .filter(p => p.availableForSale !== false)
+              .sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
+                const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
+                return dateB - dateA
+              })
+            break
+
+          case 'best-sellers':
+            filteredProducts = allProducts
+              .filter(p => p.availableForSale !== false)
+              .sort((a, b) => {
+                const aHasTag = a.tags?.some(tag => 
+                  ['bestseller', 'best-seller', 'top-seller', 'popular'].includes(tag.toLowerCase())
+                ) || false
+                const bHasTag = b.tags?.some(tag => 
+                  ['bestseller', 'best-seller', 'top-seller', 'popular'].includes(tag.toLowerCase())
+                ) || false
+                
+                if (aHasTag && !bHasTag) return -1
+                if (!aHasTag && bHasTag) return 1
+                
+                const aInventory = a.totalInventory || 0
+                const bInventory = b.totalInventory || 0
+                return bInventory - aInventory
+              })
+            break
+
+          default:
+            filteredProducts = allProducts
+        }
+
+        setProducts(filteredProducts.slice(0, 8))
+        
+        console.log(`${activeTab}: Found ${filteredProducts.length} products`)
+        
       } catch (error) {
-        console.error('❌ Error fetching collections:', error)
-        setError('Failed to load collections')
+        console.error('Error fetching products:', error)
+        setProducts([])
       } finally {
         setLoading(false)
       }
     }
 
-    fetchCollections()
-  }, [])
+    fetchProducts()
+  }, [activeTab])
 
-  // Show first 5 collections or all
-  const displayCollections = collections.length > 0 ? collections.slice(0, 5) : fallbackCategories
-
-  if (loading) {
-    return (
-      <section className="py-16 bg-gradient-to-b from-white to-gray-50">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl md:text-5xl font-bold text-center mb-3 text-[#D32F2F] font-comic">
-              🧸 Special Products
-            </h2>
-            <p className="text-center text-gray-600 mb-12 text-base md:text-lg font-medium font-comic">
-              Loading collections...
-            </p>
-          </motion.div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="aspect-square rounded-2xl bg-gray-200 animate-pulse" />
-            ))}
-          </div>
-        </div>
-      </section>
-    )
+  const handleAddToCart = async (variantId: string, productId: string) => {
+    if (!variantId) return
+    try {
+      setAddingToCart(productId)
+      await addToCart(variantId, 1)
+      setTimeout(() => setAddingToCart(null), 2000)
+    } catch (error) {
+      console.error('Error adding to cart:', error)
+      setAddingToCart(null)
+    }
   }
 
-  // ✅ Use displayCategories which is either collections or fallback
-  const displayCategories = collections.length > 0 ? collections : fallbackCategories
+  const getProductDetails = (product: Product) => {
+    const variant = product.variants?.edges?.[0]?.node
+    const price = variant?.price?.amount || '0'
+    const compareAt = variant?.compareAtPrice?.amount || null
+    const imageUrl = product.images?.edges?.[0]?.node?.url || '/placeholder.jpg'
+    const variantId = variant?.id || ''
+
+    let discount = 0
+    if (compareAt && parseFloat(compareAt) > parseFloat(price)) {
+      discount = Math.round(((parseFloat(compareAt) - parseFloat(price)) / parseFloat(compareAt)) * 100)
+    }
+
+    return { price, compareAt, imageUrl, variantId, discount }
+  }
+
+  // Get tab-specific badge and icon
+  const getTabBadge = (tab: TabType) => {
+    switch (tab) {
+      case 'trending':
+        return { icon: Sparkles, label: 'Trending', color: 'bg-orange-500' }
+      case 'new-arrivals':
+        return { icon: Clock, label: 'New', color: 'bg-blue-500' }
+      case 'best-sellers':
+        return { icon: Trophy, label: 'Best Seller', color: 'bg-yellow-500' }
+    }
+  }
+
+  const tabs = [
+    { 
+      id: 'trending' as TabType, 
+      label: 'Trending',
+      description: 'What is hot right now'
+    },
+    { 
+      id: 'new-arrivals' as TabType, 
+      label: 'New Arrivals',
+      description: 'Fresh arrivals'
+    },
+    { 
+      id: 'best-sellers' as TabType, 
+      label: 'Best Sellers',
+      description: 'Most popular picks'
+    },
+  ]
+
+  const currentTabBadge = getTabBadge(activeTab)
 
   return (
-    <section className="py-16 bg-gradient-to-b from-white to-gray-50">
-      <div className="container mx-auto px-4">
-        {/* Shop by Category - First */}
+    <section className="py-8 md:py-16 bg-gradient-to-b from-white to-gray-50">
+      <div className="container mx-auto px-3 md:px-4">
+        {/* Section Title */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
+          className="text-center mb-6 md:mb-8"
         >
-          <h2 className="text-3xl md:text-5xl font-bold text-center mb-3 text-[#D32F2F] font-comic">
-            🧸 Special Products
+          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-[#D32F2F] font-comic">
+            Special Products
           </h2>
-          <p className="text-center text-gray-600 mb-12 text-base md:text-lg font-medium font-comic">
-            Explore our wide range of premium toys ✨
+          <p className="text-gray-500 text-sm md:text-base mt-2">
+            {tabs.find(t => t.id === activeTab)?.description}
           </p>
         </motion.div>
 
-        {/* Shopify Collections Grid - Use displayCategories */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-20">
-          {displayCategories.map((category: any, i) => {
-            // Check if it's a collection from Shopify or fallback
-            const isCollection = category.id && category.handle
-            const imageUrl = category.image?.url || category.image || '/placeholder.jpg'
-            const title = category.title || category.name
-            const href = isCollection ? `/shop-by-category?category=${category.handle}` : '#'
-
-            return (
-              <motion.div
-                key={isCollection ? category.id : i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.05 }}
-                className="group cursor-pointer"
+        {/* Tabs */}
+        <div className="flex justify-center mb-6 md:mb-10">
+          <div className="inline-flex bg-gray-100 rounded-full p-1 gap-1 flex-wrap justify-center">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`relative px-4 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-base font-semibold transition-all duration-300 ${
+                  activeTab === tab.id
+                    ? 'text-white'
+                    : 'text-gray-500 hover:text-gray-700'
+                }`}
               >
-                {isCollection ? (
-                  <Link href={href}>
-                    <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition bg-white border-2 border-transparent hover:border-[#D32F2F]">
-                      <img
-                        src={imageUrl}
-                        alt={title}
-                        className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-                        onError={(e) => {
-                          e.currentTarget.src = '/placeholder.jpg'
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-3">
-                        <h3 className="text-white font-bold text-sm md:text-base font-comic">
-                          {title}
-                        </h3>
-                      </div>
-                      <div className="absolute inset-0 bg-[#D32F2F]/20 opacity-0 group-hover:opacity-100 transition duration-300" />
-                    </div>
-                  </Link>
-                ) : (
-                  <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition bg-white border-2 border-transparent hover:border-[#D32F2F]">
-                    <Image
-                      src={imageUrl}
-                      alt={title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition duration-500"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-3">
-                      <h3 className="text-white font-bold text-sm md:text-base font-comic">
-                        {title}
-                      </h3>
-                    </div>
-                    <div className="absolute inset-0 bg-[#D32F2F]/20 opacity-0 group-hover:opacity-100 transition duration-300" />
-                  </div>
+                {activeTab === tab.id && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute inset-0 bg-[#D32F2F] rounded-full shadow-lg"
+                    transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                  />
                 )}
-              </motion.div>
-            )
-          })}
+                <span className="relative z-10">{tab.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Shop by Age - Second */}
+        {/* Tab Description and Badge */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          key={activeTab}
+          initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          className="text-center mb-4 md:mb-6"
         >
-          <h2 className="text-3xl md:text-5xl font-bold text-center mb-3 text-[#FF6B35] font-comic">
-            🎈 Shop by Age
-          </h2>
-          <p className="text-center text-gray-600 mb-12 text-base md:text-lg font-medium font-comic">
-            Find the perfect toy for every stage 🌟
-          </p>
+          <span className={`${currentTabBadge.color} text-white text-xs md:text-sm font-bold px-4 py-1.5 rounded-full inline-block`}>
+            {currentTabBadge.label}
+          </span>
         </motion.div>
 
-        <div className="grid grid-cols-3 md:grid-cols-5 gap-6">
-          {ageCategories.map((cat, i) => (
+        {/* Products Grid */}
+        <AnimatePresence mode="wait">
+          {loading ? (
             <motion.div
-              key={i}
+              key="loading"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6"
+            >
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <div key={i} className="bg-gray-200 rounded-2xl h-64 md:h-80 animate-pulse" />
+              ))}
+            </motion.div>
+          ) : products.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-12"
+            >
+              <div className="text-6xl mb-4">📦</div>
+              <h3 className="text-xl font-semibold text-gray-700">No Products Found</h3>
+              <p className="text-gray-500 mt-2">Check back later for new arrivals!</p>
+            </motion.div>
+          ) : (
+            <motion.div
+              key={activeTab}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="hover:scale-105 transition duration-300 cursor-default"
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6"
             >
-              <div className="relative w-full aspect-square rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition bg-white border-2 border-[#FF6B35]/20 hover:border-[#FF6B35]">
-                <Image
-                  src={cat.image}
-                  alt={cat.name}
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute top-2 right-2 bg-[#FF6B35] text-white text-xs font-bold px-2 py-1 rounded-full font-comic">
-                  {cat.name}
-                </div>
-              </div>
-              <div className="text-center mt-3 font-semibold text-gray-700 text-sm font-comic">
-                {cat.name}
-              </div>
+              {products.slice(0, 8).map((product, i) => {
+                const { price, compareAt, imageUrl, variantId, discount } = getProductDetails(product)
+                const isAdding = addingToCart === product.id
+
+                // Check if product has specific tags for the active tab
+                const hasTrendingTag = product.tags?.some(tag => 
+                  ['trending', 'popular', 'hot', 'viral'].includes(tag.toLowerCase())
+                )
+                const hasNewTag = product.tags?.some(tag => 
+                  ['new', 'new-arrival', 'fresh'].includes(tag.toLowerCase())
+                )
+                const hasBestsellerTag = product.tags?.some(tag => 
+                  ['bestseller', 'best-seller', 'top-seller'].includes(tag.toLowerCase())
+                )
+
+                let productBadge = ''
+                if (activeTab === 'trending' && hasTrendingTag) productBadge = 'Hot'
+                if (activeTab === 'new-arrivals' && hasNewTag) productBadge = 'New'
+                if (activeTab === 'best-sellers' && hasBestsellerTag) productBadge = 'Top'
+
+                return (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="bg-white rounded-xl md:rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden group border border-gray-100 hover:border-[#D32F2F] flex flex-col"
+                  >
+                    {/* Product Image */}
+                    <Link href={`/products/${product.handle}`}>
+                      <div className="relative overflow-hidden aspect-square">
+                        <img
+                          src={imageUrl}
+                          alt={product.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                          onError={(e) => {
+                            e.currentTarget.src = '/placeholder.jpg'
+                          }}
+                        />
+                        {discount > 0 && (
+                          <span className="absolute top-2 right-2 bg-green-500 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-full">
+                            {discount}% OFF
+                          </span>
+                        )}
+                        {productBadge && (
+                          <span className={`absolute top-2 left-2 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-full ${
+                            activeTab === 'trending' ? 'bg-orange-500' :
+                            activeTab === 'new-arrivals' ? 'bg-blue-500' :
+                            'bg-yellow-500'
+                          }`}>
+                            {productBadge}
+                          </span>
+                        )}
+                      </div>
+                    </Link>
+
+                    {/* Product Details */}
+                    <div className="p-2 md:p-4 flex flex-col flex-1">
+                      <Link href={`/products/${product.handle}`}>
+                        <h3 className="font-semibold text-xs md:text-sm line-clamp-2 hover:text-[#D32F2F] transition min-h-[32px] md:min-h-[40px] leading-tight">
+                          {product.title}
+                        </h3>
+                      </Link>
+
+                      {/* Rating */}
+                      <div className="flex items-center gap-1 mt-1">
+                        <div className="flex items-center text-yellow-400">
+                          <Star className="w-2.5 h-2.5 md:w-3 md:h-3 fill-current" />
+                          <span className="text-gray-700 text-[10px] md:text-xs ml-0.5">4.8</span>
+                        </div>
+                        <span className="text-gray-400 text-[9px] md:text-xs">(245)</span>
+                      </div>
+
+                      {/* Price */}
+                      <div className="flex items-center gap-1.5 mt-1 md:mt-2 flex-wrap">
+                        <span className="text-sm md:text-lg font-bold text-[#D32F2F] font-comic">
+                          Rs. {parseFloat(price).toFixed(2)}
+                        </span>
+                        {compareAt && (
+                          <span className="text-gray-400 line-through text-[10px] md:text-xs">
+                            Rs. {parseFloat(compareAt).toFixed(2)}
+                          </span>
+                        )}
+                        {discount > 0 && (
+                          <span className="bg-green-100 text-green-700 text-[9px] md:text-[10px] font-bold px-1.5 py-0.5 rounded">
+                            {discount}% OFF
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Buttons */}
+                      <div className="mt-2 md:mt-3 grid grid-cols-2 gap-1.5 md:gap-2">
+                        <button
+                          onClick={() => handleAddToCart(variantId, product.id)}
+                          disabled={!variantId || isAdding}
+                          className="py-1.5 md:py-2 rounded-lg bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-[10px] md:text-xs font-semibold transition flex items-center justify-center gap-1 disabled:opacity-50"
+                        >
+                          {isAdding ? (
+                            <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            <>
+                              <ShoppingCart className="w-3 h-3 hidden md:block" />
+                              Add
+                            </>
+                          )}
+                        </button>
+
+                        <button
+                          onClick={() => {
+                            if (!variantId) return
+                            const storeDomain = "athvi-toys.myshopify.com"
+                            const numericVariantId = variantId.split("/").pop()
+                            window.location.href = `https://${storeDomain}/cart/${numericVariantId}:1`
+                          }}
+                          disabled={!variantId}
+                          className="py-1.5 md:py-2 rounded-lg bg-[#8B4513] hover:bg-[#6B3410] text-white text-[10px] md:text-xs font-semibold transition disabled:opacity-50"
+                        >
+                          Buy Now
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )
+              })}
             </motion.div>
-          ))}
-        </div>
+          )}
+        </AnimatePresence>
+
+        
       </div>
 
       <style jsx global>{`
