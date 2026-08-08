@@ -52,7 +52,7 @@ export default function Testimonials() {
   }
 
   return (
-    <section className="bg-[#C0392B] py-12 md:py-16 overflow-hidden">
+    <section className="bg-blue-600 py-12 md:py-16 overflow-hidden">
       <div className="container mx-auto px-4">
         <h2 className="text-center text-white text-2xl md:text-3xl lg:text-4xl font-bold mb-8 md:mb-12 font-comic">
           Trusted by Thousands of Happy Customers

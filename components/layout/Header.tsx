@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, User, Menu, X, Heart, ChevronDown, Home } from 'lucide-react'
+import { ShoppingCart, User, Menu, X, Heart, ChevronDown, Home, Search } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '@/context/CartContext'
 import SearchBar from './SearchBar'
 
@@ -20,6 +21,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isMobileCategoryOpen, setIsMobileCategoryOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { totalItems } = useCart()
 
   useEffect(() => {
@@ -32,36 +34,36 @@ export default function Header() {
 
   return (
     <>
-      {/* Top Bar - Marquee with Free Shipping & Support */}
-      <div className="bg-[#7B2FBE] text-white overflow-hidden" style={{ height: '70px' }}>
+      {/* Top Bar - Marquee with Free Shipping & Support - REDUCED HEIGHT */}
+      <div className="bg-[#7B2FBE] text-white overflow-hidden" style={{ height: '36px' }}>
         <div className="h-full flex items-center">
-          <div className="animate-marquee whitespace-nowrap flex items-center gap-16">
-            <span className="inline-flex items-center gap-2 text-sm font-medium">
-              🚚 Free Shipping on Orders above ₹499
+          <div className="animate-marquee whitespace-nowrap flex items-center gap-12">
+            <span className="inline-flex items-center gap-2 text-xs font-medium">
+              <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-sm font-medium">
-              🇮🇳 Shipping Across India
+            <span className="inline-flex items-center gap-2 text-xs font-medium">
+              <span className="text-sm">🇮🇳</span> Shipping Across India
             </span>
-            <span className="inline-flex items-center gap-2 text-sm font-medium">
-              💬 24/7 WhatsApp Support
+            <span className="inline-flex items-center gap-2 text-xs font-medium">
+              <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
-            <span className="inline-flex items-center gap-2 text-sm font-medium">
-              🚚 Free Shipping on Orders above ₹499
+            <span className="inline-flex items-center gap-2 text-xs font-medium">
+              <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-sm font-medium">
-              🇮🇳 Shipping Across India
+            <span className="inline-flex items-center gap-2 text-xs font-medium">
+              <span className="text-sm">🇮🇳</span> Shipping Across India
             </span>
-            <span className="inline-flex items-center gap-2 text-sm font-medium">
-              💬 24/7 WhatsApp Support
+            <span className="inline-flex items-center gap-2 text-xs font-medium">
+              <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
-            <span className="inline-flex items-center gap-2 text-sm font-medium">
-              🚚 Free Shipping on Orders above ₹499
+            <span className="inline-flex items-center gap-2 text-xs font-medium">
+              <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-sm font-medium">
-              🇮🇳 Shipping Across India
+            <span className="inline-flex items-center gap-2 text-xs font-medium">
+              <span className="text-sm">🇮🇳</span> Shipping Across India
             </span>
-            <span className="inline-flex items-center gap-2 text-sm font-medium">
-              💬 24/7 WhatsApp Support
+            <span className="inline-flex items-center gap-2 text-xs font-medium">
+              <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
           </div>
         </div>
@@ -87,22 +89,30 @@ export default function Header() {
                     alt="Athvi Toys" 
                     width={200} 
                     height={70}
-                    className="h-16 w-auto object-contain"
+                    className="h-14 md:h-16 w-auto object-contain"
                     priority
                   />
-                  <span className="text-[#7B2FBE] text-sm font-medium tracking-wider mt-0.5">
+                  <span className="text-[#7B2FBE] text-xs md:text-sm font-medium tracking-wider mt-0.5">
                     Little Joys. Big Smiles.
                   </span>
                 </Link>
 
-                {/* Search Bar */}
+                {/* Desktop Search Bar */}
                 <div className="hidden md:flex flex-1 max-w-2xl mx-6">
                   <SearchBar />
                 </div>
 
-                {/* Right Icons - Hide Wishlist & Cart on Mobile */}
-                <div className="flex items-center gap-6">
-                  {/* ✅ Wishlist - Hidden on mobile */}
+                {/* Right Icons */}
+                <div className="flex items-center gap-4 md:gap-6">
+                  {/* Mobile Search Icon - Opens search bar */}
+                  <button
+                    onClick={() => setIsSearchOpen(!isSearchOpen)}
+                    className="md:hidden p-2 text-gray-700 hover:text-[#7B2FBE] transition"
+                  >
+                    <Search className="w-6 h-6" />
+                  </button>
+
+                  {/* Wishlist - Hidden on mobile */}
                   <Link 
                     href="/wishlist" 
                     className="hidden lg:flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group"
@@ -111,7 +121,7 @@ export default function Header() {
                     <span className="text-base font-medium hidden lg:inline">Wishlist</span>
                   </Link>
 
-                  {/* ✅ Cart - Hidden on mobile (shown in bottom nav) */}
+                  {/* Cart - Hidden on mobile */}
                   <Link 
                     href="/cart" 
                     className="hidden lg:flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group relative"
@@ -127,10 +137,12 @@ export default function Header() {
                     <span className="text-base font-medium hidden lg:inline">Cart</span>
                   </Link>
 
+                  {/* Mobile Menu Toggle */}
                   <button
-                    className="md:hidden"
+                    className="md:hidden p-2"
                     onClick={() => {
                       setIsMenuOpen(!isMenuOpen)
+                      setIsSearchOpen(false)
                     }}
                   >
                     {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -138,10 +150,22 @@ export default function Header() {
                 </div>
               </div>
 
-              {/* Mobile Search */}
-              <div className="md:hidden pb-3">
-                <SearchBar />
-              </div>
+              {/* Mobile Search Bar - Appears on click */}
+              <AnimatePresence>
+                {isSearchOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="md:hidden overflow-hidden"
+                  >
+                    <div className="pb-3">
+                      <SearchBar />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Navigation - Desktop */}
               <nav className="hidden md:flex items-center justify-between gap-6 py-3 bg-[#7B2FBE] rounded-lg px-6 w-full">
@@ -178,7 +202,6 @@ export default function Header() {
               {/* Mobile Menu */}
               {isMenuOpen && (
                 <div className="md:hidden py-4 border-t border-gray-100 bg-white">
-                  {/* Shop by Category - Mobile */}
                   <Link 
                     href="/shop-by-category"
                     className="block w-full text-left py-3 px-4 bg-[#FF6B35] text-white font-semibold rounded-lg mb-2"
@@ -197,7 +220,6 @@ export default function Header() {
                     </span>
                   </Link>
 
-                  {/* Home Link */}
                   <Link 
                     href="/" 
                     className="block py-3 transition px-4 text-[#FF6B35] font-semibold border-b border-gray-50"
@@ -206,7 +228,6 @@ export default function Header() {
                     Home
                   </Link>
 
-                  {/* Other Nav Items */}
                   {navItems.map((item) => (
                     <Link
                       key={item.name}
@@ -224,7 +245,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* ✅ Mobile Bottom Navigation - Fixed position (Shows Cart & Wishlist) */}
+      {/* Mobile Bottom Navigation */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
         <div className="flex items-center justify-around py-2">
           <Link href="/" className="flex flex-col items-center gap-0.5 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
@@ -261,7 +282,7 @@ export default function Header() {
   )
 }
 
-// ✅ Global styles - Defined outside the component
+// Global styles
 const globalStyles = `
   @keyframes marquee {
     0% { transform: translateX(0%); }
@@ -279,7 +300,6 @@ const globalStyles = `
   }
 `
 
-// ✅ Inject global styles
 if (typeof window !== 'undefined') {
   const style = document.createElement('style')
   style.textContent = globalStyles
