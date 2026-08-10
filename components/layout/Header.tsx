@@ -9,13 +9,17 @@ import { useCart } from '@/context/CartContext'
 import SearchBar from './SearchBar'
 
 const navItems = [
+  { name: 'Home', href: '/' },
+  { name: 'All Products', href: '/collections' },
   { name: 'Shop by Category', href: '/shop-by-category' },
-  { name: 'Shop by Age', href: '/categories' },
+  { name: 'Shop By Age', href: '/categories' },
+  { name: 'Offers', href: '/offers-page' },
   { name: 'New Arrivals', href: '/category-cards' },
   { name: 'Best Sellers', href: '/best-sellers' },
-  { name: 'Offers', href: '/offers-page' },
-  { name: 'Gifts', href: '/happy-childhoods' },
-  { name: 'Brands', href: '/brands' },
+  { name: 'Trending', href: '/trending' },
+  { name: 'About', href: '/about' },
+  { name: 'Blog', href: '/blog' },
+  { name: 'Contact Us', href: '/contact' },
 ]
 
 export default function Header() {
@@ -153,12 +157,12 @@ export default function Header() {
                   </Link>
 
                   {/* Desktop: Navigation Links - CENTER - BOLD */}
-                  <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
+                  <nav className="hidden lg:flex flex-wrap items-center justify-center gap-x-3.5 xl:gap-x-5 gap-y-1 max-w-4xl mx-auto px-4">
                     {navItems.map((item) => (
                       <Link
                         key={item.name}
                         href={item.href}
-                        className={`transition text-sm font-bold whitespace-nowrap ${
+                        className={`transition text-xs xl:text-sm font-bold whitespace-nowrap ${
                           isScrolled ? 'text-gray-700 hover:text-[#D32F2F]' : 'text-gray-700 hover:text-[#D32F2F]'
                         }`}
                       >
@@ -226,19 +230,15 @@ export default function Header() {
               {/* Mobile Menu */}
               {isMenuOpen && (
                 <div className="lg:hidden py-4 border-t border-gray-100 bg-white">
-                  <Link 
-                    href="/" 
-                    className="block py-3 transition px-4 text-[#FF6B35] font-semibold border-b border-gray-50"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Home
-                  </Link>
-
-                  {navItems.map((item) => (
+                  {navItems.map((item, index) => (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="block py-3 transition px-4 text-gray-700 hover:text-[#FF6B35]"
+                      className={`block py-3 transition px-4 hover:text-[#FF6B35] ${
+                        index === 0
+                          ? 'text-[#FF6B35] font-semibold border-b border-gray-50'
+                          : 'text-gray-700'
+                      }`}
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {item.name}
