@@ -101,7 +101,7 @@ export default function Footer() {
             <div className="col-span-2 sm:col-span-3 lg:col-span-1">
               <Link href="/" className="flex items-center gap-2 mb-3 md:mb-4">
                 <Image 
-                  src="/logo1.png" 
+                  src="/logo4.png" 
                   alt="Athvi Toys" 
                   width={160} 
                   height={55}

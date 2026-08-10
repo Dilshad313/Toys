@@ -132,7 +132,7 @@ export default function Header() {
                   {/* Desktop: Logo on LEFT */}
                   <Link href="/" className="hidden lg:block flex-shrink-0">
                     <Image 
-                      src="/logo1.png" 
+                      src="/logo4.png" 
                       alt="Athvi Toys" 
                       width={200} 
                       height={70}
@@ -147,7 +147,7 @@ export default function Header() {
                   {/* Mobile: Centered Logo */}
                   <Link href="/" className="lg:hidden flex-shrink-0">
                     <Image 
-                      src="/logo2.png" 
+                      src="/logo4.png" 
                       alt="Athvi Toys" 
                       width={200} 
                       height={70}
