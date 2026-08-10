@@ -9,13 +9,17 @@ import { useCart } from '@/context/CartContext'
 import SearchBar from './SearchBar'
 
 const navItems = [
+  { name: 'Home', href: '/' },
+  { name: 'All Products', href: '/collections' },
   { name: 'Shop by Category', href: '/shop-by-category' },
-  { name: 'Shop by Age', href: '/categories' },
+  { name: 'Shop By Age', href: '/categories' },
+  { name: 'Offers', href: '/offers-page' },
   { name: 'New Arrivals', href: '/category-cards' },
   { name: 'Best Sellers', href: '/best-sellers' },
-  { name: 'Offers', href: '/offers-page' },
-  { name: 'Gifts', href: '/happy-childhoods' },
-  { name: 'Brands', href: '/brands' },
+  { name: 'Trending', href: '/trending' },
+  { name: 'About', href: '/about' },
+  { name: 'Blog', href: '/blog' },
+  { name: 'Contact Us', href: '/contact' },
 ]
 
 export default function Header() {
@@ -138,7 +142,7 @@ export default function Header() {
                   </Link>
                 </div>
 
-                {/* CENTER - Logo (Mobile Only) / Nav Links (Desktop) */}
+                {/* CENTER - Logo (Mobile Only) / Nav Links (Desktop) - SINGLE LINE */}
                 <div className="absolute left-1/2 -translate-x-1/2 lg:static lg:left-auto lg:translate-x-0 lg:flex-1 lg:flex lg:justify-center">
                   {/* Mobile: Centered Logo */}
                   <Link href="/" className="lg:hidden flex-shrink-0">
@@ -152,13 +156,13 @@ export default function Header() {
                     />
                   </Link>
 
-                  {/* Desktop: Navigation Links - CENTER - BOLD */}
-                  <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
+                  {/* Desktop: Navigation Links - SINGLE LINE - INCREASED TEXT SIZE */}
+                  <nav className="hidden lg:flex items-center justify-center gap-3 xl:gap-6 overflow-x-auto max-w-full px-2 scrollbar-hide">
                     {navItems.map((item) => (
                       <Link
                         key={item.name}
                         href={item.href}
-                        className={`transition text-sm font-bold whitespace-nowrap ${
+                        className={`transition text-sm xl:text-base font-bold whitespace-nowrap ${
                           isScrolled ? 'text-gray-700 hover:text-[#D32F2F]' : 'text-gray-700 hover:text-[#D32F2F]'
                         }`}
                       >
@@ -226,19 +230,15 @@ export default function Header() {
               {/* Mobile Menu */}
               {isMenuOpen && (
                 <div className="lg:hidden py-4 border-t border-gray-100 bg-white">
-                  <Link 
-                    href="/" 
-                    className="block py-3 transition px-4 text-[#FF6B35] font-semibold border-b border-gray-50"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Home
-                  </Link>
-
-                  {navItems.map((item) => (
+                  {navItems.map((item, index) => (
                     <Link
                       key={item.name}
                       href={item.href}
-                      className="block py-3 transition px-4 text-gray-700 hover:text-[#FF6B35]"
+                      className={`block py-3 transition px-4 hover:text-[#FF6B35] ${
+                        index === 0
+                          ? 'text-[#FF6B35] font-semibold border-b border-gray-50'
+                          : 'text-gray-700'
+                      }`}
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {item.name}
@@ -340,6 +340,17 @@ export default function Header() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Hide scrollbar styles */}
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </>
   )
 }
