@@ -5,7 +5,6 @@ import { Mail, Phone, MapPin, MessageCircle } from 'lucide-react'
 import { 
   FaFacebook, 
   FaInstagram, 
-  FaTwitter, 
   FaYoutube 
 } from 'react-icons/fa'
 
@@ -43,10 +42,10 @@ export default function ContactPage() {
             </div>
             <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Email</h3>
             <a 
-              href="mailto:support@athvitoys.com" 
+              href="mailto:hello@athvitoys.com" 
               className="text-gray-800 font-semibold hover:text-[#D32F2F] transition text-lg"
             >
-              support@athvitoys.com
+              hello@athvitoys.com
             </a>
           </motion.div>
 
@@ -62,14 +61,14 @@ export default function ContactPage() {
             </div>
             <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Phone</h3>
             <a 
-              href="tel:+919876543210" 
+              href="tel:+917550122100" 
               className="text-gray-800 font-semibold hover:text-[#D32F2F] transition text-lg"
             >
-              +91 98765 43210
+              +91 75001 22100
             </a>
           </motion.div>
 
-          {/* Address Card - Nagercoil */}
+          {/* Address Card - Updated Address */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -80,9 +79,10 @@ export default function ContactPage() {
               <MapPin className="w-8 h-8 text-[#D32F2F]" />
             </div>
             <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider mb-2">Address</h3>
-            <p className="text-gray-800 font-semibold text-lg leading-relaxed">
-              #123, Main Road,<br />
-              Nagercoil - 629001<br />
+            <p className="text-gray-800 font-semibold text-base md:text-lg leading-relaxed">
+              #9-90D/2, Thingalnagar,<br />
+              Nagercoil - 629252,<br />
+              Kanniyakumari District,<br />
               Tamil Nadu, India
             </p>
           </motion.div>
@@ -96,7 +96,7 @@ export default function ContactPage() {
           className="mt-8 text-center"
         >
           <a 
-            href="https://wa.me/919876543210" 
+            href="https://wa.me/917550122100" 
             target="_blank" 
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-full font-semibold transition shadow-lg hover:shadow-xl"
@@ -116,25 +116,25 @@ export default function ContactPage() {
           <p className="text-gray-500 text-sm font-medium mb-4">Follow Us</p>
           <div className="flex justify-center gap-4">
             <a 
-              href="#" 
+              href="https://www.facebook.com/profile.php?id=61593288174191&sk=reels_tab" 
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-white hover:bg-[#1877F2] text-gray-600 hover:text-white p-3 rounded-full shadow-md hover:shadow-lg transition w-12 h-12 flex items-center justify-center"
             >
               <FaFacebook className="w-6 h-6" />
             </a>
             <a 
-              href="#" 
+              href="https://www.instagram.com/athvi_toys/" 
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-white hover:bg-[#E4405F] text-gray-600 hover:text-white p-3 rounded-full shadow-md hover:shadow-lg transition w-12 h-12 flex items-center justify-center"
             >
               <FaInstagram className="w-6 h-6" />
             </a>
             <a 
-              href="#" 
-              className="bg-white hover:bg-[#1DA1F2] text-gray-600 hover:text-white p-3 rounded-full shadow-md hover:shadow-lg transition w-12 h-12 flex items-center justify-center"
-            >
-              <FaTwitter className="w-6 h-6" />
-            </a>
-            <a 
-              href="#" 
+              href="https://www.youtube.com/@athvitoy" 
+              target="_blank"
+              rel="noopener noreferrer"
               className="bg-white hover:bg-[#FF0000] text-gray-600 hover:text-white p-3 rounded-full shadow-md hover:shadow-lg transition w-12 h-12 flex items-center justify-center"
             >
               <FaYoutube className="w-6 h-6" />
@@ -142,7 +142,7 @@ export default function ContactPage() {
           </div>
         </motion.div>
 
-        {/* Map Section - Nagercoil */}
+        {/* Map Section - Fixed Working Embed URL */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -151,11 +151,11 @@ export default function ContactPage() {
         >
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             <div className="p-6 border-b border-gray-100">
-              <h3 className="text-lg font-bold font-comic text-gray-800">📍 Find Us in Nagercoil</h3>
+              <h3 className="text-lg font-bold font-comic text-gray-800">📍 Find Us in Thingalnagar, Nagercoil</h3>
             </div>
             <div className="h-64 md:h-80 bg-gray-200 relative">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15787.166961505642!2d77.4204662!3d8.176165!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b04f0b5f2e1a1d1%3A0x6d8c9e7a2f1f1f1!2sNagercoil%2C%20Tamil%20Nadu%2C%20India!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3936.559913256904!2d77.4287835!3d8.176928!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b04f0f5f9f9f9f9%3A0x6d8c9e7a2f1f1f1!2sThingalnagar%2C%20Nagercoil%2C%20Tamil%20Nadu%2C%20India!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
                 width="100%"
                 height="100%"
                 style={{ border: 0 }}
@@ -163,7 +163,7 @@ export default function ContactPage() {
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
                 className="w-full h-full"
-                title="Athvi Toys Location - Nagercoil"
+                title="Athvi Toys Location - Thingalnagar, Nagercoil"
               />
             </div>
           </div>

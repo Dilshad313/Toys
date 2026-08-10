@@ -9,6 +9,7 @@ import { useCart } from '@/context/CartContext'
 import SearchBar from './SearchBar'
 
 const navItems = [
+  { name: 'Shop by Category', href: '/shop-by-category' },
   { name: 'Shop by Age', href: '/categories' },
   { name: 'New Arrivals', href: '/category-cards' },
   { name: 'Best Sellers', href: '/best-sellers' },
@@ -19,7 +20,6 @@ const navItems = [
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isMobileCategoryOpen, setIsMobileCategoryOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const { totalItems } = useCart()
@@ -32,37 +32,65 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Close search on escape key
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isSearchOpen) {
+        setIsSearchOpen(false)
+      }
+    }
+    window.addEventListener('keydown', handleEsc)
+    return () => window.removeEventListener('keydown', handleEsc)
+  }, [isSearchOpen])
+
+  // Prevent body scroll when search is open
+  useEffect(() => {
+    if (isSearchOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => {
+      document.body.style.overflow = 'unset'
+    }
+  }, [isSearchOpen])
+
+  // Function to close search popup when product is selected
+  const handleProductSelect = () => {
+    setIsSearchOpen(false)
+  }
+
   return (
     <>
       {/* Top Bar - Marquee with Free Shipping & Support - REDUCED HEIGHT */}
-      <div className="bg-[#7B2FBE] text-white overflow-hidden" style={{ height: '36px' }}>
+      <div className="bg-[#7B2FBE] text-white overflow-hidden" style={{ height: '32px' }}>
         <div className="h-full flex items-center">
           <div className="animate-marquee whitespace-nowrap flex items-center gap-12">
-            <span className="inline-flex items-center gap-2 text-xs font-medium">
+            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-xs font-medium">
+            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
               <span className="text-sm">🇮🇳</span> Shipping Across India
             </span>
-            <span className="inline-flex items-center gap-2 text-xs font-medium">
+            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
-            <span className="inline-flex items-center gap-2 text-xs font-medium">
+            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-xs font-medium">
+            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
               <span className="text-sm">🇮🇳</span> Shipping Across India
             </span>
-            <span className="inline-flex items-center gap-2 text-xs font-medium">
+            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
-            <span className="inline-flex items-center gap-2 text-xs font-medium">
+            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-xs font-medium">
+            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
               <span className="text-sm">🇮🇳</span> Shipping Across India
             </span>
-            <span className="inline-flex items-center gap-2 text-xs font-medium">
+            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
           </div>
@@ -81,145 +109,123 @@ export default function Header() {
             isScrolled ? 'bg-white shadow-lg' : 'bg-white/95 backdrop-blur-sm'
           }`}>
             <div className="container mx-auto px-4">
-              <div className="flex items-center justify-between py-3">
-                {/* Logo */}
-                <Link href="/" className="flex flex-col items-start flex-shrink-0">
-                  <Image 
-                    src="/logo1.png" 
-                    alt="Athvi Toys" 
-                    width={200} 
-                    height={70}
-                    className="h-14 md:h-16 w-auto object-contain"
-                    priority
-                  />
-                  <span className="text-[#7B2FBE] text-xs md:text-sm font-medium tracking-wider mt-0.5">
-                    Little Joys. Big Smiles.
-                  </span>
-                </Link>
-
-                {/* Desktop Search Bar */}
-                <div className="hidden md:flex flex-1 max-w-2xl mx-6">
-                  <SearchBar />
-                </div>
-
-                {/* Right Icons */}
-                <div className="flex items-center gap-4 md:gap-6">
-                  {/* Mobile Search Icon - Opens search bar */}
+              {/* Desktop Layout: Logo Left | Nav Center | Icons Right */}
+              {/* Mobile Layout: Search Left | Logo Center | Menu Right */}
+              <div className="flex items-center justify-between py-3 relative lg:static">
+                
+                {/* LEFT SIDE */}
+                <div className="flex items-center gap-2 lg:gap-4 z-10">
+                  {/* Mobile: Search Icon on LEFT */}
                   <button
-                    onClick={() => setIsSearchOpen(!isSearchOpen)}
-                    className="md:hidden p-2 text-gray-700 hover:text-[#7B2FBE] transition"
+                    onClick={() => setIsSearchOpen(true)}
+                    className={`lg:hidden p-2 transition rounded-full hover:bg-gray-100 ${
+                      isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
-                    <Search className="w-6 h-6" />
+                    <Search className="w-5 h-5" />
                   </button>
 
-                  {/* Wishlist - Hidden on mobile */}
-                  <Link 
-                    href="/wishlist" 
-                    className="hidden lg:flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group"
-                  >
-                    <Heart className="w-6 h-6" />
-                    <span className="text-base font-medium hidden lg:inline">Wishlist</span>
+                  {/* Desktop: Logo on LEFT */}
+                  <Link href="/" className="hidden lg:block flex-shrink-0">
+                    <Image 
+                      src="/logo1.png" 
+                      alt="Athvi Toys" 
+                      width={200} 
+                      height={70}
+                      className="h-16 w-auto object-contain"
+                      priority
+                    />
+                  </Link>
+                </div>
+
+                {/* CENTER - Logo (Mobile Only) / Nav Links (Desktop) */}
+                <div className="absolute left-1/2 -translate-x-1/2 lg:static lg:left-auto lg:translate-x-0 lg:flex-1 lg:flex lg:justify-center">
+                  {/* Mobile: Centered Logo */}
+                  <Link href="/" className="lg:hidden flex-shrink-0">
+                    <Image 
+                      src="/logo1.png" 
+                      alt="Athvi Toys" 
+                      width={200} 
+                      height={70}
+                      className="h-14 w-auto object-contain"
+                      priority
+                    />
                   </Link>
 
-                  {/* Cart - Hidden on mobile */}
+                  {/* Desktop: Navigation Links - CENTER - BOLD */}
+                  <nav className="hidden lg:flex items-center gap-5 xl:gap-6">
+                    {navItems.map((item) => (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={`transition text-sm font-bold whitespace-nowrap ${
+                          isScrolled ? 'text-gray-700 hover:text-[#D32F2F]' : 'text-gray-700 hover:text-[#D32F2F]'
+                        }`}
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </nav>
+                </div>
+
+                {/* RIGHT SIDE - Icons */}
+                <div className="flex items-center gap-1 md:gap-2 z-10">
+                  {/* Desktop: Search, Wishlist, Cart */}
+                  <button
+                    onClick={() => setIsSearchOpen(true)}
+                    className={`hidden lg:block p-2 transition rounded-full hover:bg-gray-100 ${
+                      isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <Search className="w-5 h-5" />
+                  </button>
+
+                  <Link 
+                    href="/wishlist" 
+                    className={`hidden lg:block p-2 transition rounded-full hover:bg-gray-100 ${
+                      isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <Heart className="w-5 h-5" />
+                  </Link>
+
+                  {/* Desktop Cart */}
                   <Link 
                     href="/cart" 
-                    className="hidden lg:flex items-center gap-2 text-[#7B2FBE] hover:text-[#6A1FB3] transition group relative"
+                    className={`hidden lg:flex p-2 transition rounded-full hover:bg-gray-100 relative ${
+                      isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-700 hover:bg-gray-100'
+                    }`}
                   >
                     <div className="relative">
-                      <ShoppingCart className="w-6 h-6" />
+                      <ShoppingCart className="w-5 h-5" />
                       {totalItems > 0 && (
-                        <span className="absolute -top-2 -right-3 bg-[#FF6B35] text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">
+                        <span className={`absolute -top-2 -right-3 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center ${
+                          isScrolled ? 'bg-[#FF6B35]' : 'bg-[#FF6B35]'
+                        }`}>
                           {totalItems}
                         </span>
                       )}
                     </div>
-                    <span className="text-base font-medium hidden lg:inline">Cart</span>
                   </Link>
 
-                  {/* Mobile Menu Toggle */}
+                  {/* Mobile: Menu Toggle ONLY (no cart) */}
                   <button
-                    className="md:hidden p-2"
+                    className={`lg:hidden p-2 transition ${
+                      isScrolled ? 'text-gray-700 hover:text-[#7B2FBE]' : 'text-gray-700 hover:text-[#7B2FBE]'
+                    }`}
                     onClick={() => {
                       setIsMenuOpen(!isMenuOpen)
                       setIsSearchOpen(false)
                     }}
                   >
-                    {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                   </button>
                 </div>
               </div>
 
-              {/* Mobile Search Bar - Appears on click */}
-              <AnimatePresence>
-                {isSearchOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="md:hidden overflow-hidden"
-                  >
-                    <div className="pb-3">
-                      <SearchBar />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Navigation - Desktop */}
-              <nav className="hidden md:flex items-center justify-between gap-6 py-3 bg-[#7B2FBE] rounded-lg px-6 w-full">
-                {/* Shop by Category */}
-                <div className="flex-shrink-0">
-                  <Link href="/shop-by-category">
-                    <button className="bg-[#FF6B35] hover:bg-[#e55a2b] text-white px-6 py-3 rounded-full text-base font-semibold transition flex items-center gap-2 shadow-md hover:shadow-lg whitespace-nowrap">
-                      <svg 
-                        className="w-5 h-5" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                      </svg>
-                      Shop by Category
-                    </button>
-                  </Link>
-                </div>
-
-                <div className="flex items-center gap-6 flex-1 justify-center">
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="text-white hover:text-[#FFD700] transition text-[15px] font-medium whitespace-nowrap"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              </nav>
-
               {/* Mobile Menu */}
               {isMenuOpen && (
-                <div className="md:hidden py-4 border-t border-gray-100 bg-white">
-                  <Link 
-                    href="/shop-by-category"
-                    className="block w-full text-left py-3 px-4 bg-[#FF6B35] text-white font-semibold rounded-lg mb-2"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <span className="flex items-center gap-2">
-                      <svg 
-                        className="w-5 h-5" 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
-                      >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                      </svg>
-                      Shop by Category
-                    </span>
-                  </Link>
-
+                <div className="lg:hidden py-4 border-t border-gray-100 bg-white">
                   <Link 
                     href="/" 
                     className="block py-3 transition px-4 text-[#FF6B35] font-semibold border-b border-gray-50"
@@ -249,12 +255,12 @@ export default function Header() {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
         <div className="flex items-center justify-around py-2">
           <Link href="/" className="flex flex-col items-center gap-0.5 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
-            <Home className="w-6 h-6" />
+            <Home className="w-5 h-5" />
             <span className="text-[10px] font-medium">Home</span>
           </Link>
 
           <Link href="/shop-by-category" className="flex flex-col items-center gap-0.5 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
             <span className="text-[10px] font-medium">Shop</span>
@@ -262,7 +268,7 @@ export default function Header() {
 
           <Link href="/cart" className="flex flex-col items-center gap-0.5 text-[#7B2FBE] hover:text-[#6A1FB3] transition group relative">
             <div className="relative">
-              <ShoppingCart className="w-6 h-6" />
+              <ShoppingCart className="w-5 h-5" />
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-2 bg-[#FF6B35] text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
                   {totalItems}
@@ -273,11 +279,67 @@ export default function Header() {
           </Link>
 
           <Link href="/wishlist" className="flex flex-col items-center gap-0.5 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
-            <Heart className="w-6 h-6" />
+            <Heart className="w-5 h-5" />
             <span className="text-[10px] font-medium">Wishlist</span>
           </Link>
         </div>
       </div>
+
+      {/* ========== SEARCH POPUP OVERLAY ========== */}
+      <AnimatePresence>
+        {isSearchOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[999] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-20 md:pt-28 px-4"
+            onClick={() => setIsSearchOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: -20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: -20, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Search Header */}
+              <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                <h3 className="text-lg font-bold text-gray-800 font-comic">Search Products</h3>
+                <button
+                  onClick={() => setIsSearchOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+
+              {/* Search Bar */}
+              <div className="p-4">
+                <SearchBar onProductSelect={handleProductSelect} />
+              </div>
+
+              {/* Quick Suggestions */}
+              <div className="px-4 pb-4">
+                <p className="text-xs text-gray-400 font-medium mb-2">Popular Searches:</p>
+                <div className="flex flex-wrap gap-2">
+                  {['Educational Toys', 'RC Cars', 'Soft Toys', 'Puzzles', 'Building Blocks', 'Musical Toys'].map((tag) => (
+                    <button
+                      key={tag}
+                      className="px-3 py-1 bg-gray-100 hover:bg-[#7B2FBE]/10 text-gray-600 hover:text-[#7B2FBE] text-xs rounded-full transition"
+                      onClick={() => {
+                        setIsSearchOpen(false)
+                      }}
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }

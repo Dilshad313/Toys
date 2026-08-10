@@ -25,8 +25,8 @@ export default function HomePage() {
       <SoftToys />
       <OfferBanner />
       <HappyChildhoods />
-      <Reviews />
       <Testimonials />
+      <Reviews />
       <Features />
     </>
   )

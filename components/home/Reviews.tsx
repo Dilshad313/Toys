@@ -147,7 +147,7 @@ export default function Reviews() {
             <Star className="w-4 h-4 fill-current" />
             Customer Reviews
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold font-comic text-gray-800">
+          <h2 className="text-3xl md:text-4xl font-bold font-comic text-[#D32F2F]">
             What Our Customers Say
           </h2>
           <p className="text-gray-500 mt-2 font-comic">
@@ -270,16 +270,6 @@ export default function Reviews() {
             <div className="text-2xl font-bold text-[#D32F2F] font-comic">98%</div>
             <div className="text-xs text-gray-500">Satisfaction Rate</div>
           </div>
-        </div>
-
-        {/* Write Review CTA */}
-        <div className="text-center mt-8">
-          <button className="bg-[#D32F2F] hover:bg-[#B71C1C] text-white px-8 py-3 rounded-full font-semibold transition shadow-md hover:shadow-lg">
-            Write a Review
-          </button>
-          <p className="text-xs text-gray-400 mt-2">
-            Share your experience with us!
-          </p>
         </div>
       </div>
 

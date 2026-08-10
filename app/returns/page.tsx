@@ -15,6 +15,7 @@ import {
   Mail,
   Phone
 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function ReturnsPage() {
   return (
@@ -244,7 +245,7 @@ export default function ReturnsPage() {
             </div>
           </motion.div>
 
-          {/* Contact for Returns */}
+          {/* Contact for Returns - Fixed Working Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -258,20 +259,13 @@ export default function ReturnsPage() {
               Our team is here to assist you with any return or refund queries
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <a 
+              <Link 
                 href="/contact"
-                className="bg-white text-[#D32F2F] hover:bg-gray-100 px-6 py-3 rounded-full font-semibold transition flex items-center gap-2"
+                className="bg-white text-[#D32F2F] hover:bg-gray-100 px-6 py-3 rounded-full font-semibold transition flex items-center gap-2 shadow-lg hover:shadow-xl"
               >
                 <MessageCircle className="w-5 h-5" />
                 Contact Support
-              </a>
-              <a 
-                href="tel:+919876543210"
-                className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-full font-semibold transition flex items-center gap-2 border border-white/30"
-              >
-                <Phone className="w-5 h-5" />
-                Call Now
-              </a>
+              </Link>
             </div>
           </motion.div>
         </div>

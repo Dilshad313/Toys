@@ -256,9 +256,9 @@ export default function BestSellers() {
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 font-comic text-[#D32F2F]">🧠 Educational Toys</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-white rounded-xl h-56 animate-pulse shadow-md" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="bg-white rounded-xl h-64 animate-pulse shadow-md" />
             ))}
           </div>
         </div>
@@ -314,10 +314,10 @@ export default function BestSellers() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold font-comic text-[#D32F2F]">
-                🧠 Educational Toys
+                Educational Toys
               </h2>
               <p className="text-gray-600 mt-1 font-medium font-comic text-sm md:text-base">
-                Our premium collection loved by kids everywhere! 🎉
+                Our premium collection loved by kids everywhere! 
               </p>
             </div>
           </div>
@@ -343,7 +343,7 @@ export default function BestSellers() {
               <ChevronRight className="w-5 h-5" />
             </button>
 
-            {/* Scrollable Products */}
+            {/* Scrollable Products - INCREASED SIZE ON DESKTOP */}
             <div
               ref={scrollContainerRef}
               className="flex gap-3 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory scroll-smooth"
@@ -373,7 +373,7 @@ export default function BestSellers() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.05 }}
-                    className="flex-shrink-0 w-[180px] sm:w-[200px] md:w-[220px] snap-start"
+                    className="flex-shrink-0 w-[180px] sm:w-[200px] md:w-[240px] lg:w-[260px] snap-start"
                   >
                     <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden group border border-gray-100 hover:border-[#D32F2F] flex flex-col relative h-full">
                       {/* Wishlist Button */}
@@ -382,10 +382,10 @@ export default function BestSellers() {
                           e.stopPropagation()
                           toggleWishlist(product.id)
                         }}
-                        className="absolute top-1.5 right-1.5 z-10 bg-white/90 backdrop-blur-sm p-1 rounded-full shadow-md hover:shadow-lg transition hover:scale-110"
+                        className="absolute top-2 right-2 z-10 bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-md hover:shadow-lg transition hover:scale-110"
                       >
                         <Heart
-                          className={`w-3.5 h-3.5 transition-colors ${
+                          className={`w-4 h-4 transition-colors ${
                             inWishlist 
                               ? 'fill-[#D32F2F] text-[#D32F2F]' 
                               : 'text-gray-400 hover:text-[#D32F2F]'
@@ -399,13 +399,13 @@ export default function BestSellers() {
                           <img
                             src={imageUrl}
                             alt={product.title}
-                            className="w-full h-36 object-cover group-hover:scale-110 transition duration-500"
+                            className="w-full h-44 md:h-52 lg:h-56 object-cover group-hover:scale-110 transition duration-500"
                             onError={(e) => {
                               e.currentTarget.src = '/placeholder.jpg'
                             }}
                           />
                           {discount > 0 && (
-                            <span className="absolute top-1.5 left-1.5 bg-green-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full">
+                            <span className="absolute top-2 left-2 bg-green-500 text-white text-[9px] md:text-[10px] font-bold px-2 py-1 rounded-full">
                               {discount}% OFF
                             </span>
                           )}
@@ -414,25 +414,25 @@ export default function BestSellers() {
 
                       {/* Product Details */}
                       <Link href={`/products/${product.handle}`} className="flex-1">
-                        <div className="p-2 flex flex-col flex-1 cursor-pointer">
-                          <h3 className="font-semibold text-[11px] line-clamp-2 hover:text-[#FF6B35] transition min-h-[32px] font-comic leading-tight">
+                        <div className="p-2.5 md:p-3 flex flex-col flex-1 cursor-pointer">
+                          <h3 className="font-semibold text-xs md:text-sm line-clamp-2 hover:text-[#FF6B35] transition min-h-[36px] md:min-h-[40px] font-comic leading-tight">
                             {product.title}
                           </h3>
                           
-                          <div className="flex items-center gap-1 mt-1">
+                          <div className="flex items-center gap-1 mt-1.5">
                             <div className="flex items-center text-yellow-400">
-                              <Star className="w-2.5 h-2.5 fill-current" />
-                              <span className="text-gray-700 ml-0.5 text-[9px]">4.8</span>
+                              <Star className="w-3 h-3 md:w-3.5 md:h-3.5 fill-current" />
+                              <span className="text-gray-700 ml-0.5 text-[10px] md:text-xs">4.8</span>
                             </div>
-                            <span className="text-gray-400 text-[8px]">(245)</span>
+                            <span className="text-gray-400 text-[9px] md:text-[10px]">(245)</span>
                           </div>
                           
-                          <div className="flex items-center gap-1.5 mt-1">
-                            <span className="text-sm font-bold text-[#D32F2F] font-comic">
+                          <div className="flex items-center gap-1.5 mt-1.5">
+                            <span className="text-base md:text-lg font-bold text-[#D32F2F] font-comic">
                               ₹{parseFloat(price).toFixed(2)}
                             </span>
                             {compareAt && (
-                              <span className="text-gray-400 line-through text-[8px]">
+                              <span className="text-gray-400 line-through text-[9px] md:text-[10px]">
                                 ₹{parseFloat(compareAt).toFixed(2)}
                               </span>
                             )}
@@ -441,7 +441,7 @@ export default function BestSellers() {
                       </Link>
 
                       {/* Two Buttons */}
-                      <div className="p-2 pt-0 grid grid-cols-2 gap-1.5">
+                      <div className="p-2.5 md:p-3 pt-0 grid grid-cols-2 gap-1.5 md:gap-2">
                         <AnimatePresence mode="wait">
                           {isAdded ? (
                             <motion.button
@@ -449,10 +449,10 @@ export default function BestSellers() {
                               initial={{ scale: 0.8, opacity: 0 }}
                               animate={{ scale: 1, opacity: 1 }}
                               exit={{ scale: 0.8, opacity: 0 }}
-                              className="py-1.5 rounded-lg font-semibold text-[9px] bg-green-500 text-white flex items-center justify-center gap-1 cursor-default"
+                              className="py-1.5 md:py-2 rounded-lg font-semibold text-[10px] md:text-xs bg-green-500 text-white flex items-center justify-center gap-1 cursor-default"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <Check className="w-2.5 h-2.5" />
+                              <Check className="w-3 h-3 md:w-3.5 md:h-3.5" />
                               Added
                             </motion.button>
                           ) : isAdding ? (
@@ -461,10 +461,10 @@ export default function BestSellers() {
                               initial={{ scale: 0.8, opacity: 0 }}
                               animate={{ scale: 1, opacity: 1 }}
                               exit={{ scale: 0.8, opacity: 0 }}
-                              className="py-1.5 rounded-lg font-semibold text-[9px] bg-[#D32F2F] text-white flex items-center justify-center gap-1 opacity-70 cursor-wait"
+                              className="py-1.5 md:py-2 rounded-lg font-semibold text-[10px] md:text-xs bg-[#D32F2F] text-white flex items-center justify-center gap-1 opacity-70 cursor-wait"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <div className="w-2.5 h-2.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              <div className="w-3 h-3 md:w-3.5 md:h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                             </motion.button>
                           ) : (
                             <motion.button
@@ -477,9 +477,9 @@ export default function BestSellers() {
                                 handleAddToCart(variantId, product.id, product)
                               }}
                               disabled={!variantId}
-                              className="py-1.5 rounded-lg font-semibold text-[9px] bg-[#D32F2F] hover:bg-[#B71C1C] text-white transition flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="py-1.5 md:py-2 rounded-lg font-semibold text-[10px] md:text-xs bg-[#D32F2F] hover:bg-[#B71C1C] text-white transition flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              <ShoppingCart className="w-2.5 h-2.5" />
+                              <ShoppingCart className="w-3 h-3 md:w-3.5 md:h-3.5" />
                               Add
                             </motion.button>
                           )}
@@ -491,7 +491,7 @@ export default function BestSellers() {
                             handleBuyNow(variantId)
                           }}
                           disabled={!variantId}
-                          className="py-1.5 rounded-lg font-semibold text-[9px] bg-[#FF6B35] hover:bg-[#e55a2b] text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="py-1.5 md:py-2 rounded-lg font-semibold text-[10px] md:text-xs bg-blue-600 hover:bg-blue-700 text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Buy Now
                         </button>

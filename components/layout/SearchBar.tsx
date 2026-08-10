@@ -33,7 +33,11 @@ interface Product {
   }
 }
 
-export default function SearchBar() {
+interface SearchBarProps {
+  onProductSelect?: () => void  // Add this prop
+}
+
+export default function SearchBar({ onProductSelect }: SearchBarProps) {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<Product[]>([])
   const [loading, setLoading] = useState(false)
@@ -89,6 +93,10 @@ export default function SearchBar() {
     if (query.trim()) {
       router.push(`/search?q=${encodeURIComponent(query)}`)
       setIsOpen(false)
+      // Close the popup when searching
+      if (onProductSelect) {
+        onProductSelect()
+      }
     }
   }
 
@@ -101,6 +109,17 @@ export default function SearchBar() {
     setQuery('')
     setResults([])
     setIsOpen(false)
+  }
+
+  // Handle product selection - closes the popup
+  const handleProductSelect = () => {
+    setIsOpen(false)
+    setQuery('')
+    setResults([])
+    // Call the onProductSelect callback to close the search popup
+    if (onProductSelect) {
+      onProductSelect()
+    }
   }
 
   return (
@@ -149,15 +168,15 @@ export default function SearchBar() {
                   <Link
                     key={product.id}
                     href={`/products/${product.handle}`}
-                    onClick={() => setIsOpen(false)}
+                    onClick={handleProductSelect}
                     className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-xl transition group"
                   >
                     <div className="relative w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
-                    <img
+                      <img
                         src={imageUrl}
                         alt={product.title}
                         className="w-full h-full object-cover"
-                    />
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <h4 className="font-medium text-gray-800 text-sm truncate group-hover:text-[#FF6B35] transition">
@@ -173,7 +192,7 @@ export default function SearchBar() {
               <div className="border-t border-gray-100 pt-2 mt-2">
                 <Link
                   href={`/search?q=${encodeURIComponent(query)}`}
-                  onClick={() => setIsOpen(false)}
+                  onClick={handleProductSelect}
                   className="block text-center text-sm text-[#FF6B35] font-semibold hover:underline py-1"
                 >
                   View all results →

@@ -12,6 +12,7 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function PrivacyPage() {
   return (
@@ -184,7 +185,7 @@ export default function PrivacyPage() {
                   </div>
                 </div>
 
-                {/* Contact for Privacy */}
+                {/* Contact for Privacy - Updated Email */}
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Mail className="w-5 h-5 text-teal-500" />
@@ -192,8 +193,8 @@ export default function PrivacyPage() {
                   <div>
                     <h3 className="font-bold text-gray-800">Privacy Questions</h3>
                     <ul className="text-gray-600 text-sm space-y-1 mt-1">
-                      <li>• Email: <a href="mailto:support@athvitoys.com" className="text-[#D32F2F] hover:underline">support@athvitoys.com</a></li>
-                      <li>• Phone: <a href="tel:+919876543210" className="text-[#D32F2F] hover:underline">+91 98765 43210</a></li>
+                      <li>• Email: <a href="mailto:hello@athvitoys.com" className="text-[#D32F2F] hover:underline">hello@athvitoys.com</a></li>
+                      <li>• Phone: <a href="tel:+917550122100" className="text-[#D32F2F] hover:underline">+91 75001 22100</a></li>
                       <li>• We respond within 24 hours</li>
                     </ul>
                   </div>
@@ -218,7 +219,7 @@ export default function PrivacyPage() {
             </p>
           </motion.div>
 
-          {/* Contact Section */}
+          {/* Contact Section - Fixed Working Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -232,16 +233,18 @@ export default function PrivacyPage() {
               We're here to address any concerns about your privacy
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <a 
+              <Link 
                 href="/contact"
-                className="bg-white text-[#D32F2F] hover:bg-gray-100 px-6 py-3 rounded-full font-semibold transition flex items-center gap-2"
+                className="bg-white text-[#D32F2F] hover:bg-gray-100 px-6 py-3 rounded-full font-semibold transition flex items-center gap-2 shadow-lg hover:shadow-xl"
               >
                 <Mail className="w-5 h-5" />
                 Contact Us
-              </a>
+              </Link>
               <a 
-                href="mailto:support@athvitoys.com"
-                className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-full font-semibold transition flex items-center gap-2 border border-white/30"
+                href="mailto:hello@athvitoys.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-full font-semibold transition flex items-center gap-2 border border-white/30 hover:border-white/50"
               >
                 <Mail className="w-5 h-5" />
                 Email Support

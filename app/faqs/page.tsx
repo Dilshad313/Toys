@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Search, MessageCircle, Phone, Mail, Package, Truck, CreditCard, RotateCcw, Shield, Clock } from 'lucide-react'
+import Link from 'next/link'
 
 const faqs = [
   {
@@ -224,27 +225,27 @@ export default function FAQsPage() {
               Quick Links
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <a href="/track-order" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+              <Link href="/track-order" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
                 <Truck className="w-6 h-6 text-[#D32F2F]" />
                 <span className="text-xs font-medium text-gray-600">Track Order</span>
-              </a>
-              <a href="/returns" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+              </Link>
+              <Link href="/returns" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
                 <RotateCcw className="w-6 h-6 text-[#D32F2F]" />
                 <span className="text-xs font-medium text-gray-600">Returns</span>
-              </a>
-              <a href="/contact" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+              </Link>
+              <Link href="/contact" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
                 <MessageCircle className="w-6 h-6 text-[#D32F2F]" />
                 <span className="text-xs font-medium text-gray-600">Contact</span>
-              </a>
-              <a href="/shipping-policy" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+              </Link>
+              <Link href="/shipping-policy" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
                 <Package className="w-6 h-6 text-[#D32F2F]" />
                 <span className="text-xs font-medium text-gray-600">Shipping</span>
-              </a>
+              </Link>
             </div>
           </div>
         </motion.div>
 
-        {/* Still Need Help */}
+        {/* Still Need Help - Fixed Contact Us Button */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -259,20 +260,13 @@ export default function FAQsPage() {
               Our support team is here to help you 24/7
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <a 
+              <Link 
                 href="/contact"
-                className="bg-white text-[#D32F2F] hover:bg-gray-100 px-6 py-3 rounded-full font-semibold transition flex items-center gap-2"
+                className="bg-white text-[#D32F2F] hover:bg-gray-100 px-6 py-3 rounded-full font-semibold transition flex items-center gap-2 shadow-lg hover:shadow-xl"
               >
                 <MessageCircle className="w-5 h-5" />
                 Contact Us
-              </a>
-              <a 
-                href="tel:+919876543210"
-                className="bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-full font-semibold transition flex items-center gap-2 border border-white/30"
-              >
-                <Phone className="w-5 h-5" />
-                Call Now
-              </a>
+              </Link>
             </div>
           </div>
         </motion.div>

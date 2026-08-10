@@ -52,16 +52,16 @@ export default function Footer() {
             <div className="flex flex-col items-center lg:items-end gap-2">
               <p className="text-[#1a1a2e] font-semibold text-sm">Follow Us</p>
               <div className="flex gap-2">
-                <a href="#" className="bg-white hover:bg-[#E21923] text-[#E21923] hover:text-white p-2 rounded-full transition w-9 h-9 flex items-center justify-center">
+                <a href="https://www.instagram.com/athvi_toys/" className="bg-white hover:bg-[#E21923] text-[#E21923] hover:text-white p-2 rounded-full transition w-9 h-9 flex items-center justify-center">
                   <FaInstagram className="w-4 h-4" />
                 </a>
-                <a href="#" className="bg-white hover:bg-[#045EE6] text-[#045EE6] hover:text-white p-2 rounded-full transition w-9 h-9 flex items-center justify-center">
+                <a href="https://www.facebook.com/profile.php?id=61593288174191&sk=reels_tab" className="bg-white hover:bg-[#045EE6] text-[#045EE6] hover:text-white p-2 rounded-full transition w-9 h-9 flex items-center justify-center">
                   <FaFacebook className="w-4 h-4" />
                 </a>
-                <a href="#" className="bg-white hover:bg-[#E21923] text-[#E21923] hover:text-white p-2 rounded-full transition w-9 h-9 flex items-center justify-center">
+                <a href="https://www.youtube.com/@athvitoy" className="bg-white hover:bg-[#E21923] text-[#E21923] hover:text-white p-2 rounded-full transition w-9 h-9 flex items-center justify-center">
                   <FaYoutube className="w-4 h-4" />
                 </a>
-                <a href="#" className="bg-white hover:bg-[#25D366] text-[#25D366] hover:text-white p-2 rounded-full transition w-9 h-9 flex items-center justify-center">
+                <a href="https://wa.me/917550122100" className="bg-white hover:bg-[#25D366] text-[#25D366] hover:text-white p-2 rounded-full transition w-9 h-9 flex items-center justify-center">
                   <FaWhatsapp className="w-4 h-4" />
                 </a>
               </div>
@@ -107,7 +107,7 @@ export default function Footer() {
               <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Customer Service</h4>
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/contact" className="text-white/80 hover:text-[#FAC310] transition">Contact Us</Link></li>
-                <li><Link href="/track-order" className="text-white/80 hover:text-[#FAC310] transition">Track Order</Link></li>
+                {/* <li><Link href="/track-order" className="text-white/80 hover:text-[#FAC310] transition">Track Order</Link></li> */}
                 <li><Link href="/shipping-policy" className="text-white/80 hover:text-[#FAC310] transition">Shipping Policy</Link></li>
                 <li><Link href="/returns" className="text-white/80 hover:text-[#FAC310] transition">Returns & Refunds</Link></li>
                 <li><Link href="/faqs" className="text-white/80 hover:text-[#FAC310] transition">FAQs</Link></li>

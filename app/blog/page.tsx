@@ -1,98 +1,181 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef } from 'react'
+import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { Star } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Calendar, User, ArrowRight } from 'lucide-react'
 
-interface Review {
+interface BlogPost {
   id: number
-  name: string
-  text: string
+  title: string
+  excerpt: string
   image: string
-  rating: number
+  author: string
+  date: string
+  category: string
 }
 
-const reviews: Review[] = [
+const blogPosts: BlogPost[] = [
   {
     id: 1,
-    name: 'Dipak Munjariya',
-    text: 'Wow!! Jawahill! This shop is very huge and my kids enjoying this',
+    title: 'Top 10 Educational Toys for Kids in 2025',
+    excerpt: 'Discover the best educational toys that boost creativity, motor skills, and logical thinking for children of all ages.',
     image: '/review1.png',
-    rating: 5,
+    author: 'Admin',
+    date: 'Aug 10, 2025',
+    category: 'Education',
   },
   {
     id: 2,
-    name: 'Samir Bhadani',
-    text: 'Great shopping experience and very good variety for everyone',
+    title: 'How to Choose the Perfect Toy for Your Child',
+    excerpt: 'A complete guide to selecting age-appropriate toys that help in your child\'s overall development and growth.',
     image: '/review2.png',
-    rating: 5,
+    author: 'Team Athvi',
+    date: 'Aug 05, 2025',
+    category: 'Guide',
   },
   {
     id: 3,
-    name: 'Pratika Kalathiya',
-    text: 'Great place for kids\' toys- good quality and lovely atmosphere',
+    title: 'Benefits of Outdoor Play for Children',
+    excerpt: 'Learn why outdoor play is essential for physical health, social skills, and mental well-being of your little ones.',
     image: '/review3.png',
-    rating: 5,
+    author: 'Admin',
+    date: 'Jul 28, 2025',
+    category: 'Health',
   },
 ]
 
-export default function TestimonialsSection() {
+export default function BlogSection() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -340, behavior: 'smooth' })
+    }
+  }
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 340, behavior: 'smooth' })
+    }
+  }
+
   return (
-    <section className="bg-[#C0392B] py-12 md:py-16">
+    <section className="bg-blue-600 py-12 md:py-20 overflow-hidden">
       <div className="container mx-auto px-4">
-        {/* Section Title */}
-        <h2 className="text-center text-white text-2xl md:text-3xl lg:text-4xl font-bold mb-8 md:mb-12 font-comic">
-          Trusted by Thousands of Happy Customers
-        </h2>
 
-        {/* Reviews Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          {reviews.map((review) => (
-            <div
-              key={review.id}
-              className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
-            >
-              {/* Review Image */}
-              <div className="relative w-full h-48 md:h-56 lg:h-64">
-                <Image
-                  src={review.image}
-                  alt={`Review by ${review.name}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                />
-              </div>
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="text-center mb-8 md:mb-12"
+        >
+          <span className="text-white/80 text-sm md:text-base font-semibold uppercase tracking-wider">
+            Our Blog
+          </span>
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-black mt-2">
+            Latest Articles & Tips
+          </h2>
+          <p className="text-white/70 text-sm md:text-base mt-2 max-w-xl mx-auto">
+            Explore parenting tips, toy guides, and expert advice for your child's development.
+          </p>
+        </motion.div>
 
-              {/* Review Content */}
-              <div className="p-4 md:p-5">
-                {/* Star Rating */}
-                <div className="flex gap-1 mb-3">
-                  {[...Array(review.rating)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className="w-4 h-4 fill-[#F1C40F] text-[#F1C40F]"
-                    />
-                  ))}
+        <div className="relative">
+          {/* Mobile Navigation Buttons */}
+          <button
+            onClick={scrollLeft}
+            className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 text-gray-700 p-2 rounded-full shadow-lg backdrop-blur transition -ml-2"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+
+          <button
+            onClick={scrollRight}
+            className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 text-gray-700 p-2 rounded-full shadow-lg backdrop-blur transition -mr-2"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+
+          {/* Blog Cards Container */}
+          <div
+            ref={scrollContainerRef}
+            className="flex md:grid md:grid-cols-3 gap-5 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-smooth pb-4 md:pb-0 scrollbar-hide"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {blogPosts.map((post) => (
+              <div
+                key={post.id}
+                className="flex-shrink-0 w-[300px] md:w-auto snap-start bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group cursor-pointer"
+              >
+                {/* Image */}
+                <div className="relative w-full h-48 md:h-52 lg:h-56 overflow-hidden">
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                  {/* Category Badge */}
+                  <div className="absolute top-3 left-3 bg-[#D32F2F] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                    {post.category}
+                  </div>
                 </div>
 
-                {/* Review Text */}
-                <p className="text-gray-700 text-sm md:text-base leading-relaxed mb-3">
-                  {review.text}
-                </p>
+                {/* Content */}
+                <div className="p-4 md:p-5">
+                  {/* Meta */}
+                  <div className="flex items-center gap-3 mb-3 text-gray-400 text-xs">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      <span>{post.date}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <User className="w-3 h-3" />
+                      <span>{post.author}</span>
+                    </div>
+                  </div>
 
-                {/* Reviewer Name */}
-                <p className="text-gray-900 font-semibold text-sm md:text-base">
-                  - {review.name}
-                </p>
+                  {/* Title */}
+                  <h3 className="text-gray-900 font-bold text-base md:text-lg leading-snug mb-2 group-hover:text-[#D32F2F] transition-colors line-clamp-2">
+                    {post.title}
+                  </h3>
+
+                  {/* Excerpt */}
+                  <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
+                    {post.excerpt}
+                  </p>
+
+                  {/* Read More */}
+                  <div className="flex items-center gap-1 text-[#D32F2F] font-semibold text-sm group-hover:gap-2 transition-all">
+                    <span>Read More</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Mobile Dots */}
+        <div className="flex justify-center gap-2 mt-4 md:hidden">
+          {blogPosts.map((_, index) => (
+            <div key={index} className={`w-2 h-2 rounded-full ${index === 0 ? 'bg-white' : 'bg-white/40'}`} />
           ))}
         </div>
+
       </div>
 
       <style jsx global>{`
-        .font-comic {
-          font-family: 'Baloo 2', 'Comic Neue', cursive;
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
       `}</style>
     </section>

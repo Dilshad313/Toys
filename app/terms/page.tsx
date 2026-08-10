@@ -17,6 +17,7 @@ import {
   Lock,
   Package
 } from 'lucide-react'
+import Link from 'next/link'
 
 export default function TermsPage() {
   return (
@@ -207,7 +208,7 @@ export default function TermsPage() {
                     <ul className="text-gray-600 text-sm space-y-1 mt-1">
                       <li>• We respect your privacy and protect your data</li>
                       <li>• Your information is never shared with third parties</li>
-                      <li>• Read our full <a href="/privacy" className="text-[#D32F2F] hover:underline">Privacy Policy</a></li>
+                      <li>• Read our full <Link href="/privacy" className="text-[#D32F2F] hover:underline">Privacy Policy</Link></li>
                     </ul>
                   </div>
                 </div>
@@ -271,7 +272,7 @@ export default function TermsPage() {
                   </div>
                 </div>
 
-                {/* Contact */}
+                {/* Contact - Updated with correct details */}
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0 mt-0.5">
                     <Mail className="w-5 h-5 text-green-500" />
@@ -279,9 +280,9 @@ export default function TermsPage() {
                   <div>
                     <h3 className="font-bold text-gray-800">12. Contact Us</h3>
                     <ul className="text-gray-600 text-sm space-y-1 mt-1">
-                      <li>• Email: <a href="mailto:support@athvitoys.com" className="text-[#D32F2F] hover:underline">support@athvitoys.com</a></li>
-                      <li>• Phone: <a href="tel:+919876543210" className="text-[#D32F2F] hover:underline">+91 98765 43210</a></li>
-                      <li>• Address: #123, Main Road, Nagercoil - 629001, Tamil Nadu</li>
+                      <li>• Email: <a href="mailto:hello@athvitoys.com" className="text-[#D32F2F] hover:underline">hello@athvitoys.com</a></li>
+                      <li>• Phone: <a href="tel:+917550122100" className="text-[#D32F2F] hover:underline">+91 75001 22100</a></li>
+                      <li>• Address: #9-90D/2, Thingalnagar, Nagercoil - 629252, Kanniyakumari District, Tamil Nadu</li>
                     </ul>
                   </div>
                 </div>
@@ -307,7 +308,7 @@ export default function TermsPage() {
             </div>
           </motion.div>
 
-          {/* Quick Links */}
+          {/* Quick Links - Updated with Link components */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -318,22 +319,22 @@ export default function TermsPage() {
               📚 Quick Links
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <a href="/privacy" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+              <Link href="/privacy" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
                 <Lock className="w-6 h-6 text-[#D32F2F]" />
                 <span className="text-xs font-medium text-gray-600">Privacy Policy</span>
-              </a>
-              <a href="/shipping-policy" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+              </Link>
+              <Link href="/shipping-policy" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
                 <Truck className="w-6 h-6 text-[#D32F2F]" />
                 <span className="text-xs font-medium text-gray-600">Shipping Policy</span>
-              </a>
-              <a href="/returns" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+              </Link>
+              <Link href="/returns" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
                 <RotateCcw className="w-6 h-6 text-[#D32F2F]" />
                 <span className="text-xs font-medium text-gray-600">Returns</span>
-              </a>
-              <a href="/contact" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
+              </Link>
+              <Link href="/contact" className="flex flex-col items-center gap-2 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition">
                 <Mail className="w-6 h-6 text-[#D32F2F]" />
                 <span className="text-xs font-medium text-gray-600">Contact Us</span>
-              </a>
+              </Link>
             </div>
           </motion.div>
         </div>

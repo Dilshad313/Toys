@@ -58,6 +58,7 @@ export default function Categories() {
   const [addingToCart, setAddingToCart] = useState<string | null>(null)
   const { addToCart } = useCart()
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const ageScrollRef = useRef<HTMLDivElement>(null)
 
   // Fetch products based on active tab
   useEffect(() => {
@@ -175,39 +176,26 @@ export default function Categories() {
     return { price, compareAt, imageUrl, variantId, discount }
   }
 
-  // Get tab-specific badge and icon
-  const getTabBadge = (tab: TabType) => {
-    switch (tab) {
-      case 'trending':
-        return { icon: Sparkles, label: 'Trending', color: 'bg-orange-500' }
-      case 'new-arrivals':
-        return { icon: Clock, label: 'New', color: 'bg-blue-500' }
-      case 'best-sellers':
-        return { icon: Trophy, label: 'Best Seller', color: 'bg-yellow-500' }
-    }
-  }
+  
 
   const tabs = [
     { 
       id: 'trending' as TabType, 
       label: 'Trending',
-      description: 'What is hot right now'
     },
     { 
       id: 'new-arrivals' as TabType, 
       label: 'New Arrivals',
-      description: 'Fresh arrivals'
     },
     { 
       id: 'best-sellers' as TabType, 
       label: 'Best Sellers',
-      description: 'Most popular picks'
     },
   ]
 
-  const currentTabBadge = getTabBadge(activeTab)
+ 
 
-  // Scroll functions
+  // Scroll functions for products
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollBy({ left: -280, behavior: 'smooth' })
@@ -220,62 +208,24 @@ export default function Categories() {
     }
   }
 
+  // Scroll functions for age categories
+  const ageScrollLeft = () => {
+    if (ageScrollRef.current) {
+      ageScrollRef.current.scrollBy({ left: -200, behavior: 'smooth' })
+    }
+  }
+
+  const ageScrollRight = () => {
+    if (ageScrollRef.current) {
+      ageScrollRef.current.scrollBy({ left: 200, behavior: 'smooth' })
+    }
+  }
+
   return (
     <section className="py-8 md:py-16 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-3 md:px-4">
         
-        {/* ==================== SHOP BY AGE SECTION ==================== */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="mb-12 md:mb-16"
-        >
-          {/* Shop by Age Title */}
-          <div className="text-center mb-6 md:mb-8">
-            <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-[#FF6B35] font-comic">
-              Shop by Age
-            </h2>
-            <p className="text-gray-500 text-sm md:text-base mt-2">
-              Find the perfect toy for every stage
-            </p>
-          </div>
-
-          {/* Age Categories Grid - ROUND IMAGES */}
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-4 md:gap-8">
-            {ageCategories.map((cat, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="flex flex-col items-center group cursor-pointer"
-              >
-                <Link href={`/shop-by-category?age=${cat.name.toLowerCase().replace(/\s+/g, '-')}`}>
-                  {/* ROUND Image Container */}
-                  <div className="relative w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group-hover:scale-110 border-4 border-[#FF6B35]/20 group-hover:border-[#FF6B35]">
-                    <img
-                      src={cat.image}
-                      alt={cat.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-                      onError={(e) => {
-                        e.currentTarget.src = '/placeholder.jpg'
-                      }}
-                    />
-                  </div>
-                  {/* Age Label Below */}
-                  <div className="mt-3 md:mt-4 text-center">
-                    <span className="inline-block bg-[#FF6B35] text-white text-xs md:text-sm font-bold px-3 py-1 md:px-4 md:py-1.5 rounded-full font-comic">
-                      {cat.name}
-                    </span>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ==================== SPECIAL PRODUCTS SECTION ==================== */}
+        {/* ==================== SPECIAL PRODUCTS SECTION (FIRST) ==================== */}
         {/* Section Title */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -284,11 +234,8 @@ export default function Categories() {
           className="text-center mb-6 md:mb-8"
         >
           <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-[#D32F2F] font-comic">
-            Special Products
+            Loved by kids 
           </h2>
-          <p className="text-gray-500 text-sm md:text-base mt-2">
-            {tabs.find(t => t.id === activeTab)?.description}
-          </p>
         </motion.div>
 
         {/* Tabs */}
@@ -317,16 +264,13 @@ export default function Categories() {
           </div>
         </div>
 
-        {/* Tab Description and Badge */}
+        {/* Tab Badge - Shows only the selected tab badge */}
         <motion.div
           key={activeTab}
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-4 md:mb-6"
         >
-          <span className={`${currentTabBadge.color} text-white text-xs md:text-sm font-bold px-4 py-1.5 rounded-full inline-block`}>
-            {currentTabBadge.label}
-          </span>
         </motion.div>
 
         {/* Products Grid - Horizontal Scroll on Mobile */}
@@ -496,7 +440,7 @@ export default function Categories() {
                               window.location.href = `https://${storeDomain}/cart/${numericVariantId}:1`
                             }}
                             disabled={!variantId}
-                            className="py-1.5 md:py-2 rounded-lg bg-[#8B4513] hover:bg-[#6B3410] text-white text-[10px] md:text-xs font-semibold transition disabled:opacity-50"
+                            className="py-1.5 md:py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[10px] md:text-xs font-semibold transition disabled:opacity-50"
                           >
                             Buy Now
                           </button>
@@ -509,6 +453,77 @@ export default function Categories() {
             </div>
           )}
         </AnimatePresence>
+
+        {/* ==================== SHOP BY AGE SECTION (SECOND) ==================== */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="mt-12 md:mt-16 pt-8 md:pt-12 border-t border-gray-200"
+        >
+          {/* Shop by Age Title */}
+          <div className="text-center mb-6 md:mb-8">
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-[#FF6B35] font-comic">
+              Shop by Age
+            </h2>
+          </div>
+
+          {/* Age Categories - Horizontal Scroll on Mobile */}
+          <div className="relative">
+            {/* Scroll Buttons - Desktop Only */}
+            <div className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10">
+              <button
+                onClick={ageScrollLeft}
+                className="bg-white rounded-full shadow-lg p-2 hover:bg-gray-50 transition border border-gray-200"
+              >
+                <ChevronLeft className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+            <div className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10">
+              <button
+                onClick={ageScrollRight}
+                className="bg-white rounded-full shadow-lg p-2 hover:bg-gray-50 transition border border-gray-200"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
+            <div
+              ref={ageScrollRef}
+              className="flex gap-8 md:gap-12 overflow-x-auto md:justify-center pb-4 scroll-smooth scrollbar-hide"
+            >
+              {ageCategories.map((cat, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="flex flex-col items-center group cursor-pointer flex-shrink-0"
+                >
+                  <Link href={`/shop-by-category?age=${cat.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                    {/* ROUND Image Container */}
+                    <div className="relative w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group-hover:scale-110 border-4 border-[#FF6B35]/20 group-hover:border-[#FF6B35]">
+                      <img
+                        src={cat.image}
+                        alt={cat.name}
+                        className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                        onError={(e) => {
+                          e.currentTarget.src = '/placeholder.jpg'
+                        }}
+                      />
+                    </div>
+                    {/* Age Label Below */}
+                    <div className="mt-3 md:mt-4 text-center">
+                      <span className="inline-block bg-[#FF6B35] text-white text-xs md:text-sm font-bold px-3 py-1 md:px-4 md:py-1.5 rounded-full font-comic">
+                        {cat.name}
+                      </span>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       <style jsx>{`
