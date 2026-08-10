@@ -147,7 +147,7 @@ export default function Header() {
                   {/* Mobile: Centered Logo */}
                   <Link href="/" className="lg:hidden flex-shrink-0">
                     <Image 
-                      src="/logo1.png" 
+                      src="/logo2.png" 
                       alt="Athvi Toys" 
                       width={200} 
                       height={70}
