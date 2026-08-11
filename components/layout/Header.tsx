@@ -101,6 +101,7 @@ export default function Header() {
         </div>
       </div>
 
+      {/* Main Header - Sticky */}
       <header className="sticky top-0 z-50">
         {/* Main Header */}
         <div 
@@ -251,7 +252,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile Bottom Navigation */}
+      {/* Mobile Bottom Navigation - Sticky */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
         <div className="flex items-center justify-around py-2">
           <Link href="/" className="flex flex-col items-center gap-0.5 text-[#7B2FBE] hover:text-[#6A1FB3] transition group">
