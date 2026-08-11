@@ -38,8 +38,8 @@ export default function Hero() {
             transition={{ duration: 0.6 }}
             className="max-w-4xl"
           >
-            {/* Main Heading & Text - Mobile-ൽ അൽപ്പം മുകളിലേക്ക് */}
-            <div className="text-left -mt-6 md:mt-0">
+            {/* Main Heading & Text - Mobile: moved down */}
+            <div className="text-left md:mt-0">
               <h1 className="text-2xl md:text-5xl lg:text-6xl font-bold leading-tight mb-1 md:mb-3">
                 {/* Mobile: Single line, Desktop: Two lines */}
                 <span className="text-blue-600 block md:inline">
@@ -58,8 +58,8 @@ export default function Hero() {
               </p>
             </div>
 
-            {/* Stats Section & Button ONLY - Mobile-ൽ ഇനിയും പരമാവധി താഴേക്ക് തള്ളാൻ translate-y-24 / pt-44 നൽകിയിട്ടുണ്ട് */}
-            <div className="pt-44 md:pt-0 transform translate-y-6 md:translate-y-0">
+            {/* Stats Section & Button */}
+            <div className="pt-36 md:pt-0 transform translate-y-4 md:translate-y-0">
               {/* Stats Section */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
