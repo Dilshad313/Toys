@@ -75,7 +75,7 @@ export default function BlogSection() {
           <span className="text-white/80 text-sm md:text-base font-semibold uppercase tracking-wider">
             Our Blog
           </span>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-black mt-2">
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-white mt-2">
             Latest Articles & Tips
           </h2>
           <p className="text-white/70 text-sm md:text-base mt-2 max-w-xl mx-auto">

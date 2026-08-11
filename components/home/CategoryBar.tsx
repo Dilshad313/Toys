@@ -177,11 +177,11 @@ export default function CategoryBar() {
 
   if (loading) {
     return (
-      <section className="py-4 md:py-8 bg-white border-b border-gray-100">
+      <section className="py-4 md:py-8 bg-blue-600 border-b border-blue-500">
         <div className="container mx-auto px-2 md:px-4">
           <div className="flex items-center justify-center gap-2 py-8">
-            <div className="w-4 h-4 border-2 border-[#FF6B35] border-t-transparent rounded-full animate-spin" />
-            <span className="text-gray-500 text-sm">Loading categories...</span>
+            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <span className="text-white text-sm">Loading categories...</span>
           </div>
         </div>
       </section>
@@ -191,11 +191,11 @@ export default function CategoryBar() {
   // No collections found
   if (collections.length === 0) {
     return (
-      <section className="py-4 md:py-8 bg-white border-b border-gray-100">
+      <section className="py-4 md:py-8 bg-blue-600 border-b border-blue-500">
         <div className="container mx-auto px-2 md:px-4">
           <div className="text-center py-6">
-            <p className="text-gray-500 text-sm">No collections found. Add collections in Shopify Admin.</p>
-            <p className="text-gray-400 text-xs mt-1">Go to Shopify → Products → Collections</p>
+            <p className="text-white text-sm">No collections found. Add collections in Shopify Admin.</p>
+            <p className="text-white/70 text-xs mt-1">Go to Shopify → Products → Collections</p>
           </div>
         </div>
       </section>
@@ -203,8 +203,9 @@ export default function CategoryBar() {
   }
 
   return (
-    <section className="py-4 md:py-8 bg-white border-b border-gray-100">
+    <section className="py-4 md:py-8 bg-blue-600 border-b border-blue-500">
       <div className="container mx-auto px-2 md:px-4">
+
         <div 
           ref={containerRef}
           className="relative flex items-center touch-pan-y select-none"
@@ -261,7 +262,7 @@ export default function CategoryBar() {
                     href={`/shop-by-category?category=${category.handle}`}
                     className="flex flex-col items-center group w-full"
                   >
-                    <div className={`relative rounded-full overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:scale-110 border-2 border-gray-100 group-hover:border-[#FF6B35] ${
+                    <div className={`relative rounded-full overflow-hidden shadow-lg group-hover:shadow-2xl transition-all duration-300 group-hover:scale-110 border-2 border-white/30 group-hover:border-[#FFD700] ${
                       itemsPerPage === 3 ? 'w-24 h-24 md:w-28 md:h-28' :
                       itemsPerPage === 4 ? 'w-28 h-28 md:w-32 md:h-32' :
                       'w-32 h-32 md:w-40 md:h-40'
@@ -276,12 +277,12 @@ export default function CategoryBar() {
                           priority={i < 3}
                         />
                       ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-[#D32F2F]/20 to-[#FF6B35]/20 flex items-center justify-center">
+                        <div className="w-full h-full bg-gradient-to-br from-white/20 to-white/10 flex items-center justify-center">
                           <span className="text-3xl">🧸</span>
                         </div>
                       )}
                     </div>
-                    <span className={`mt-2 md:mt-3 text-center font-semibold text-gray-700 group-hover:text-[#FF6B35] transition line-clamp-1 ${
+                    <span className={`mt-2 md:mt-3 text-center font-semibold text-white group-hover:text-[#FFD700] transition line-clamp-1 ${
                       itemsPerPage === 3 ? 'text-xs md:text-sm' :
                       itemsPerPage === 4 ? 'text-sm md:text-base' :
                       'text-sm md:text-base'
@@ -327,8 +328,8 @@ export default function CategoryBar() {
                 onClick={() => setCurrentIndex(index)}
                 className={`rounded-full transition-all ${
                   currentIndex === index
-                    ? 'w-6 md:w-8 h-1.5 md:h-2 bg-[#FF6B35]'
-                    : 'w-1.5 md:w-2 h-1.5 md:h-2 bg-gray-300 hover:bg-gray-400'
+                    ? 'w-6 md:w-8 h-1.5 md:h-2 bg-[#FFD700]'
+                    : 'w-1.5 md:w-2 h-1.5 md:h-2 bg-white/40 hover:bg-white/60'
                 }`}
                 aria-label={`Go to slide ${index + 1}`}
               />
@@ -336,6 +337,12 @@ export default function CategoryBar() {
           </div>
         )}
       </div>
+
+      <style jsx global>{`
+        .font-comic {
+          font-family: 'Baloo 2', 'Comic Neue', cursive;
+        }
+      `}</style>
     </section>
   )
 }

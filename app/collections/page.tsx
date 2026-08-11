@@ -145,9 +145,9 @@ export default function CollectionsPage() {
         <h1 className="text-3xl md:text-5xl font-bold font-comic text-[#D32F2F] mb-8">
           🛍️ All Collections
         </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="bg-gray-100 rounded-2xl h-72 animate-pulse" />
+            <div key={i} className="bg-gray-100 rounded-2xl h-56 md:h-72 animate-pulse" />
           ))}
         </div>
       </div>
@@ -217,7 +217,7 @@ export default function CollectionsPage() {
         </p>
       </div>
 
-      {/* Products Grid */}
+      {/* Products Grid - 2 columns on mobile */}
       {sortedProducts.length === 0 ? (
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-8 text-center">
           <div className="text-6xl mb-4">🔍</div>
@@ -227,7 +227,7 @@ export default function CollectionsPage() {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           {sortedProducts.map((product, i) => {
             const variant = product.variants?.edges?.[0]?.node
             const price = variant?.price?.amount || '0'
@@ -255,65 +255,65 @@ export default function CollectionsPage() {
                     <img
                       src={imageUrl}
                       alt={product.title}
-                      className="w-full h-56 object-cover group-hover:scale-110 transition duration-500"
+                      className="w-full h-40 sm:h-48 md:h-56 object-cover group-hover:scale-110 transition duration-500"
                     />
                     {discount > 0 && (
-                      <span className="absolute top-3 right-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                      <span className="absolute top-2 right-2 bg-green-500 text-white text-[9px] md:text-xs font-bold px-1.5 py-0.5 rounded-full">
                         {discount}% OFF
                       </span>
                     )}
                     {product.tags?.includes('best-seller') && (
-                      <span className="absolute top-3 left-3 bg-[#D32F2F] text-white text-xs font-bold px-2 py-1 rounded-full">
+                      <span className="absolute top-2 left-2 bg-[#D32F2F] text-white text-[9px] md:text-xs font-bold px-1.5 py-0.5 rounded-full">
                         ⭐ Best Seller
                       </span>
                     )}
                   </div>
                 </Link>
 
-                <div className="p-4 flex flex-col flex-1">
+                <div className="p-2.5 md:p-4 flex flex-col flex-1">
                   {/* Product Title - Clickable */}
                   <Link href={`/products/${product.handle}`}>
-                    <h3 className="font-semibold text-base line-clamp-2 hover:text-[#FF6B35] transition min-h-[48px] cursor-pointer">
+                    <h3 className="font-semibold text-[11px] sm:text-xs md:text-base line-clamp-2 hover:text-[#FF6B35] transition min-h-[32px] sm:min-h-[36px] md:min-h-[48px] cursor-pointer">
                       {product.title}
                     </h3>
                   </Link>
 
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-2 mt-0.5 md:mt-1">
                     <div className="flex items-center text-yellow-400">
-                      <Star className="w-3 h-3 fill-current" />
-                      <span className="text-gray-700 text-xs ml-1">4.8</span>
+                      <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3 md:h-3 fill-current" />
+                      <span className="text-gray-700 text-[9px] sm:text-xs ml-0.5">4.8</span>
                     </div>
-                    <span className="text-gray-400 text-xs">(245)</span>
+                    <span className="text-gray-400 text-[8px] sm:text-[9px] md:text-xs">(245)</span>
                   </div>
 
-                  <div className="flex items-center gap-2 mt-2">
-                    <span className="text-xl font-bold text-[#D32F2F] font-comic">
+                  <div className="flex items-center gap-1.5 md:gap-2 mt-1 md:mt-2">
+                    <span className="text-sm sm:text-base md:text-xl font-bold text-[#D32F2F] font-comic">
                       ₹{parseFloat(price).toFixed(2)}
                     </span>
                     {compareAt && (
-                      <span className="text-gray-400 line-through text-xs">
+                      <span className="text-gray-400 line-through text-[8px] sm:text-[9px] md:text-xs">
                         ₹{parseFloat(compareAt).toFixed(2)}
                       </span>
                     )}
                   </div>
 
-                  {/* Two Buttons - Add to Cart & Buy Now */}
-                  <div className="grid grid-cols-2 gap-2 mt-3">
+                  {/* Two Buttons - Responsive */}
+                  <div className="grid grid-cols-2 gap-1.5 md:gap-2 mt-2 md:mt-3">
                     {/* Add to Cart Button */}
                     <button
                       onClick={() => handleAddToCart(variantId, product.id)}
                       disabled={!variantId || isAdding}
-                      className="py-2 rounded-full bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-xs font-semibold transition flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="py-1.5 md:py-2 rounded-full bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-[9px] sm:text-[10px] md:text-xs font-semibold transition flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isAdding ? (
                         <>
-                          <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          Adding...
+                          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span className="hidden sm:inline">Adding...</span>
                         </>
                       ) : (
                         <>
-                          <ShoppingCart className="w-3.5 h-3.5" />
-                          Add
+                          <ShoppingCart className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5" />
+                          <span className="hidden sm:inline">Add</span>
                         </>
                       )}
                     </button>
@@ -322,7 +322,7 @@ export default function CollectionsPage() {
                     <button
                       onClick={() => handleBuyNow(variantId)}
                       disabled={!variantId}
-                      className="py-2 rounded-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-xs font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="py-1.5 md:py-2 rounded-full bg-[#FF6B35] hover:bg-[#e55a2b] text-white text-[9px] sm:text-[10px] md:text-xs font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Buy Now
                     </button>

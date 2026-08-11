@@ -46,21 +46,9 @@ export default function OfferBanner() {
                 RC Cars
               </h3>
               
-              <p className="text-white/90 text-base md:text-lg">
-                Speed. Power.
-                <br />
-                <span className="text-[#FFD700] font-bold">Endless Fun!</span>
-              </p>
+            
 
-              {/* Rating */}
-              <div className="flex items-center gap-1 mt-2">
-                <Star className="w-4 h-4 fill-[#FFD700] text-[#FFD700]" />
-                <Star className="w-4 h-4 fill-[#FFD700] text-[#FFD700]" />
-                <Star className="w-4 h-4 fill-[#FFD700] text-[#FFD700]" />
-                <Star className="w-4 h-4 fill-[#FFD700] text-[#FFD700]" />
-                <Star className="w-4 h-4 fill-[#FFD700] text-[#FFD700]" />
-                <span className="text-white/70 text-sm ml-2">(4.9 ★)</span>
-              </div>
+            
 
               <div className="mt-4">
                 <Link
@@ -112,21 +100,9 @@ export default function OfferBanner() {
                 RC Flying Toys
               </h3>
               
-              <p className="text-white/90 text-base md:text-lg">
-                Soar High.
-                <br />
-                <span className="text-[#FFD700] font-bold">Endless Adventure!</span>
-              </p>
+            
 
-              {/* Rating */}
-              <div className="flex items-center gap-1 mt-2">
-                <Star className="w-4 h-4 fill-[#FFD700] text-[#FFD700]" />
-                <Star className="w-4 h-4 fill-[#FFD700] text-[#FFD700]" />
-                <Star className="w-4 h-4 fill-[#FFD700] text-[#FFD700]" />
-                <Star className="w-4 h-4 fill-[#FFD700] text-[#FFD700]" />
-                <Star className="w-4 h-4 fill-[#FFD700] text-[#FFD700]" />
-                <span className="text-white/70 text-sm ml-2">(4.8 ★)</span>
-              </div>
+              
 
               <div className="mt-4">
                 <Link

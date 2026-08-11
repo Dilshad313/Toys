@@ -8,7 +8,7 @@ const categories = [
   {
     id: 1,
     name: 'Educational Toys',
-    subtitle: 'Starting from ₹499',
+    subtitle: 'Starting from ₹1599',
     image: 'https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?w=200&h=200&fit=crop&q=80',
     bgColor: 'bg-[#F5E6D3]',
     href: '#'
@@ -16,7 +16,7 @@ const categories = [
   {
     id: 2,
     name: 'RC Cars',
-    subtitle: 'Starting from ₹899',
+    subtitle: 'Starting from ₹1299',
     image: 'https://images.unsplash.com/photo-1594787318286-3d835c1d207f?w=200&h=200&fit=crop&q=80',
     bgColor: 'bg-[#D4DDE8]',
     href: '#'
@@ -24,7 +24,7 @@ const categories = [
   {
     id: 3,
     name: 'Soft Toys',
-    subtitle: 'Starting from ₹299',
+    subtitle: 'Starting from ₹699',
     image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=200&h=200&fit=crop&q=80',
     bgColor: 'bg-[#E8F0F0]',
     href: '#'

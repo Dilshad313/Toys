@@ -67,7 +67,7 @@ export default function Header() {
   return (
     <>
       {/* Top Bar - Marquee with Free Shipping & Support - REDUCED HEIGHT */}
-      <div className="bg-[#7B2FBE] text-white overflow-hidden" style={{ height: '32px' }}>
+      <div className="bg-blue-600 text-white overflow-hidden" style={{ height: '32px' }}>
         <div className="h-full flex items-center">
           <div className="animate-marquee whitespace-nowrap flex items-center gap-12">
             <span className="inline-flex items-center gap-2 text-[11px] font-medium">
