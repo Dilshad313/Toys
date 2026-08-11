@@ -177,10 +177,6 @@ export default function Footer() {
                 <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
                   <span className="text-[#097939] font-bold text-xs">UPI</span>
                 </div>
-                {/* COD */}
-                <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
-                  <span className="text-[#1A1A2E] font-bold text-[10px]">COD Available</span>
-                </div>
               </div>
             </div>
           </div>

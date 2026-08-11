@@ -72,7 +72,7 @@ export default function OfferBanner() {
             {/* Background Image */}
             <div className="absolute inset-0">
               <Image
-                src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=800&h=500&fit=crop&q=80"
+                src="/rc-flying1.png"
                 alt="RC Flying Toys"
                 fill
                 className="object-cover group-hover:scale-110 transition duration-700"

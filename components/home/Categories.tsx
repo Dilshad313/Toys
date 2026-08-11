@@ -338,9 +338,9 @@ export default function Categories() {
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: i * 0.05 }}
-                      className="min-w-[45vw] md:min-w-0 bg-white rounded-xl md:rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden group border border-gray-100 hover:border-[#D32F2F] flex flex-col"
+                      className="min-w-[45vw] md:min-w-0 bg-white rounded-xl md:rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden group border border-gray-100 hover:border-[#D32F2F] flex flex-col h-full"
                     >
-                      {/* Product Image */}
+                      {/* Product Image - Fixed aspect ratio */}
                       <Link href={`/products/${product.handle}`}>
                         <div className="relative overflow-hidden aspect-square">
                           <img
@@ -368,27 +368,26 @@ export default function Categories() {
                         </div>
                       </Link>
 
-                      {/* Product Details */}
+                      {/* Product Details - Fixed height with flex column */}
                       <div className="p-2 md:p-4 flex flex-col flex-1">
-                        {/* Title - STRICTLY 2 LINES ONLY */}
+                        {/* Title - STRICTLY 2 LINES ONLY with fixed min-height */}
                         <Link href={`/products/${product.handle}`}>
                           <h3 
-                            className="font-semibold text-[10px] md:text-sm text-gray-900 hover:text-[#D32F2F] transition leading-tight"
+                            className="font-semibold text-[10px] md:text-sm text-gray-900 hover:text-[#D32F2F] transition leading-tight min-h-[2.8em]"
                             style={{
                               display: '-webkit-box',
                               WebkitLineClamp: 2,
                               WebkitBoxOrient: 'vertical',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
-                              maxHeight: '2.8em',
                             }}
                           >
                             {product.title}
                           </h3>
                         </Link>
 
-                        {/* Rating */}
-                        <div className="flex items-center gap-1 mt-1">
+                        {/* Rating - Fixed height */}
+                        <div className="flex items-center gap-1 mt-1 h-4 md:h-5">
                           <div className="flex items-center text-yellow-400">
                             <Star className="w-2.5 h-2.5 md:w-3 md:h-3 fill-current" />
                             <span className="text-gray-700 text-[10px] md:text-xs ml-0.5">4.8</span>
@@ -396,8 +395,8 @@ export default function Categories() {
                           <span className="text-gray-400 text-[9px] md:text-xs">(245)</span>
                         </div>
 
-                        {/* Price */}
-                        <div className="flex items-center gap-1.5 mt-1 md:mt-2 flex-wrap">
+                        {/* Price - Fixed height */}
+                        <div className="flex items-center gap-1.5 mt-1 md:mt-2 flex-wrap h-5 md:h-7">
                           <span className="text-sm md:text-lg font-bold text-[#D32F2F] font-comic">
                             Rs. {parseFloat(price).toFixed(2)}
                           </span>
@@ -413,12 +412,12 @@ export default function Categories() {
                           )}
                         </div>
 
-                        {/* Single Centered Add to Cart Button - REMOVED BUY NOW */}
-                        <div className="mt-2 md:mt-3">
+                        {/* Button - Fixed height and aligned at bottom */}
+                        <div className="mt-auto pt-2 md:pt-3">
                           <button
                             onClick={() => handleAddToCart(variantId, product.id)}
                             disabled={!variantId || isAdding}
-                            className="w-full py-2 md:py-2.5 rounded-lg bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-xs md:text-sm font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full py-2 md:py-2.5 rounded-lg bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-xs md:text-sm font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] md:min-h-[42px]"
                           >
                             {isAdding ? (
                               <>
@@ -559,5 +558,3 @@ export default function Categories() {
     </section>
   )
 }
-
-

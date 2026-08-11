@@ -10,7 +10,7 @@ const categories = [
     id: 1,
     name: 'Under ₹699',
     subtitle: 'Budget Friendly Toys',
-    image: 'https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?w=200&h=200&fit=crop&q=80',
+    image: '/soft-toys.png',
     bgColor: 'bg-[#FFF3E0]',
     textColor: 'text-[#E65100]',
     href: '#'
@@ -19,7 +19,7 @@ const categories = [
     id: 2,
     name: 'Under ₹1,299',
     subtitle: 'Best Value Toys',
-    image: 'https://images.unsplash.com/photo-1594787318286-3d835c1d207f?w=200&h=200&fit=crop&q=80',
+    image: '/rc-cars.png',
     bgColor: 'bg-[#E3F2FD]',
     textColor: 'text-[#1565C0]',
     href: '#'
@@ -28,7 +28,7 @@ const categories = [
     id: 3,
     name: 'Under ₹1,599',
     subtitle: 'Premium Picks',
-    image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=200&h=200&fit=crop&q=80',
+    image: '/educational.png',
     bgColor: 'bg-[#F3E5F5]',
     textColor: 'text-[#7B1FA2]',
     href: '#'
