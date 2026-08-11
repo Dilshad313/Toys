@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { ShoppingCart, Star, Sparkles, Clock, Trophy, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ShoppingCart, Star, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 
 interface Product {
@@ -65,13 +65,13 @@ export default function Categories() {
     const fetchProducts = async () => {
       try {
         setLoading(true)
-        
+
         console.log(`Fetching ${activeTab} products...`)
-        
+
         // First, fetch all products
         const allResponse = await fetch('/api/products?first=50')
         const allResult = await allResponse.json()
-        
+
         let allProducts: Product[] = []
         if (allResult.success && allResult.data?.products?.edges) {
           allProducts = allResult.data.products.edges.map((edge: any) => edge.node)
@@ -90,10 +90,10 @@ export default function Categories() {
                 const bHasTag = b.tags?.some(tag => 
                   ['trending', 'popular', 'hot', 'viral'].includes(tag.toLowerCase())
                 ) || false
-                
+
                 if (aHasTag && !bHasTag) return -1
                 if (!aHasTag && bHasTag) return 1
-                
+
                 const aInventory = a.totalInventory || 0
                 const bInventory = b.totalInventory || 0
                 return bInventory - aInventory
@@ -120,10 +120,10 @@ export default function Categories() {
                 const bHasTag = b.tags?.some(tag => 
                   ['bestseller', 'best-seller', 'top-seller', 'popular'].includes(tag.toLowerCase())
                 ) || false
-                
+
                 if (aHasTag && !bHasTag) return -1
                 if (!aHasTag && bHasTag) return 1
-                
+
                 const aInventory = a.totalInventory || 0
                 const bInventory = b.totalInventory || 0
                 return bInventory - aInventory
@@ -135,9 +135,9 @@ export default function Categories() {
         }
 
         setProducts(filteredProducts.slice(0, 8))
-        
+
         console.log(`${activeTab}: Found ${filteredProducts.length} products`)
-        
+
       } catch (error) {
         console.error('Error fetching products:', error)
         setProducts([])
@@ -176,8 +176,6 @@ export default function Categories() {
     return { price, compareAt, imageUrl, variantId, discount }
   }
 
-  
-
   const tabs = [
     { 
       id: 'trending' as TabType, 
@@ -192,8 +190,6 @@ export default function Categories() {
       label: 'Best Sellers',
     },
   ]
-
- 
 
   // Scroll functions for products
   const scrollLeft = () => {
@@ -224,7 +220,7 @@ export default function Categories() {
   return (
     <section className="py-8 md:py-16 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-3 md:px-4">
-        
+
         {/* ==================== SPECIAL PRODUCTS SECTION (FIRST) ==================== */}
         {/* Section Title */}
         <motion.div
@@ -263,15 +259,6 @@ export default function Categories() {
             ))}
           </div>
         </div>
-
-        {/* Tab Badge - Shows only the selected tab badge */}
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-4 md:mb-6"
-        >
-        </motion.div>
 
         {/* Products Grid - Horizontal Scroll on Mobile - 2 products visible */}
         <AnimatePresence mode="wait">
@@ -383,8 +370,19 @@ export default function Categories() {
 
                       {/* Product Details */}
                       <div className="p-2 md:p-4 flex flex-col flex-1">
+                        {/* Title - STRICTLY 2 LINES ONLY */}
                         <Link href={`/products/${product.handle}`}>
-                          <h3 className="font-semibold text-[10px] md:text-sm line-clamp-2 hover:text-[#D32F2F] transition min-h-[32px] md:min-h-[40px] leading-tight">
+                          <h3 
+                            className="font-semibold text-[10px] md:text-sm text-gray-900 hover:text-[#D32F2F] transition leading-tight"
+                            style={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              maxHeight: '2.8em',
+                            }}
+                          >
                             {product.title}
                           </h3>
                         </Link>
@@ -415,34 +413,24 @@ export default function Categories() {
                           )}
                         </div>
 
-                        {/* Buttons */}
-                        <div className="mt-2 md:mt-3 grid grid-cols-2 gap-1.5 md:gap-2">
+                        {/* Single Centered Add to Cart Button - REMOVED BUY NOW */}
+                        <div className="mt-2 md:mt-3">
                           <button
                             onClick={() => handleAddToCart(variantId, product.id)}
                             disabled={!variantId || isAdding}
-                            className="py-1.5 md:py-2 rounded-lg bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-[10px] md:text-xs font-semibold transition flex items-center justify-center gap-1 disabled:opacity-50"
+                            className="w-full py-2 md:py-2.5 rounded-lg bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-xs md:text-sm font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {isAdding ? (
-                              <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              <>
+                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                <span>Adding...</span>
+                              </>
                             ) : (
                               <>
-                                <ShoppingCart className="w-3 h-3 hidden md:block" />
-                                Add
+                                <ShoppingCart className="w-4 h-4" />
+                                <span>Add to Cart</span>
                               </>
                             )}
-                          </button>
-
-                          <button
-                            onClick={() => {
-                              if (!variantId) return
-                              const storeDomain = "athvi-toys.myshopify.com"
-                              const numericVariantId = variantId.split("/").pop()
-                              window.location.href = `https://${storeDomain}/cart/${numericVariantId}:1`
-                            }}
-                            disabled={!variantId}
-                            className="py-1.5 md:py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[10px] md:text-xs font-semibold transition disabled:opacity-50"
-                          >
-                            Buy Now
                           </button>
                         </div>
                       </div>

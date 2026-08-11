@@ -41,13 +41,13 @@ export default function PromoBanner() {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
-          {/* Left - Promotional Banner */}
+          {/* Left - Promotional Banner - Reduced height to match cards */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="relative overflow-hidden rounded-2xl bg-[#E53935] min-h-[280px] md:min-h-[340px] flex items-center"
+            className="relative overflow-hidden rounded-2xl bg-[#E53935] min-h-[280px] md:min-h-[320px] flex items-center"
           >
             {/* Confetti decorations */}
             <div className="absolute top-4 right-20 w-2 h-2 bg-yellow-400 rounded-full opacity-80" />
@@ -58,40 +58,40 @@ export default function PromoBanner() {
             <div className="absolute top-3 right-48 w-1 h-1 bg-yellow-500 rounded-full opacity-60" />
             <div className="absolute top-10 right-8 w-2 h-2 bg-yellow-400 rounded-full opacity-50" />
 
-            {/* Content */}
-            <div className="relative z-10 pl-6 md:pl-8 pr-4 py-6 flex flex-col justify-center h-full max-w-[55%]">
+            {/* Content - Reduced padding and text sizes */}
+            <div className="relative z-10 pl-6 md:pl-8 pr-4 py-4 md:py-5 flex flex-col justify-center h-full max-w-[55%]">
               {/* Badge */}
-              <div className="bg-[#FFCA28] text-[#B71C1C] text-xs md:text-sm font-bold px-4 py-1.5 rounded-full w-fit mb-3 uppercase tracking-wide">
+              <div className="bg-[#FFCA28] text-[#B71C1C] text-[10px] md:text-xs font-bold px-3 py-1 rounded-full w-fit mb-2 uppercase tracking-wide">
                 Shop by Price
               </div>
 
-              <h2 className="text-white text-3xl md:text-4xl font-extrabold leading-tight mb-1">
+              <h2 className="text-white text-2xl md:text-3xl font-extrabold leading-tight mb-0.5">
                 Find Toys
               </h2>
-              <h2 className="text-[#FFCA28] text-3xl md:text-4xl font-extrabold leading-tight mb-3">
+              <h2 className="text-[#FFCA28] text-2xl md:text-3xl font-extrabold leading-tight mb-1.5">
                 Within Your Budget!
               </h2>
 
-              <p className="text-white/90 text-sm md:text-base font-medium mb-5">
+              <p className="text-white/90 text-xs md:text-sm font-medium mb-3">
                 Little Joys for Every Price Range
               </p>
 
-              {/* Shop Now Button */}
+              {/* Shop Now Button - Smaller */}
               <Link href="/collections">
-                <button className="bg-[#FFCA28] hover:bg-[#FFB300] text-[#B71C1C] font-bold text-sm md:text-base px-6 py-2.5 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105">
+                <button className="bg-[#FFCA28] hover:bg-[#FFB300] text-[#B71C1C] font-bold text-xs md:text-sm px-5 py-2 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105">
                   Shop Now
                 </button>
               </Link>
             </div>
 
-            {/* Gift Box Image - Right Side */}
-            <div className="absolute right-0 bottom-0 w-[50%] h-full">
-              <div className="relative w-full h-full">
+            {/* Gift Box Image - Centered - Smaller */}
+            <div className="absolute right-0 bottom-0 w-[50%] h-full flex items-center justify-center">
+              <div className="relative w-[70%] h-[70%] max-w-[160px] max-h-[160px] md:max-w-[200px] md:max-h-[200px]">
                 <Image
                   src="/giftbox.png"
                   alt="Gift Box"
                   fill
-                  className="object-contain object-bottom"
+                  className="object-contain"
                 />
               </div>
             </div>

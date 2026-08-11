@@ -216,15 +216,6 @@ export default function WoodenToys() {
     return wishlist.includes(productId)
   }
 
-  const handleBuyNow = (variantId: string) => {
-    if (!variantId) return
-
-    const storeDomain = "athvi-toys.myshopify.com"
-    const numericVariantId = variantId.split("/").pop()
-    const checkoutUrl = `https://${storeDomain}/cart/${numericVariantId}:1`
-    window.location.href = checkoutUrl
-  }
-
   // Helper function to get product image URL
   const getProductImage = (product: Product) => {
     if (product.images?.edges?.length > 0) {
@@ -415,7 +406,17 @@ export default function WoodenToys() {
                       {/* Product Details */}
                       <Link href={`/products/${product.handle}`} className="flex-1">
                         <div className="p-2.5 md:p-3 flex flex-col flex-1 cursor-pointer">
-                          <h3 className="font-semibold text-[10px] sm:text-xs md:text-sm line-clamp-2 hover:text-[#FF6B35] transition min-h-[32px] sm:min-h-[36px] md:min-h-[40px] font-comic leading-tight">
+                          <h3 
+                            className="font-semibold text-[10px] sm:text-xs md:text-sm hover:text-[#FF6B35] transition font-comic leading-tight"
+                            style={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              maxHeight: '2.8em',
+                            }}
+                          >
                             {product.title}
                           </h3>
                           
@@ -440,8 +441,8 @@ export default function WoodenToys() {
                         </div>
                       </Link>
 
-                      {/* Two Buttons */}
-                      <div className="p-2.5 md:p-3 pt-0 grid grid-cols-2 gap-1.5 md:gap-2">
+                      {/* Single Centered Add to Cart Button - REMOVED BUY NOW */}
+                      <div className="p-2.5 md:p-3 pt-0">
                         <AnimatePresence mode="wait">
                           {isAdded ? (
                             <motion.button
@@ -449,11 +450,11 @@ export default function WoodenToys() {
                               initial={{ scale: 0.8, opacity: 0 }}
                               animate={{ scale: 1, opacity: 1 }}
                               exit={{ scale: 0.8, opacity: 0 }}
-                              className="py-1.5 md:py-2 rounded-lg font-semibold text-[8px] sm:text-[10px] md:text-xs bg-green-500 text-white flex items-center justify-center gap-1 cursor-default"
+                              className="w-full py-2.5 md:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base bg-green-500 text-white flex items-center justify-center gap-2 cursor-default"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5" />
-                              <span className="hidden sm:inline">Added</span>
+                              <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                              <span>Added to Cart</span>
                             </motion.button>
                           ) : isAdding ? (
                             <motion.button
@@ -461,10 +462,11 @@ export default function WoodenToys() {
                               initial={{ scale: 0.8, opacity: 0 }}
                               animate={{ scale: 1, opacity: 1 }}
                               exit={{ scale: 0.8, opacity: 0 }}
-                              className="py-1.5 md:py-2 rounded-lg font-semibold text-[8px] sm:text-[10px] md:text-xs bg-[#D32F2F] text-white flex items-center justify-center gap-1 opacity-70 cursor-wait"
+                              className="w-full py-2.5 md:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base bg-[#D32F2F] text-white flex items-center justify-center gap-2 opacity-70 cursor-wait"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                              <span>Adding...</span>
                             </motion.button>
                           ) : (
                             <motion.button
@@ -477,24 +479,13 @@ export default function WoodenToys() {
                                 handleAddToCart(variantId, product.id, product)
                               }}
                               disabled={!variantId}
-                              className="py-1.5 md:py-2 rounded-lg font-semibold text-[8px] sm:text-[10px] md:text-xs bg-[#D32F2F] hover:bg-[#B71C1C] text-white transition flex items-center justify-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full py-2.5 md:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base bg-[#D32F2F] hover:bg-[#B71C1C] text-white transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              <ShoppingCart className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5" />
-                              <span className="hidden sm:inline">Add</span>
+                              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                              <span>Add to Cart</span>
                             </motion.button>
                           )}
                         </AnimatePresence>
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            handleBuyNow(variantId)
-                          }}
-                          disabled={!variantId}
-                          className="py-1.5 md:py-2 rounded-lg font-semibold text-[8px] sm:text-[10px] md:text-xs bg-blue-600 hover:bg-blue-700 text-white transition disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          Buy Now
-                        </button>
                       </div>
                     </div>
                   </motion.div>
