@@ -3,37 +3,41 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ChevronRight } from 'lucide-react'
 
 const categories = [
   {
     id: 1,
-    name: 'Educational Toys',
-    subtitle: 'Starting from ₹1599',
+    name: 'Under ₹699',
+    subtitle: 'Budget Friendly Toys',
     image: 'https://images.unsplash.com/photo-1531512073830-ba890ca4eba2?w=200&h=200&fit=crop&q=80',
-    bgColor: 'bg-[#F5E6D3]',
+    bgColor: 'bg-[#FFF3E0]',
+    textColor: 'text-[#E65100]',
     href: '#'
   },
   {
     id: 2,
-    name: 'RC Cars',
-    subtitle: 'Starting from ₹1299',
+    name: 'Under ₹1,299',
+    subtitle: 'Best Value Toys',
     image: 'https://images.unsplash.com/photo-1594787318286-3d835c1d207f?w=200&h=200&fit=crop&q=80',
-    bgColor: 'bg-[#D4DDE8]',
+    bgColor: 'bg-[#E3F2FD]',
+    textColor: 'text-[#1565C0]',
     href: '#'
   },
   {
     id: 3,
-    name: 'Soft Toys',
-    subtitle: 'Starting from ₹699',
+    name: 'Under ₹1,599',
+    subtitle: 'Premium Picks',
     image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=200&h=200&fit=crop&q=80',
-    bgColor: 'bg-[#E8F0F0]',
+    bgColor: 'bg-[#F3E5F5]',
+    textColor: 'text-[#7B1FA2]',
     href: '#'
   },
 ]
 
 export default function PromoBanner() {
   return (
-    <section className="py-8 md:py-12 bg-white">
+    <section className="py-8 md:py-12 bg-blue-600">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 
@@ -43,7 +47,7 @@ export default function PromoBanner() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="relative overflow-hidden rounded-2xl bg-blue-600 min-h-[280px] md:min-h-[340px] flex items-center"
+            className="relative overflow-hidden rounded-2xl bg-[#E53935] min-h-[280px] md:min-h-[340px] flex items-center"
           >
             {/* Confetti decorations */}
             <div className="absolute top-4 right-20 w-2 h-2 bg-yellow-400 rounded-full opacity-80" />
@@ -56,31 +60,38 @@ export default function PromoBanner() {
 
             {/* Content */}
             <div className="relative z-10 pl-6 md:pl-8 pr-4 py-6 flex flex-col justify-center h-full max-w-[55%]">
-              <h2 className="text-yellow-400 text-4xl md:text-5xl font-extrabold mb-1">Shop by Price</h2>
-              <p className="text-white text-sm md:text-base font-medium mb-4">On Your First Order</p>
+              {/* Badge */}
+              <div className="bg-[#FFCA28] text-[#B71C1C] text-xs md:text-sm font-bold px-4 py-1.5 rounded-full w-fit mb-3 uppercase tracking-wide">
+                Shop by Price
+              </div>
 
-              {/* Dashed border code box */}
-              
-                <span className="text-yellow-400 text-sm md:text-base font-medium">Within Your Budget! </span><br />
-                
-              
+              <h2 className="text-white text-3xl md:text-4xl font-extrabold leading-tight mb-1">
+                Find Toys
+              </h2>
+              <h2 className="text-[#FFCA28] text-3xl md:text-4xl font-extrabold leading-tight mb-3">
+                Within Your Budget!
+              </h2>
 
-              {/* Shop Now Button - Navigates to /collections */}
+              <p className="text-white/90 text-sm md:text-base font-medium mb-5">
+                Little Joys for Every Price Range
+              </p>
+
+              {/* Shop Now Button */}
               <Link href="/collections">
-                <button className="bg-yellow-400 hover:bg-yellow-300 text-[#E53935] font-bold text-sm md:text-base px-6 py-2.5 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105">
+                <button className="bg-[#FFCA28] hover:bg-[#FFB300] text-[#B71C1C] font-bold text-sm md:text-base px-6 py-2.5 rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-105">
                   Shop Now
                 </button>
               </Link>
             </div>
 
-            {/* Gift Box Image - Right Side with Red Background */}
-            <div className="absolute right-0 bottom-0 w-[50%] h-full bg-blue-600">
+            {/* Gift Box Image - Right Side */}
+            <div className="absolute right-0 bottom-0 w-[50%] h-full">
               <div className="relative w-full h-full">
                 <Image
                   src="/giftbox.png"
                   alt="Gift Box"
                   fill
-                  className="object-contain object-center p-4"
+                  className="object-contain object-bottom"
                 />
               </div>
             </div>
@@ -96,10 +107,10 @@ export default function PromoBanner() {
                 transition={{ delay: i * 0.1, duration: 0.5 }}
                 viewport={{ once: true }}
               >
-                <div className="group block cursor-default">
+                <Link href={category.href} className="group block">
                   <div className={`relative overflow-hidden rounded-xl shadow-md hover:shadow-lg transition-all duration-300 ${category.bgColor} flex items-center h-[85px] md:h-[100px]`}>
                     {/* Image - Left Side */}
-                    <div className="relative w-24 md:w-28 h-full flex-shrink-0 overflow-hidden rounded-l-xl">
+                    <div className="relative w-28 md:w-32 h-full flex-shrink-0 overflow-hidden rounded-l-xl">
                       <Image
                         src={category.image}
                         alt={category.name}
@@ -109,21 +120,34 @@ export default function PromoBanner() {
                     </div>
 
                     {/* Content - Right Side */}
-                    <div className="flex-1 px-4 md:px-5 py-3">
-                      <h3 className="text-base md:text-lg font-bold text-[#2C3E50] group-hover:text-[#D32F2F] transition">
-                        {category.name}
-                      </h3>
-                      <p className="text-[#5D6D7E] text-xs md:text-sm font-medium mt-0.5">
-                        {category.subtitle}
-                      </p>
+                    <div className="flex-1 px-4 md:px-5 py-3 flex items-center justify-between">
+                      <div>
+                        <h3 className={`text-xl md:text-2xl font-extrabold ${category.textColor} leading-tight`}>
+                          {category.name}
+                        </h3>
+                        <p className="text-gray-500 text-xs md:text-sm font-medium mt-0.5">
+                          {category.subtitle}
+                        </p>
+                      </div>
+
+                      {/* Arrow Button */}
+                      <div className={`w-8 h-8 md:w-10 md:h-10 rounded-full ${category.textColor.replace('text-', 'bg-').replace('900', '100').replace('700', '100').replace('600', '100')} flex items-center justify-center flex-shrink-0 ml-2 group-hover:scale-110 transition`}>
+                        <ChevronRight className={`w-4 h-4 md:w-5 md:h-5 ${category.textColor}`} />
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               </motion.div>
             ))}
           </div>
         </div>
       </div>
+
+      <style jsx global>{`
+        .font-comic {
+          font-family: 'Baloo 2', 'Comic Neue', cursive;
+        }
+      `}</style>
     </section>
   )
 }

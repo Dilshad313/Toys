@@ -454,13 +454,14 @@ export default function Categories() {
           )}
         </AnimatePresence>
 
-        {/* ==================== SHOP BY AGE SECTION (SECOND) - BLUE-600 BACKGROUND ==================== */}
-        <div className="mt-12 md:mt-16 -mx-3 md:-mx-4">
-          <div className="bg-blue-600 py-8 md:py-12 px-3 md:px-4">
+        {/* ==================== SHOP BY AGE SECTION (SECOND) - FULL WIDTH BLUE-600 BACKGROUND ==================== */}
+        <div className="w-screen relative left-1/2 -translate-x-1/2 mt-12 md:mt-16">
+          <div className="bg-blue-600 py-8 md:py-12 px-3 md:px-4 w-full">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
+              className="container mx-auto"
             >
               {/* Shop by Age Title */}
               <div className="text-center mb-6 md:mb-8">
