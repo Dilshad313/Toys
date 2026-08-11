@@ -43,7 +43,7 @@ export default function PromoBanner() {
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="relative overflow-hidden rounded-2xl bg-[#E53935] min-h-[280px] md:min-h-[340px] flex items-center"
+            className="relative overflow-hidden rounded-2xl bg-blue-600 min-h-[280px] md:min-h-[340px] flex items-center"
           >
             {/* Confetti decorations */}
             <div className="absolute top-4 right-20 w-2 h-2 bg-yellow-400 rounded-full opacity-80" />
@@ -56,15 +56,14 @@ export default function PromoBanner() {
 
             {/* Content */}
             <div className="relative z-10 pl-6 md:pl-8 pr-4 py-6 flex flex-col justify-center h-full max-w-[55%]">
-              <p className="text-white text-lg md:text-xl font-medium mb-0">Flat</p>
-              <h2 className="text-yellow-400 text-4xl md:text-5xl font-extrabold mb-1">20% OFF</h2>
+              <h2 className="text-yellow-400 text-4xl md:text-5xl font-extrabold mb-1">Shop by Price</h2>
               <p className="text-white text-sm md:text-base font-medium mb-4">On Your First Order</p>
 
               {/* Dashed border code box */}
-              <div className="border-2 border-dashed border-white/60 rounded-xl px-4 py-2 mb-5 inline-block w-fit">
-                <span className="text-white text-sm md:text-base font-medium">Use Code: </span>
-                <span className="text-white text-sm md:text-base font-bold">ATHVI20</span>
-              </div>
+              
+                <span className="text-yellow-400 text-sm md:text-base font-medium">Within Your Budget! </span><br />
+                
+              
 
               {/* Shop Now Button - Navigates to /collections */}
               <Link href="/collections">
@@ -75,7 +74,7 @@ export default function PromoBanner() {
             </div>
 
             {/* Gift Box Image - Right Side with Red Background */}
-            <div className="absolute right-0 bottom-0 w-[50%] h-full bg-[#E53935]">
+            <div className="absolute right-0 bottom-0 w-[50%] h-full bg-blue-600">
               <div className="relative w-full h-full">
                 <Image
                   src="/giftbox.png"

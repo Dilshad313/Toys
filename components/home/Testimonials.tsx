@@ -61,24 +61,24 @@ export default function BlogSection() {
   }
 
   return (
-    <section className="bg-blue-600 py-12 md:py-20 overflow-hidden">
+    <section className="bg-blue-600 py-8 md:py-16 overflow-hidden">
       <div className="container mx-auto px-4">
 
-        {/* Section Header */}
+        {/* Section Header - Reduced spacing */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-center mb-8 md:mb-12"
+          className="text-center mb-6 md:mb-10"
         >
-          <span className="text-white/80 text-sm md:text-base font-semibold uppercase tracking-wider">
+          <span className="text-white/80 text-xs md:text-sm font-semibold uppercase tracking-wider">
             Our Blog
           </span>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-white mt-2">
+          <h2 className="text-xl md:text-3xl lg:text-4xl font-extrabold text-white mt-1.5 md:mt-2">
             Latest Articles & Tips
           </h2>
-          <p className="text-white/70 text-sm md:text-base mt-2 max-w-xl mx-auto">
+          <p className="text-white/70 text-xs md:text-sm mt-1.5 md:mt-2 max-w-xl mx-auto">
             Explore parenting tips, toy guides, and expert advice for your child's development.
           </p>
         </motion.div>
@@ -87,31 +87,31 @@ export default function BlogSection() {
           {/* Mobile Navigation Buttons */}
           <button
             onClick={scrollLeft}
-            className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 text-gray-700 p-2 rounded-full shadow-lg backdrop-blur transition -ml-2"
+            className="md:hidden absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 text-gray-700 p-1.5 rounded-full shadow-lg backdrop-blur transition -ml-1.5"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-4 h-4" />
           </button>
 
           <button
             onClick={scrollRight}
-            className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 text-gray-700 p-2 rounded-full shadow-lg backdrop-blur transition -mr-2"
+            className="md:hidden absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-gray-50 text-gray-700 p-1.5 rounded-full shadow-lg backdrop-blur transition -mr-1.5"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-4 h-4" />
           </button>
 
-          {/* Blog Cards Container */}
+          {/* Blog Cards Container - Reduced mobile card width */}
           <div
             ref={scrollContainerRef}
-            className="flex md:grid md:grid-cols-3 gap-5 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-smooth pb-4 md:pb-0 scrollbar-hide"
+            className="flex md:grid md:grid-cols-3 gap-4 md:gap-8 overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-smooth pb-3 md:pb-0 scrollbar-hide"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {blogPosts.map((post) => (
               <div
                 key={post.id}
-                className="flex-shrink-0 w-[300px] md:w-auto snap-start bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group cursor-pointer"
+                className="flex-shrink-0 w-[260px] md:w-auto snap-start bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 group cursor-pointer"
               >
-                {/* Image */}
-                <div className="relative w-full h-48 md:h-52 lg:h-56 overflow-hidden">
+                {/* Image - Reduced height on mobile */}
+                <div className="relative w-full h-40 md:h-52 lg:h-56 overflow-hidden">
                   <Image
                     src={post.image}
                     alt={post.title}
@@ -120,39 +120,39 @@ export default function BlogSection() {
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   />
                   {/* Category Badge */}
-                  <div className="absolute top-3 left-3 bg-[#D32F2F] text-white text-xs font-semibold px-3 py-1 rounded-full">
+                  <div className="absolute top-2 left-2 bg-[#D32F2F] text-white text-[10px] md:text-xs font-semibold px-2 md:px-3 py-0.5 md:py-1 rounded-full">
                     {post.category}
                   </div>
                 </div>
 
-                {/* Content */}
-                <div className="p-4 md:p-5">
+                {/* Content - Reduced padding on mobile */}
+                <div className="p-3 md:p-5">
                   {/* Meta */}
-                  <div className="flex items-center gap-3 mb-3 text-gray-400 text-xs">
-                    <div className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
+                  <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3 text-gray-400 text-[10px] md:text-xs">
+                    <div className="flex items-center gap-0.5 md:gap-1">
+                      <Calendar className="w-2.5 h-2.5 md:w-3 md:h-3" />
                       <span>{post.date}</span>
                     </div>
-                    <div className="flex items-center gap-1">
-                      <User className="w-3 h-3" />
+                    <div className="flex items-center gap-0.5 md:gap-1">
+                      <User className="w-2.5 h-2.5 md:w-3 md:h-3" />
                       <span>{post.author}</span>
                     </div>
                   </div>
 
-                  {/* Title */}
-                  <h3 className="text-gray-900 font-bold text-base md:text-lg leading-snug mb-2 group-hover:text-[#D32F2F] transition-colors line-clamp-2">
+                  {/* Title - Smaller on mobile */}
+                  <h3 className="text-gray-900 font-bold text-sm md:text-lg leading-snug mb-1.5 md:mb-2 group-hover:text-[#D32F2F] transition-colors line-clamp-2">
                     {post.title}
                   </h3>
 
-                  {/* Excerpt */}
-                  <p className="text-gray-500 text-sm leading-relaxed mb-4 line-clamp-2">
+                  {/* Excerpt - Hidden on mobile, shown on desktop */}
+                  <p className="hidden md:block text-gray-500 text-sm leading-relaxed mb-3 md:mb-4 line-clamp-2">
                     {post.excerpt}
                   </p>
 
-                  {/* Read More */}
-                  <div className="flex items-center gap-1 text-[#D32F2F] font-semibold text-sm group-hover:gap-2 transition-all">
+                  {/* Read More - Smaller on mobile */}
+                  <div className="flex items-center gap-1 text-[#D32F2F] font-semibold text-[11px] md:text-sm group-hover:gap-2 transition-all">
                     <span>Read More</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ArrowRight className="w-3.5 h-3.5 md:w-4 md:h-4" />
                   </div>
                 </div>
               </div>
@@ -160,10 +160,10 @@ export default function BlogSection() {
           </div>
         </div>
 
-        {/* Mobile Dots */}
-        <div className="flex justify-center gap-2 mt-4 md:hidden">
+        {/* Mobile Dots - Smaller */}
+        <div className="flex justify-center gap-1.5 mt-3 md:hidden">
           {blogPosts.map((_, index) => (
-            <div key={index} className={`w-2 h-2 rounded-full ${index === 0 ? 'bg-white' : 'bg-white/40'}`} />
+            <div key={index} className={`w-1.5 h-1.5 rounded-full ${index === 0 ? 'bg-white' : 'bg-white/40'}`} />
           ))}
         </div>
 
