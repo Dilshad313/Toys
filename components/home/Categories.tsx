@@ -373,13 +373,14 @@ export default function Categories() {
                         {/* Title - STRICTLY 2 LINES ONLY with fixed min-height */}
                         <Link href={`/products/${product.handle}`}>
                           <h3 
-                            className="font-semibold text-[10px] md:text-sm text-gray-900 hover:text-[#D32F2F] transition leading-tight min-h-[2.8em]"
+                            className="font-semibold text-[10px] md:text-sm text-gray-900 hover:text-[#D32F2F] transition leading-tight"
                             style={{
                               display: '-webkit-box',
                               WebkitLineClamp: 2,
                               WebkitBoxOrient: 'vertical',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
+                              maxHeight: '2.8em',
                             }}
                           >
                             {product.title}
@@ -547,6 +548,13 @@ export default function Categories() {
         .scrollbar-hide {
           -ms-overflow-style: none;
           scrollbar-width: none;
+        }
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       `}</style>
 

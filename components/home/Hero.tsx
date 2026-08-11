@@ -106,34 +106,34 @@ export default function Hero() {
       </section>
 
       {/* Marquee Bar - Below Hero Section */}
-      <div className="bg-blue-600 text-white overflow-hidden" style={{ height: '32px' }}>
+      <div className="bg-blue-600 text-white overflow-hidden" style={{ height: '52px' }}>
         <div className="h-full flex items-center">
           <div className="animate-marquee whitespace-nowrap flex items-center gap-12">
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">🇮🇳</span> Shipping Across India
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">🇮🇳</span> Shipping Across India
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">🇮🇳</span> Shipping Across India
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
           </div>

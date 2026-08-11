@@ -547,47 +547,6 @@ export default function ProductDetailPage() {
                 </ul>
               </div>
 
-              {/* Choose Your Option - Variants */}
-              {product.options && product.options.length > 0 && (
-                <div className="mb-3 md:mb-4">
-                  <h3 className="font-semibold text-xs md:text-sm mb-1.5 md:mb-2">Choose Your Option</h3>
-                  <div className="flex flex-wrap gap-2 md:gap-3">
-                    {product.variants?.edges?.map((e: any) => {
-                      const v = e.node
-                      const isSelected = selectedVariant === v.id
-                      const vPrice = v.price.amount
-                      const vCompare = v.compareAtPrice?.amount || null
-                      const vDiscount = vCompare ? Math.round(((parseFloat(vCompare) - parseFloat(vPrice)) / parseFloat(vCompare)) * 100) : 0
-
-                      return (
-                        <button
-                          key={v.id}
-                          onClick={() => {
-                            setSelectedVariant(v.id)
-                            setQuantity(1)
-                          }}
-                          className={`p-2 md:p-3 rounded-xl border-2 transition text-left flex-1 min-w-[80px] md:min-w-[100px] ${
-                            isSelected ? 'border-[#D32F2F] bg-red-50' : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <div className="text-[10px] md:text-xs font-medium text-gray-500">Price</div>
-                          <div className="flex flex-wrap items-center gap-1 mt-0.5">
-                            <span className="text-xs md:text-sm text-[#D32F2F] font-bold">₹{parseFloat(vPrice).toFixed(2)}</span>
-                            {vCompare && (
-                              <span className="text-gray-400 line-through text-[8px] md:text-[10px]">₹{parseFloat(vCompare).toFixed(2)}</span>
-                            )}
-                            {vDiscount > 0 && (
-                              <span className="bg-green-500 text-white text-[8px] px-1 py-0.5 rounded-full">
-                                {vDiscount}% OFF
-                              </span>
-                            )}
-                          </div>
-                        </button>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
 
               {/* Quantity */}
               <div className="mb-3 md:mb-4">

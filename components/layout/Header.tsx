@@ -67,34 +67,34 @@ export default function Header() {
   return (
     <>
       {/* Top Bar - Marquee with Free Shipping & Support - REDUCED HEIGHT */}
-      <div className="bg-blue-600 text-white overflow-hidden" style={{ height: '32px' }}>
+      <div className="bg-blue-600 text-white overflow-hidden" style={{ height: '34px' }}>
         <div className="h-full flex items-center">
           <div className="animate-marquee whitespace-nowrap flex items-center gap-12">
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">🇮🇳</span> Shipping Across India
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">🇮🇳</span> Shipping Across India
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">🇮🇳</span> Shipping Across India
             </span>
-            <span className="inline-flex items-center gap-2 text-[11px] font-medium">
+            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
           </div>

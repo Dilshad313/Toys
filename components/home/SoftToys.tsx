@@ -305,7 +305,7 @@ export default function SoftToys() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold font-comic text-[#D32F2F]">
-                Soft Toys
+                🧸 Soft Toys
               </h2>
               <p className="text-gray-600 mt-1 font-medium font-comic text-sm md:text-base">
                 Our premium collection loved by kids everywhere! 
