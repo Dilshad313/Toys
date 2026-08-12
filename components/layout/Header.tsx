@@ -182,7 +182,7 @@ export default function Header() {
                       isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
-                    <Search className="w-5 h-5" />
+                    <Search className="w-7 h-7" />
                   </button>
 
                   <Link 
@@ -191,7 +191,7 @@ export default function Header() {
                       isScrolled ? 'text-gray-700 hover:bg-gray-100' : 'text-gray-700 hover:bg-gray-100'
                     }`}
                   >
-                    <Heart className="w-5 h-5" />
+                    <Heart className="w-7 h-7" />
                   </Link>
 
                   {/* Desktop Cart */}
@@ -202,7 +202,7 @@ export default function Header() {
                     }`}
                   >
                     <div className="relative">
-                      <ShoppingCart className="w-5 h-5" />
+                      <ShoppingCart className="w-7 h-7" />
                       {totalItems > 0 && (
                         <span className={`absolute -top-2 -right-3 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center ${
                           isScrolled ? 'bg-[#FF6B35]' : 'bg-[#FF6B35]'

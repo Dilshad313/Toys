@@ -106,7 +106,7 @@ export default function Hero() {
       </section>
 
       {/* Marquee Bar - Below Hero Section */}
-      <div className="bg-[#D32F2F] text-[#F6C445] overflow-hidden" style={{ height: '52px' }}>
+      <div className="bg-[#F6C445] text-black overflow-hidden" style={{ height: '52px' }}>
         <div className="h-full flex items-center">
           <div className="animate-marquee whitespace-nowrap flex items-center gap-12">
             <span className="inline-flex items-center gap-2 text-[15px] font-medium">
