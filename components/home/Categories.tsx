@@ -373,7 +373,7 @@ export default function Categories() {
                         {/* Title - STRICTLY 2 LINES ONLY with fixed min-height */}
                         <Link href={`/products/${product.handle}`}>
                           <h3 
-                            className="font-semibold text-[13px] md:text-sm text-gray-900 hover:text-[#D32F2F] transition leading-tight"
+                            className="font-semibold text-[14px] md:text-sm text-gray-900 hover:text-[#D32F2F] transition leading-tight"
                             style={{
                               display: '-webkit-box',
                               WebkitLineClamp: 2,

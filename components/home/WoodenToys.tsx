@@ -407,7 +407,7 @@ export default function WoodenToys() {
                       <Link href={`/products/${product.handle}`} className="flex-1">
                         <div className="p-2.5 md:p-3 flex flex-col flex-1 cursor-pointer">
                           <h3 
-                            className="font-semibold text-[13px] sm:text-xs md:text-sm hover:text-[#FF6B35] transition font-comic leading-tight"
+                            className="font-semibold text-[14px] sm:text-xs md:text-sm hover:text-[#FF6B35] transition font-comic leading-tight"
                             style={{
                               display: '-webkit-box',
                               WebkitLineClamp: 2,

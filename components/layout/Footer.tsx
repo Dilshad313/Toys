@@ -28,10 +28,10 @@ export default function Footer() {
                 </svg>
               </div>
               <div>
-                <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-[#1a1a2e] font-comic">
+                <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-[#1a1a2e] font-comic">
                   Get <span className="text-[#E21923]">₹100 OFF</span> on your first order!
                 </h3>
-                <p className="text-[#1a1a2e]/70 mt-0.5 text-sm md:text-base">
+                <p className="text-[#1a1a2e]/70 mt-0.5 text-base md:text-lg">
                   Join our newsletter and get exclusive offers.
                 </p>
               </div>
@@ -41,16 +41,16 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Enter your email address"
-                className="flex-1 px-4 py-2.5 md:px-6 md:py-3 rounded-full bg-white border border-white text-[#1a1a2e] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E21923] transition text-sm md:text-base min-w-[250px]"
+                className="flex-1 px-4 py-2.5 md:px-6 md:py-3 rounded-full bg-white border border-white text-[#1a1a2e] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E21923] transition text-base md:text-lg min-w-[250px]"
               />
-              <button className="bg-[#E21923] hover:bg-[#c41720] text-white px-6 py-2.5 md:px-8 md:py-3 rounded-full font-bold transition text-sm md:text-base whitespace-nowrap">
+              <button className="bg-[#E21923] hover:bg-[#c41720] text-white px-6 py-2.5 md:px-8 md:py-3 rounded-full font-bold transition text-base md:text-lg whitespace-nowrap">
                 Subscribe
               </button>
             </div>
 
             {/* Follow Us - Right Side */}
             <div className="flex flex-col items-center lg:items-start gap-1">
-              <p className="text-[#1a1a2e] font-semibold text-sm">
+              <p className="text-[#1a1a2e] font-semibold text-base">
                 Follow Us
               </p>
               <div className="flex gap-2">
@@ -109,15 +109,15 @@ export default function Footer() {
                   priority
                 />
               </Link>
-              <p className="text-xs md:text-sm text-white/80 mb-3 md:mb-4 max-w-xs leading-relaxed">
+              <p className="text-sm md:text-base text-white/80 mb-3 md:mb-4 max-w-xs leading-relaxed">
                 Athvi Toys is your one-stop shop for premium quality toys for kids of all ages.
               </p>
             </div>
 
             {/* Shop Links */}
             <div>
-              <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Shop</h4>
-              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+              <h4 className="text-white font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Shop</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
                 <li><Link href="/collections" className="text-white/80 hover:text-[#FAC310] transition">All Toys</Link></li>
                 <li><Link href="/category-cards" className="text-white/80 hover:text-[#FAC310] transition">New Arrivals</Link></li>
                 <li><Link href="/best-sellers" className="text-white/80 hover:text-[#FAC310] transition">Best Sellers</Link></li>
@@ -126,8 +126,8 @@ export default function Footer() {
 
             {/* Customer Service */}
             <div>
-              <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Customer Service</h4>
-              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+              <h4 className="text-white font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Customer Service</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
                 <li><Link href="/contact" className="text-white/80 hover:text-[#FAC310] transition">Contact Us</Link></li>
                 <li><Link href="/shipping-policy" className="text-white/80 hover:text-[#FAC310] transition">Shipping Policy</Link></li>
                 <li><Link href="/returns" className="text-white/80 hover:text-[#FAC310] transition">Returns & Refunds</Link></li>
@@ -137,8 +137,8 @@ export default function Footer() {
 
             {/* Information */}
             <div>
-              <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Information</h4>
-              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+              <h4 className="text-white font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Information</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
                 <li><Link href="/privacy" className="text-white/80 hover:text-[#FAC310] transition">Privacy Policy</Link></li>
                 <li><Link href="/terms" className="text-white/80 hover:text-[#FAC310] transition">Terms & Conditions</Link></li>
                 <li><Link href="/blog" className="text-white/80 hover:text-[#FAC310] transition">Blog</Link></li>
@@ -147,8 +147,8 @@ export default function Footer() {
 
             {/* Help & Support */}
             <div>
-              <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Help & Support</h4>
-              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+              <h4 className="text-white font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Help & Support</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
                 <li><Link href="/wishlist" className="text-white/80 hover:text-[#FAC310] transition">Wishlist</Link></li>
                 <li><Link href="/order-history" className="text-white/80 hover:text-[#FAC310] transition">Order History</Link></li>
               </ul>
@@ -156,11 +156,11 @@ export default function Footer() {
 
             {/* Payment Methods Column */}
             <div className="col-span-2 sm:col-span-3 lg:col-span-1">
-              <h4 className="text-white font-bold text-base md:text-lg mb-3 md:mb-4 font-comic">Payment Methods</h4>
+              <h4 className="text-white font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Payment Methods</h4>
               <div className="flex flex-wrap gap-2">
                 {/* VISA */}
                 <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
-                  <span className="text-[#1A1F71] font-bold text-xs italic tracking-wider">VISA</span>
+                  <span className="text-[#1A1F71] font-bold text-sm italic tracking-wider">VISA</span>
                 </div>
                 {/* Mastercard */}
                 <div className="bg-white rounded-md px-2 py-1 flex items-center justify-center">
@@ -171,11 +171,11 @@ export default function Footer() {
                 </div>
                 {/* RuPay */}
                 <div className="bg-white rounded-md px-2 py-1 flex items-center justify-center">
-                  <span className="text-[#1A1A2E] font-bold text-[10px]">RuPay</span>
+                  <span className="text-[#1A1A2E] font-bold text-xs">RuPay</span>
                 </div>
                 {/* UPI */}
                 <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
-                  <span className="text-[#097939] font-bold text-xs">UPI</span>
+                  <span className="text-[#097939] font-bold text-sm">UPI</span>
                 </div>
               </div>
             </div>
@@ -186,7 +186,7 @@ export default function Footer() {
       {/* Copyright Bar */}
       <div className="bg-[#045EE6] border-t border-white/10">
         <div className="container mx-auto px-4 py-3 md:py-4">
-          <p className="text-center text-xs md:text-sm text-white/60">
+          <p className="text-center text-sm md:text-base text-white/60">
             © 2025 Athvi Toys. All Rights Reserved.
           </p>
         </div>
