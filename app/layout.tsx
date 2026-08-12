@@ -38,8 +38,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} ${baloo.variable} ${fredoka.variable} ${comic.variable}`}>
+    <html lang="en" className="overflow-x-hidden">
+      <body className={`${inter.className} ${baloo.variable} ${fredoka.variable} ${comic.variable} overflow-x-hidden`}>
         <CartProvider>
           <Header />
           <main className="min-h-screen">{children}</main>

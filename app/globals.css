@@ -13,8 +13,9 @@
     @apply bg-gradient-to-r from-[#FF6B35] to-[#FF9A56] bg-clip-text text-transparent;
   }
   
-  html {
+  html, body {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
 }
 

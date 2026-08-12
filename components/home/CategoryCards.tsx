@@ -37,7 +37,7 @@ const categories = [
 
 export default function PromoBanner() {
   return (
-    <section className="py-8 md:py-12 bg-[#F6C445]">
+    <section className="py-8 md:py-12 bg-[#F6C445] overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
 

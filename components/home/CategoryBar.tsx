@@ -222,7 +222,7 @@ export default function CategoryBar() {
           {currentIndex > 0 && (
             <button
               onClick={prevSlide}
-              className="absolute left-0 z-10 bg-white shadow-lg rounded-full p-2 md:p-3 border border-gray-200 hover:shadow-xl transition hover:scale-105 -ml-2 md:-ml-4"
+              className="absolute left-0 z-10 bg-white shadow-lg rounded-full p-2 md:p-3 border border-gray-200 hover:shadow-xl transition hover:scale-105"
               aria-label="Previous"
             >
               <svg
@@ -299,7 +299,7 @@ export default function CategoryBar() {
           {currentIndex < totalPages - 1 && (
             <button
               onClick={nextSlide}
-              className="absolute right-0 z-10 bg-white shadow-lg rounded-full p-2 md:p-3 border border-gray-200 hover:shadow-xl transition hover:scale-105 -mr-2 md:-mr-4"
+              className="absolute right-0 z-10 bg-white shadow-lg rounded-full p-2 md:p-3 border border-gray-200 hover:shadow-xl transition hover:scale-105"
               aria-label="Next"
             >
               <svg
