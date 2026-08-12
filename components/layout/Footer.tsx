@@ -116,47 +116,47 @@ export default function Footer() {
 
             {/* Shop Links */}
             <div>
-              <h4 className="text-black font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Shop</h4>
+              <h4 className="text-[#EB001B] font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Shop</h4>
               <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
-                <li><Link href="/collections" className="text-black hover:text-[#FAC310] transition">All Toys</Link></li>
-                <li><Link href="/category-cards" className="text-black hover:text-[#FAC310] transition">New Arrivals</Link></li>
-                <li><Link href="/best-sellers" className="text-black hover:text-[#FAC310] transition">Best Sellers</Link></li>
+                <li><Link href="/collections" className="text-black font-bold hover:text-[#FAC310] transition">All Toys</Link></li>
+                <li><Link href="/category-cards" className="text-black font-bold hover:text-[#FAC310] transition">New Arrivals</Link></li>
+                <li><Link href="/best-sellers" className="text-black font-bold hover:text-[#FAC310] transition">Best Sellers</Link></li>
               </ul>
             </div>
 
             {/* Customer Service */}
             <div>
-              <h4 className="text-black font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Customer Service</h4>
+              <h4 className="text-[#EB001B] font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Customer Service</h4>
               <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
-                <li><Link href="/contact" className="text-black hover:text-[#FAC310] transition">Contact Us</Link></li>
-                <li><Link href="/shipping-policy" className="text-black hover:text-[#FAC310] transition">Shipping Policy</Link></li>
-                <li><Link href="/returns" className="text-black hover:text-[#FAC310] transition">Returns & Refunds</Link></li>
-                <li><Link href="/faqs" className="text-black hover:text-[#FAC310] transition">FAQs</Link></li>
+                <li><Link href="/contact" className="text-black font-bold hover:text-[#FAC310] transition">Contact Us</Link></li>
+                <li><Link href="/shipping-policy" className="text-black font-bold hover:text-[#FAC310] transition">Shipping Policy</Link></li>
+                <li><Link href="/returns" className="text-black font-bold hover:text-[#FAC310] transition">Returns & Refunds</Link></li>
+                <li><Link href="/faqs" className="text-black font-bold hover:text-[#FAC310] transition">FAQs</Link></li>
               </ul>
             </div>
 
             {/* Information */}
             <div>
-              <h4 className="text-black font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Information</h4>
+              <h4 className="text-[#EB001B] font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Information</h4>
               <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
-                <li><Link href="/privacy" className="text-black hover:text-[#FAC310] transition">Privacy Policy</Link></li>
-                <li><Link href="/terms" className="text-black hover:text-[#FAC310] transition">Terms & Conditions</Link></li>
-                <li><Link href="/blog" className="text-black hover:text-[#FAC310] transition">Blog</Link></li>
+                <li><Link href="/privacy" className="text-black font-bold hover:text-[#FAC310] transition">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="text-black font-bold hover:text-[#FAC310] transition">Terms & Conditions</Link></li>
+                <li><Link href="/blog" className="text-black font-bold hover:text-[#FAC310] transition">Blog</Link></li>
               </ul>
             </div>
 
             {/* Help & Support */}
             <div>
-              <h4 className="text-black font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Help & Support</h4>
+              <h4 className="text-[#EB001B] font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Help & Support</h4>
               <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
-                <li><Link href="/wishlist" className="text-black hover:text-[#FAC310] transition">Wishlist</Link></li>
-                <li><Link href="/order-history" className="text-black hover:text-[#FAC310] transition">Order History</Link></li>
+                <li><Link href="/wishlist" className="text-black font-bold hover:text-[#FAC310] transition">Wishlist</Link></li>
+                <li><Link href="/order-history" className="text-black font-bold hover:text-[#FAC310] transition">Order History</Link></li>
               </ul>
             </div>
 
             {/* Payment Methods Column */}
             <div className="col-span-2 sm:col-span-3 lg:col-span-1">
-              <h4 className="text-black font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Payment Methods</h4>
+              <h4 className="text-[#EB001B] font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Payment Methods</h4>
               <div className="flex flex-wrap gap-2">
                 {/* VISA */}
                 <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
