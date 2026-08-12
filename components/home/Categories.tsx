@@ -444,7 +444,7 @@ export default function Categories() {
 
         {/* ==================== SHOP BY AGE SECTION (SECOND) - FULL WIDTH BLUE-600 BACKGROUND ==================== */}
         <div className="w-screen relative left-1/2 -translate-x-1/2 mt-12 md:mt-16">
-          <div className="bg-blue-600 py-8 md:py-12 px-3 md:px-4 w-full">
+          <div className="bg-[#F6C445] py-8 md:py-12 px-3 md:px-4 w-full">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -453,10 +453,10 @@ export default function Categories() {
             >
               {/* Shop by Age Title */}
               <div className="text-center mb-6 md:mb-8">
-                <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white font-comic">
+                <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-black font-comic">
                   Shop by Age
                 </h2>
-                <p className="text-white/80 text-sm md:text-base mt-2 font-comic">
+                <p className="text-black text-sm md:text-base mt-2 font-comic">
                   Find the perfect toy for every stage
                 </p>
               </div>

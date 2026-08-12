@@ -93,7 +93,7 @@ export default function Footer() {
       </div>
 
       {/* Main Footer - Blue Background */}
-      <div className="bg-[#045EE6]">
+      <div className="bg-[#D32F2F]">
         <div className="container mx-auto px-4 py-8 md:py-10">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8">
             

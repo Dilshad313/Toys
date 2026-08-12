@@ -197,7 +197,7 @@ export default function WatchAndBuy() {
   }
 
   return (
-    <section className="py-16 bg-blue-600">
+    <section className="py-16 bg-[#F6C445]">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div
@@ -207,10 +207,10 @@ export default function WatchAndBuy() {
           viewport={{ once: true }}
           className="text-center mb-8"
         >
-          <h2 className="text-3xl md:text-5xl font-bold font-comic text-white">
+          <h2 className="text-3xl md:text-5xl font-bold font-comic text-black">
             Watch & Buy
           </h2>
-          <p className="text-white/80 mt-2 font-medium font-comic text-base md:text-lg">
+          <p className="text-black mt-2 font-medium font-comic text-base md:text-lg">
             See the toys in action and shop your favorites!
           </p>
           <div className="w-20 h-1 bg-[#FFD700] mx-auto mt-4 rounded-full" />

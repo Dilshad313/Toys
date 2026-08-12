@@ -177,7 +177,7 @@ export default function CategoryBar() {
 
   if (loading) {
     return (
-      <section className="py-4 md:py-8 bg-blue-600 border-b border-blue-500">
+      <section className="py-4 md:py-8 bg-[#F6C445] border-b border-[#F6C445]">
         <div className="container mx-auto px-2 md:px-4">
           <div className="flex items-center justify-center gap-2 py-8">
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -191,7 +191,7 @@ export default function CategoryBar() {
   // No collections found
   if (collections.length === 0) {
     return (
-      <section className="py-4 md:py-8 bg-blue-600 border-b border-blue-500">
+      <section className="py-4 md:py-8 bg-[#F6C445] border-b border-[#F6C445]">
         <div className="container mx-auto px-2 md:px-4">
           <div className="text-center py-6">
             <p className="text-white text-sm">No collections found. Add collections in Shopify Admin.</p>
@@ -203,7 +203,7 @@ export default function CategoryBar() {
   }
 
   return (
-    <section className="py-4 md:py-8 bg-blue-600 border-b border-blue-500">
+    <section className="py-4 md:py-8 bg-[#F6C445] border-b border-[#F6C445]">
       <div className="container mx-auto px-2 md:px-4">
 
         <div 
@@ -282,7 +282,7 @@ export default function CategoryBar() {
                         </div>
                       )}
                     </div>
-                    <span className={`mt-2 md:mt-3 text-center font-semibold text-white group-hover:text-[#FFD700] transition line-clamp-1 ${
+                    <span className={`mt-2 md:mt-3 text-center font-semibold text-black group-hover:text-[#FFD700] transition line-clamp-1 ${
                       itemsPerPage === 3 ? 'text-xs md:text-sm' :
                       itemsPerPage === 4 ? 'text-sm md:text-base' :
                       'text-sm md:text-base'

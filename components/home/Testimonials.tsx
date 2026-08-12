@@ -61,7 +61,7 @@ export default function BlogSection() {
   }
 
   return (
-    <section className="bg-blue-600 py-8 md:py-16 overflow-hidden">
+    <section className="bg-[#F6C445] py-8 md:py-16 overflow-hidden">
       <div className="container mx-auto px-4">
 
         {/* Section Header - Reduced spacing */}
@@ -72,13 +72,13 @@ export default function BlogSection() {
           viewport={{ once: true }}
           className="text-center mb-6 md:mb-10"
         >
-          <span className="text-white/80 text-xs md:text-sm font-semibold uppercase tracking-wider">
+          <span className="text-blue-600 text-xs md:text-sm font-semibold uppercase tracking-wider">
             Our Blog
           </span>
-          <h2 className="text-xl md:text-3xl lg:text-4xl font-extrabold text-white mt-1.5 md:mt-2">
+          <h2 className="text-xl md:text-3xl lg:text-4xl font-extrabold text-black mt-1.5 md:mt-2">
             Latest Articles & Tips
           </h2>
-          <p className="text-white/70 text-xs md:text-sm mt-1.5 md:mt-2 max-w-xl mx-auto">
+          <p className="text-black text-xs md:text-sm mt-1.5 md:mt-2 max-w-xl mx-auto">
             Explore parenting tips, toy guides, and expert advice for your child's development.
           </p>
         </motion.div>

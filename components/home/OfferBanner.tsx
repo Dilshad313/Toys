@@ -7,7 +7,7 @@ import { Rocket, Gift, Star } from 'lucide-react'
 
 export default function OfferBanner() {
   return (
-    <section className="py-8 md:py-12 bg-blue-600">
+    <section className="py-8 md:py-12 bg-[#F6C445]">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           
