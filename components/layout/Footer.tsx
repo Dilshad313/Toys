@@ -93,7 +93,7 @@ export default function Footer() {
       </div>
 
       {/* Main Footer - Blue Background */}
-      <div className="bg-[#D32F2F]">
+      <div className="bg-white">
         <div className="container mx-auto px-4 py-8 md:py-10">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 md:gap-8">
             
@@ -109,54 +109,54 @@ export default function Footer() {
                   priority
                 />
               </Link>
-              <p className="text-sm md:text-base text-white/80 mb-3 md:mb-4 max-w-xs leading-relaxed">
+              <p className="text-sm md:text-base text-black mb-3 md:mb-4 max-w-xs leading-relaxed">
                 Athvi Toys is your one-stop shop for premium quality toys for kids of all ages.
               </p>
             </div>
 
             {/* Shop Links */}
             <div>
-              <h4 className="text-white font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Shop</h4>
+              <h4 className="text-black font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Shop</h4>
               <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
-                <li><Link href="/collections" className="text-white/80 hover:text-[#FAC310] transition">All Toys</Link></li>
-                <li><Link href="/category-cards" className="text-white/80 hover:text-[#FAC310] transition">New Arrivals</Link></li>
-                <li><Link href="/best-sellers" className="text-white/80 hover:text-[#FAC310] transition">Best Sellers</Link></li>
+                <li><Link href="/collections" className="text-black hover:text-[#FAC310] transition">All Toys</Link></li>
+                <li><Link href="/category-cards" className="text-black hover:text-[#FAC310] transition">New Arrivals</Link></li>
+                <li><Link href="/best-sellers" className="text-black hover:text-[#FAC310] transition">Best Sellers</Link></li>
               </ul>
             </div>
 
             {/* Customer Service */}
             <div>
-              <h4 className="text-white font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Customer Service</h4>
+              <h4 className="text-black font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Customer Service</h4>
               <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
-                <li><Link href="/contact" className="text-white/80 hover:text-[#FAC310] transition">Contact Us</Link></li>
-                <li><Link href="/shipping-policy" className="text-white/80 hover:text-[#FAC310] transition">Shipping Policy</Link></li>
-                <li><Link href="/returns" className="text-white/80 hover:text-[#FAC310] transition">Returns & Refunds</Link></li>
-                <li><Link href="/faqs" className="text-white/80 hover:text-[#FAC310] transition">FAQs</Link></li>
+                <li><Link href="/contact" className="text-black hover:text-[#FAC310] transition">Contact Us</Link></li>
+                <li><Link href="/shipping-policy" className="text-black hover:text-[#FAC310] transition">Shipping Policy</Link></li>
+                <li><Link href="/returns" className="text-black hover:text-[#FAC310] transition">Returns & Refunds</Link></li>
+                <li><Link href="/faqs" className="text-black hover:text-[#FAC310] transition">FAQs</Link></li>
               </ul>
             </div>
 
             {/* Information */}
             <div>
-              <h4 className="text-white font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Information</h4>
+              <h4 className="text-black font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Information</h4>
               <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
-                <li><Link href="/privacy" className="text-white/80 hover:text-[#FAC310] transition">Privacy Policy</Link></li>
-                <li><Link href="/terms" className="text-white/80 hover:text-[#FAC310] transition">Terms & Conditions</Link></li>
-                <li><Link href="/blog" className="text-white/80 hover:text-[#FAC310] transition">Blog</Link></li>
+                <li><Link href="/privacy" className="text-black hover:text-[#FAC310] transition">Privacy Policy</Link></li>
+                <li><Link href="/terms" className="text-black hover:text-[#FAC310] transition">Terms & Conditions</Link></li>
+                <li><Link href="/blog" className="text-black hover:text-[#FAC310] transition">Blog</Link></li>
               </ul>
             </div>
 
             {/* Help & Support */}
             <div>
-              <h4 className="text-white font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Help & Support</h4>
+              <h4 className="text-black font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Help & Support</h4>
               <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
-                <li><Link href="/wishlist" className="text-white/80 hover:text-[#FAC310] transition">Wishlist</Link></li>
-                <li><Link href="/order-history" className="text-white/80 hover:text-[#FAC310] transition">Order History</Link></li>
+                <li><Link href="/wishlist" className="text-black hover:text-[#FAC310] transition">Wishlist</Link></li>
+                <li><Link href="/order-history" className="text-black hover:text-[#FAC310] transition">Order History</Link></li>
               </ul>
             </div>
 
             {/* Payment Methods Column */}
             <div className="col-span-2 sm:col-span-3 lg:col-span-1">
-              <h4 className="text-white font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Payment Methods</h4>
+              <h4 className="text-black font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Payment Methods</h4>
               <div className="flex flex-wrap gap-2">
                 {/* VISA */}
                 <div className="bg-white rounded-md px-3 py-1.5 flex items-center justify-center">
@@ -184,9 +184,9 @@ export default function Footer() {
       </div>
 
       {/* Copyright Bar */}
-      <div className="bg-[#045EE6] border-t border-white/10">
+      <div className="bg-[#F6C445] border-t border-white/10">
         <div className="container mx-auto px-4 py-3 md:py-4">
-          <p className="text-center text-sm md:text-base text-white/60">
+          <p className="text-center text-sm md:text-base text-black">
             © 2025 Athvi Toys. All Rights Reserved.
           </p>
         </div>
