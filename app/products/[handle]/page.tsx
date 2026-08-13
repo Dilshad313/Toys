@@ -37,7 +37,8 @@ import {
   Eye,
   Leaf,
   Video,
-  Move
+  Move,
+  AlertCircle
 } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 
@@ -181,6 +182,52 @@ const WHATS_IN_BOX = [
   { icon: CircleDot, title: '1 × User Manual', color: 'text-purple-500' }
 ]
 
+// Function to get color classes based on color name
+const getColorClasses = (colorName: string) => {
+  const colorMap: Record<string, { border: string, bg: string, text: string, ring: string }> = {
+    'Blue': { border: 'border-blue-500', bg: 'bg-blue-50', text: 'text-blue-700', ring: 'ring-blue-500' },
+    'Pink': { border: 'border-pink-500', bg: 'bg-pink-50', text: 'text-pink-700', ring: 'ring-pink-500' },
+    'Red': { border: 'border-red-500', bg: 'bg-red-50', text: 'text-red-700', ring: 'ring-red-500' },
+    'Green': { border: 'border-green-500', bg: 'bg-green-50', text: 'text-green-700', ring: 'ring-green-500' },
+    'Yellow': { border: 'border-yellow-500', bg: 'bg-yellow-50', text: 'text-yellow-700', ring: 'ring-yellow-500' },
+    'Purple': { border: 'border-purple-500', bg: 'bg-purple-50', text: 'text-purple-700', ring: 'ring-purple-500' },
+    'Orange': { border: 'border-orange-500', bg: 'bg-orange-50', text: 'text-orange-700', ring: 'ring-orange-500' },
+    'Black': { border: 'border-gray-800', bg: 'bg-gray-100', text: 'text-gray-800', ring: 'ring-gray-800' },
+    'White': { border: 'border-gray-300', bg: 'bg-gray-50', text: 'text-gray-700', ring: 'ring-gray-400' },
+    'Gold': { border: 'border-yellow-600', bg: 'bg-yellow-50', text: 'text-yellow-700', ring: 'ring-yellow-600' },
+    'Silver': { border: 'border-gray-400', bg: 'bg-gray-50', text: 'text-gray-600', ring: 'ring-gray-400' },
+  }
+  return colorMap[colorName] || { border: 'border-[#D32F2F]', bg: 'bg-red-50', text: 'text-[#D32F2F]', ring: 'ring-[#D32F2F]' }
+}
+
+// Toast Message Component
+const ToastMessage = ({ message, type, onClose }: { message: string, type: 'success' | 'error' | 'warning', onClose: () => void }) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose()
+    }, 3000)
+    return () => clearTimeout(timer)
+  }, [onClose])
+
+  const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-yellow-500'
+  const icon = type === 'success' ? <Check className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: -50 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -50 }}
+      className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 ${bgColor} text-white px-6 py-3 rounded-xl shadow-lg flex items-center gap-3 max-w-md w-full`}
+    >
+      {icon}
+      <span className="text-sm font-medium">{message}</span>
+      <button onClick={onClose} className="ml-auto hover:opacity-80">
+        <X className="w-4 h-4" />
+      </button>
+    </motion.div>
+  )
+}
+
 export default function ProductDetailPage() {
   const params = useParams()
   const handle = params?.handle as string
@@ -205,9 +252,11 @@ export default function ProductDetailPage() {
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' | 'warning' } | null>(null)
   const { addToCart } = useCart()
   const imageContainerRef = useRef<HTMLDivElement>(null)
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   // Wishlist management
   const [wishlistItems, setWishlistItems] = useState<string[]>([])
@@ -272,6 +321,19 @@ export default function ProductDetailPage() {
     const totalImages = images.length
     const index = Math.floor((rotationAngle / 360) * totalImages) % totalImages
     return images[index]
+  }
+
+  // Scroll functions for color options
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -200, behavior: 'smooth' })
+    }
+  }
+
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 200, behavior: 'smooth' })
+    }
   }
 
   useEffect(() => {
@@ -418,7 +480,12 @@ export default function ProductDetailPage() {
   }
 
   const handleQuantityChange = (type: 'increase' | 'decrease') => {
+    const currentStock = variant?.quantityAvailable || 0
     if (type === 'increase') {
+      if (quantity >= currentStock) {
+        setToast({ message: `Only ${currentStock} items available in stock!`, type: 'warning' })
+        return
+      }
       setQuantity(prev => prev + 1)
     } else if (type === 'decrease' && quantity > 1) {
       setQuantity(prev => prev - 1)
@@ -426,13 +493,23 @@ export default function ProductDetailPage() {
   }
 
   const handleAddToCart = async () => {
-    if (!selectedVariant) return
+    if (!selectedVariant) {
+      setToast({ message: 'Please select a color option first!', type: 'warning' })
+      return
+    }
+
+    const currentStock = variant?.quantityAvailable || 0
+    if (quantity > currentStock) {
+      setToast({ message: `Only ${currentStock} items available in stock!`, type: 'error' })
+      return
+    }
 
     setAddingToCart(true)
     try {
       await addToCart(selectedVariant, quantity)
       setAddedToCart(true)
       setShowCartPopup(true)
+      setToast({ message: `Added ${quantity} item(s) to cart! 🎉`, type: 'success' })
 
       setTimeout(() => {
         setShowCartPopup(false)
@@ -441,14 +518,24 @@ export default function ProductDetailPage() {
       setTimeout(() => setAddedToCart(false), 3000)
     } catch (error) {
       console.error('Error adding to cart:', error)
+      setToast({ message: 'Failed to add to cart. Please try again.', type: 'error' })
     } finally {
       setAddingToCart(false)
     }
   }
 
-  // Buy Now - Redirect to Shopify Checkout
+  // Buy Now - Redirect to Shopify Checkout with selected variant
   const handleBuyNow = () => {
-    if (!selectedVariant) return
+    if (!selectedVariant) {
+      setToast({ message: 'Please select a color option first!', type: 'warning' })
+      return
+    }
+
+    const currentStock = variant?.quantityAvailable || 0
+    if (quantity > currentStock) {
+      setToast({ message: `Only ${currentStock} items available in stock!`, type: 'error' })
+      return
+    }
 
     const storeDomain = "athvi-toys.myshopify.com"
     const numericVariantId = selectedVariant.split("/").pop()
@@ -564,6 +651,13 @@ export default function ProductDetailPage() {
     return variant?.compareAtPrice?.amount || null
   }
 
+  // Get selected variant title
+  const getSelectedVariantTitle = () => {
+    if (!product) return ''
+    const variant = product.variants?.edges?.find((e: any) => e.node.id === selectedVariant)?.node
+    return variant?.title || ''
+  }
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8 md:py-16">
@@ -602,6 +696,8 @@ export default function ProductDetailPage() {
   const variant = product.variants?.edges?.find((e: any) => e.node.id === selectedVariant)?.node
   const images = product.images?.edges?.map((e: any) => e.node) || []
   const deliveryDates = getDeliveryDates() // Dynamic dates
+  const selectedVariantTitle = getSelectedVariantTitle()
+  const currentStock = variant?.quantityAvailable || 0
 
   const specifications = getSpecifications()
   const additionalDetails = getAdditionalDetails()
@@ -633,6 +729,7 @@ export default function ProductDetailPage() {
               <div className="flex-1 min-w-0">
                 <h3 className="font-bold text-gray-800 text-sm">Added to Cart! 🎉</h3>
                 <p className="text-xs text-gray-600 truncate">{product?.title}</p>
+                <p className="text-xs text-gray-500">Variant: {selectedVariantTitle}</p>
                 <p className="text-xs text-[#D32F2F] font-semibold mt-1">
                   ₹{parseFloat(currentPrice).toFixed(2)} × {quantity}
                 </p>
@@ -667,6 +764,17 @@ export default function ProductDetailPage() {
   return (
     <div className="bg-gray-50 min-h-screen">
       <CartPopup />
+
+      {/* Toast Messages */}
+      <AnimatePresence>
+        {toast && (
+          <ToastMessage 
+            message={toast.message} 
+            type={toast.type} 
+            onClose={() => setToast(null)} 
+          />
+        )}
+      </AnimatePresence>
 
       <div className="container mx-auto px-4 py-4 md:py-8">
         {/* Breadcrumb */}
@@ -811,6 +919,11 @@ export default function ProductDetailPage() {
                   )}
                 </div>
                 <p className="text-[13.5px] md:text-[13px] text-gray-500 mt-0.5">Inclusive of all taxes</p>
+                {selectedVariantTitle && (
+                  <p className="text-[11px] md:text-[12px] text-gray-400 mt-0.5">
+                    Selected: {selectedVariantTitle} • {currentStock} in stock
+                  </p>
+                )}
               </div>
 
               {/* Why Kids Love This - Using data from image */}
@@ -829,62 +942,124 @@ export default function ProductDetailPage() {
                 </ul>
               </div>
 
-              {/* Choose Your Option - Variant Selector */}
+              {/* Choose Your Option - Scrollable Variant Selector */}
               {colorOption && (
                 <div className="mb-3 md:mb-4">
                   <h3 className="font-semibold text-[13.5px] md:text-[14px] mb-2">Choose Your Option</h3>
-                  <div className="flex flex-wrap gap-2 md:gap-3">
-                    {product.variants.edges.map((edge: any) => {
-                      const v = edge.node
-                      const colorValue = v.selectedOptions?.find((opt: any) => 
-                        opt.name.toLowerCase().includes('color') || opt.name.toLowerCase().includes('colour')
-                      )?.value
+                  <div className="relative">
+                    {/* Left Scroll Button */}
+                    <button
+                      onClick={scrollLeft}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur p-1.5 rounded-full shadow-md hover:bg-white transition"
+                    >
+                      <ChevronLeft className="w-4 h-4 text-gray-600" />
+                    </button>
 
-                      if (!colorValue) return null
+                    {/* Scrollable Container with mouse drag support */}
+                    <div
+                      ref={scrollContainerRef}
+                      className="flex gap-2 md:gap-3 overflow-x-auto pb-2 scrollbar-hide scroll-smooth px-6 cursor-grab active:cursor-grabbing"
+                      style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                      onMouseDown={(e) => {
+                        const container = e.currentTarget
+                        let startX = e.pageX - container.offsetLeft
+                        let scrollLeft = container.scrollLeft
 
-                      const isSelected = selectedOptions[colorOption.name] === colorValue
-                      const variantImage = v.image?.url
+                        const onMouseMove = (e: MouseEvent) => {
+                          const x = e.pageX - container.offsetLeft
+                          const walk = (x - startX) * 1.5
+                          container.scrollLeft = scrollLeft - walk
+                        }
 
-                      return (
-                        <button
-                          key={v.id}
-                          onClick={() => handleOptionChange(colorOption.name, colorValue)}
-                          className={`relative flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-xl border-2 transition ${
-                            isSelected 
-                              ? 'border-[#D32F2F] bg-red-50' 
-                              : 'border-gray-200 hover:border-gray-300 bg-white'
-                          }`}
-                        >
-                          {variantImage && (
-                            <img 
-                              src={variantImage} 
-                              alt={colorValue}
-                              className="w-10 h-10 md:w-12 md:h-12 rounded-lg object-cover"
-                            />
-                          )}
-                          <div className="text-left">
-                            <div className="text-[13.5px] md:text-[14px] font-semibold text-gray-800">
-                              Elephant Drummer ({colorValue})
-                            </div>
-                            <div className="flex items-center gap-1 md:gap-2 mt-0.5">
-                              <span className="text-[13.5px] md:text-[14px] font-bold text-[#D32F2F]">
-                                ₹{parseFloat(v.price.amount).toFixed(2)}
-                              </span>
+                        const onMouseUp = () => {
+                          document.removeEventListener('mousemove', onMouseMove)
+                          document.removeEventListener('mouseup', onMouseUp)
+                          container.style.cursor = 'grab'
+                        }
+
+                        container.style.cursor = 'grabbing'
+                        document.addEventListener('mousemove', onMouseMove)
+                        document.addEventListener('mouseup', onMouseUp)
+                      }}
+                    >
+                      {product.variants.edges.map((edge: any) => {
+                        const v = edge.node
+                        const colorValue = v.selectedOptions?.find((opt: any) => 
+                          opt.name.toLowerCase().includes('color') || opt.name.toLowerCase().includes('colour')
+                        )?.value
+
+                        if (!colorValue) return null
+
+                        const isSelected = selectedOptions[colorOption.name] === colorValue
+                        const variantImage = v.image?.url
+                        const colorClasses = getColorClasses(colorValue)
+
+                        return (
+                          <button
+                            key={v.id}
+                            onClick={() => {
+                              // Update the selected option
+                              handleOptionChange(colorOption.name, colorValue)
+                              // Update the selected variant - THIS IS KEY FOR PURCHASING
+                              setSelectedVariant(v.id)
+                              // If there's a variant image, update the main image
+                              if (variantImage) {
+                                const imageIndex = images.findIndex(img => img.url === variantImage)
+                                if (imageIndex !== -1) {
+                                  setSelectedImage(imageIndex)
+                                }
+                              }
+                            }}
+                            className={`relative flex-shrink-0 flex items-center gap-2 md:gap-3 p-2 md:p-3 rounded-xl border-2 transition-all duration-300 ${
+                              isSelected 
+                                ? `${colorClasses.border} ${colorClasses.bg} shadow-md ring-2 ${colorClasses.ring} ring-opacity-50` 
+                                : `border-2 ${colorClasses.border} bg-white hover:${colorClasses.bg} hover:shadow-sm`
+                            }`}
+                          >
+                            {variantImage && (
+                              <img 
+                                src={variantImage} 
+                                alt={colorValue}
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-lg object-cover"
+                              />
+                            )}
+                            <div className="text-left min-w-[140px] md:min-w-[160px]">
+                              <div className={`text-[13.5px] md:text-[14px] font-semibold ${isSelected ? colorClasses.text : 'text-gray-800'}`}>
+                                Elephant Drummer ({colorValue})
+                              </div>
+                              <div className="flex items-center gap-1 md:gap-2 mt-0.5">
+                                <span className={`text-[13.5px] md:text-[14px] font-bold ${isSelected ? colorClasses.text : 'text-[#D32F2F]'}`}>
+                                  ₹{parseFloat(v.price.amount).toFixed(2)}
+                                </span>
+                                {v.compareAtPrice && (
+                                  <span className="text-gray-400 line-through text-[12.5px] md:text-[13px]">
+                                    ₹{parseFloat(v.compareAtPrice.amount).toFixed(2)}
+                                  </span>
+                                )}
+                              </div>
                               {v.compareAtPrice && (
-                                <span className="text-gray-400 line-through text-[12.5px] md:text-[13px]">
-                                  ₹{parseFloat(v.compareAtPrice.amount).toFixed(2)}
+                                <span className="text-[11.5px] md:text-[11px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-bold">
+                                  {Math.round(((parseFloat(v.compareAtPrice.amount) - parseFloat(v.price.amount)) / parseFloat(v.compareAtPrice.amount)) * 100)}% OFF
                                 </span>
                               )}
                             </div>
-                            {v.compareAtPrice && (
-                              <span className="text-[11.5px] md:text-[11px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-bold">
-                                {Math.round(((parseFloat(v.compareAtPrice.amount) - parseFloat(v.price.amount)) / parseFloat(v.compareAtPrice.amount)) * 100)}% OFF
-                              </span>
+                            {isSelected && (
+                              <div className={`absolute -top-1 -right-1 ${colorClasses.text} bg-white rounded-full p-0.5 shadow-md border ${colorClasses.border}`}>
+                                <Check className="w-3 h-3" />
+                              </div>
                             )}
-                          </div>
-                        </button>
-                      )
-                    })}
+                          </button>
+                        )
+                      })}
+                    </div>
+
+                    {/* Right Scroll Button */}
+                    <button
+                      onClick={scrollRight}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white/90 backdrop-blur p-1.5 rounded-full shadow-md hover:bg-white transition"
+                    >
+                      <ChevronRight className="w-4 h-4 text-gray-600" />
+                    </button>
                   </div>
                 </div>
               )}
@@ -894,7 +1069,7 @@ export default function ProductDetailPage() {
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="font-semibold text-[13.5px] md:text-[14px]">Quantity</h3>
                   <span className="text-[12.5px] md:text-[13px] text-gray-500">
-                    {variant?.quantityAvailable || 0} in stock
+                    {currentStock} in stock
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
@@ -913,35 +1088,21 @@ export default function ProductDetailPage() {
                       <Plus className="w-3 h-3 md:w-4 md:h-4" />
                     </button>
                   </div>
+                  {quantity >= currentStock && currentStock > 0 && (
+                    <span className="text-[11px] text-red-500 font-medium">
+                      Max {currentStock} available
+                    </span>
+                  )}
                 </div>
               </div>
 
-              {/* Social Proof & Urgency */}
-              <div className="bg-orange-50 rounded-xl p-3 md:p-4 mb-3 md:mb-4 border border-orange-100">
-                <div className="flex items-center gap-2 mb-2">
-                  <Users className="w-4 h-4 text-orange-500" />
-                  <span className="text-[13.5px] md:text-[14px] font-bold text-orange-700">
-                    🔥 {MOCK_VIEWERS_COUNT} people are viewing this product right now!
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[13.5px] md:text-[14px] font-bold text-green-700">
-                    Hurry! Only {MOCK_STOCK_LEFT} left in stock.
-                  </span>
-                </div>
-                <div className="mt-2 w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-green-500 h-2 rounded-full transition-all"
-                    style={{ width: `${(MOCK_STOCK_LEFT / 50) * 100}%` }}
-                  />
-                </div>
-              </div>
+             
 
-              {/* Add to Cart & Buy Now */}
+              {/* Add to Cart & Buy Now - Uses selectedVariant */}
               <div className="flex flex-col sm:flex-row gap-2 md:gap-3 mb-3 md:mb-4">
                 <button
                   onClick={handleAddToCart}
-                  disabled={addingToCart}
+                  disabled={addingToCart || !selectedVariant || currentStock === 0}
                   className="flex-1 sm:flex-none sm:w-[180px] md:w-[200px] bg-[#D32F2F] hover:bg-[#B71C1C] text-white py-2.5 md:py-3 px-4 md:px-6 rounded-full font-bold transition flex items-center justify-center gap-2 disabled:opacity-50 text-[13.5px] md:text-[14px]"
                 >
                   {addingToCart ? (
@@ -957,16 +1118,19 @@ export default function ProductDetailPage() {
                   ) : (
                     <>
                       <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
-                      <span className="text-[13.5px] md:text-[14px]">Add to Cart</span>
+                      <span className="text-[13.5px] md:text-[14px]">
+                        {currentStock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                      </span>
                     </>
                   )}
                 </button>
                 <button
                   onClick={handleBuyNow}
-                  className="flex-1 sm:flex-none sm:w-[180px] md:w-[200px] bg-[#FF9800] hover:bg-[#F57C00] text-white py-2.5 md:py-3 px-4 md:px-6 rounded-full font-bold transition flex items-center justify-center gap-2 text-[13.5px] md:text-[14px]"
+                  disabled={!selectedVariant || currentStock === 0}
+                  className="flex-1 sm:flex-none sm:w-[180px] md:w-[200px] bg-[#FF9800] hover:bg-[#F57C00] text-white py-2.5 md:py-3 px-4 md:px-6 rounded-full font-bold transition flex items-center justify-center gap-2 disabled:opacity-50 text-[13.5px] md:text-[14px]"
                 >
                   <Zap className="w-4 h-4 md:w-5 md:h-5" />
-                  Buy Now
+                  {currentStock === 0 ? 'Out of Stock' : 'Buy Now'}
                 </button>
               </div>
 
@@ -1307,6 +1471,10 @@ export default function ProductDetailPage() {
           .prose li {
             margin-bottom: 0.5rem;
           }
+        }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
         }
         /* Prevent text selection while dragging 360 view */
         .cursor-grabbing * {
