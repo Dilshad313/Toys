@@ -282,7 +282,7 @@ export default function CategoryBar() {
                         </div>
                       )}
                     </div>
-                    <span className={`mt-2 md:mt-3 text-center font-semibold text-black group-hover:text-[#FFD700] transition line-clamp-1 ${
+                    <span className={`mt-2 md:mt-3 text-center font-semibold text-black group-hover:text-blue-600 transition line-clamp-1 ${
                       itemsPerPage === 3 ? 'text-xs md:text-sm' :
                       itemsPerPage === 4 ? 'text-sm md:text-base' :
                       'text-sm md:text-base'
