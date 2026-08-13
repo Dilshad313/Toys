@@ -41,6 +41,7 @@ interface Product {
     edges: Array<{
       node: {
         id: string
+        title: string
         price: { amount: string }
         compareAtPrice?: { amount: string }
         availableForSale: boolean
