@@ -127,123 +127,110 @@ export default function CartPage() {
             {items.length > 0 && (
               <button
                 onClick={handleRemoveAll}
-                className="flex items-center gap-2 text-red-500 hover:text-red-700 transition font-medium text-sm bg-red-50 hover:bg-red-100 px-4 py-2 rounded-full"
+                className="flex items-center gap-2 text-red-500 hover:text-red-700 transition font-medium text-[13.5px] md:text-sm bg-red-50 hover:bg-red-100 px-4 py-2 rounded-full"
               >
                 <X className="w-4 h-4" />
                 Remove All
               </button>
             )}
-            <Link 
-              href="/"
-              className="flex items-center gap-2 text-gray-600 hover:text-[#D32F2F] transition font-medium"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Continue Shopping
-            </Link>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items */}
-          <div className="lg:col-span-2 space-y-4">
-            <AnimatePresence>
-              {items.map((item, index) => {
-                const isUpdating = updatingId === item.id
-                const hasError = imageErrors[item.id]
-                // ✅ Use item.image directly — it's preserved in context
-                const imageSrc = hasError ? '/placeholder.jpg' : (item.image || '/placeholder.jpg')
-                
-                return (
-                  <motion.div
-                    key={item.id}
-                    initial={{ x: 300, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: -300, opacity: 0 }}
-                    transition={{ 
-                      type: 'spring', 
-                      damping: 25, 
-                      stiffness: 300,
-                      delay: index * 0.05
-                    }}
-                    className="bg-white rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden border border-gray-100 relative group"
-                  >
-                    {/* Remove Button - Top Right */}
-                    <button
-                      onClick={() => handleRemove(item.id)}
-                      disabled={isUpdating}
-                      className="absolute top-2 right-2 z-10 bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-700 p-1.5 rounded-full transition opacity-0 group-hover:opacity-100 disabled:opacity-50"
-                      aria-label="Remove item"
+          {/* Cart Items - Grid layout for mobile */}
+          <div className="lg:col-span-2">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              <AnimatePresence>
+                {items.map((item, index) => {
+                  const isUpdating = updatingId === item.id
+                  const hasError = imageErrors[item.id]
+                  const imageSrc = hasError ? '/placeholder.jpg' : (item.image || '/placeholder.jpg')
+                  
+                  return (
+                    <motion.div
+                      key={item.id}
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.9, opacity: 0 }}
+                      transition={{ 
+                        type: 'spring', 
+                        damping: 25, 
+                        stiffness: 300,
+                        delay: index * 0.05
+                      }}
+                      className="bg-white rounded-2xl shadow-md hover:shadow-lg transition overflow-hidden border border-gray-100 relative group"
                     >
-                      <X className="w-4 h-4" />
-                    </button>
+                      {/* Remove Button - Top Right */}
+                      <button
+                        onClick={() => handleRemove(item.id)}
+                        disabled={isUpdating}
+                        className="absolute top-2 right-2 z-10 bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-700 p-1.5 rounded-full transition disabled:opacity-50"
+                        aria-label="Remove item"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
 
-                    <div className="flex flex-col sm:flex-row gap-4 p-4">
-                      {/* Product Image */}
-                      <div className="relative w-full sm:w-32 h-32 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
-                        <img
-                          src={imageSrc}
-                          alt={item.title}
-                          className="w-full h-full object-cover"
-                          onError={() => handleImageError(item.id)}
-                        />
-                        {isUpdating && (
-                          <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
-                            <div className="w-6 h-6 border-2 border-[#D32F2F] border-t-transparent rounded-full animate-spin" />
-                          </div>
-                        )}
-                      </div>
+                      <div className="p-2.5 sm:p-3">
+                        {/* Product Image - Square */}
+                        <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-gray-100">
+                          <img
+                            src={imageSrc}
+                            alt={item.title}
+                            className="w-full h-full object-cover"
+                            onError={() => handleImageError(item.id)}
+                          />
+                          {isUpdating && (
+                            <div className="absolute inset-0 bg-white/50 flex items-center justify-center">
+                              <div className="w-6 h-6 border-2 border-[#D32F2F] border-t-transparent rounded-full animate-spin" />
+                            </div>
+                          )}
+                        </div>
 
-                      {/* Product Details */}
-                      <div className="flex-1 flex flex-col sm:flex-row gap-4">
-                        <div className="flex-1">
+                        {/* Product Details */}
+                        <div className="mt-2 sm:mt-3">
                           <Link href={`/products/${item.handle}`}>
-                            <h3 className="font-semibold text-lg hover:text-[#D32F2F] transition line-clamp-2 font-comic">
+                            <h3 className="font-semibold text-[15.5px] sm:text-[16px] md:text-[17px] hover:text-[#D32F2F] transition line-clamp-2 font-comic leading-tight">
                               {item.title}
                             </h3>
                           </Link>
-                          <div className="text-sm text-gray-500 mt-1">
+                          <div className="text-[13px] sm:text-[13.5px] md:text-[14px] text-gray-500 mt-0.5 font-medium">
                             ₹{parseFloat(item.price).toFixed(2)}
                           </div>
-                        </div>
 
-                        {/* Quantity Controls */}
-                        <div className="flex items-center gap-3">
-                          <div className="flex items-center border border-gray-200 rounded-full overflow-hidden">
-                            <button
-                              onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                              disabled={item.quantity <= 1 || isUpdating}
-                              className="p-2 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <Minus className="w-4 h-4" />
-                            </button>
-                            <span className="w-10 text-center font-semibold text-sm">
-                              {isUpdating ? '...' : item.quantity}
+                          {/* Quantity Controls */}
+                          <div className="flex items-center justify-between mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-gray-50">
+                            <div className="flex items-center border border-gray-200 rounded-full overflow-hidden">
+                              <button
+                                onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                                disabled={item.quantity <= 1 || isUpdating}
+                                className="p-1.5 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                <Minus className="w-3.5 h-3.5" />
+                              </button>
+                              <span className="w-7 sm:w-8 text-center font-semibold text-[13px]">
+                                {isUpdating ? '...' : item.quantity}
+                              </span>
+                              <button
+                                onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                                disabled={isUpdating}
+                                className="p-1.5 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                <Plus className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+
+                            {/* Total Price */}
+                            <span className="text-[13px] sm:text-[13.5px] md:text-[14px] font-bold text-[#D32F2F]">
+                              ₹{(parseFloat(item.price) * item.quantity).toFixed(2)}
                             </span>
-                            <button
-                              onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                              disabled={isUpdating}
-                              className="p-2 hover:bg-gray-100 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <Plus className="w-4 h-4" />
-                            </button>
                           </div>
-
-                          {/* Remove Button - Mobile */}
-                          <button
-                            onClick={() => handleRemove(item.id)}
-                            disabled={isUpdating}
-                            className="p-2 text-red-400 hover:text-red-600 transition lg:hidden disabled:opacity-50"
-                            aria-label="Remove item"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
                         </div>
                       </div>
-                    </div>
-                  </motion.div>
-                )
-              })}
-            </AnimatePresence>
+                    </motion.div>
+                  )
+                })}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Order Summary */}
@@ -255,13 +242,13 @@ export default function CartPage() {
           >
             <div className="bg-white rounded-2xl shadow-md p-6 sticky top-24 border border-gray-100">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold font-comic text-[#D32F2F]">
+                <h2 className="text-xl md:text-2xl font-bold font-comic text-[#D32F2F]">
                   Order Summary
                 </h2>
                 {items.length > 0 && (
                   <button
                     onClick={handleRemoveAll}
-                    className="text-xs text-red-500 hover:text-red-700 transition font-medium flex items-center gap-1"
+                    className="text-[11.5px] md:text-xs text-red-500 hover:text-red-700 transition font-medium flex items-center gap-1"
                   >
                     <X className="w-3 h-3" />
                     Remove All
@@ -270,21 +257,21 @@ export default function CartPage() {
               </div>
 
               <div className="space-y-3 border-b border-gray-100 pb-4">
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-[13.5px] md:text-sm">
                   <span className="text-gray-600">Subtotal ({totalItems} items)</span>
                   <span className="font-semibold">₹{parseFloat(totalPrice).toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-[13.5px] md:text-sm">
                   <span className="text-gray-600">Shipping</span>
                   <span className="text-green-600 font-semibold">Free</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex justify-between text-[13.5px] md:text-sm">
                   <span className="text-gray-600">Tax</span>
                   <span className="font-semibold">₹0.00</span>
                 </div>
               </div>
 
-              <div className="flex justify-between text-lg font-bold py-4 border-b border-gray-100">
+              <div className="flex justify-between text-lg md:text-xl font-bold py-4 border-b border-gray-100">
                 <span>Total</span>
                 <span className="text-[#D32F2F]">₹{parseFloat(totalPrice).toFixed(2)}</span>
               </div>
@@ -292,7 +279,7 @@ export default function CartPage() {
               {/* Checkout Button */}
               <button 
                 onClick={handleCheckout}
-                className="w-full mt-4 bg-[#D32F2F] hover:bg-[#B71C1C] text-white py-3 rounded-full font-semibold transition flex items-center justify-center gap-2"
+                className="w-full mt-4 bg-[#D32F2F] hover:bg-[#B71C1C] text-white py-3 rounded-full font-semibold transition flex items-center justify-center gap-2 text-[13.5px] md:text-sm"
               >
                 <CreditCard className="w-5 h-5" />
                 Proceed to Checkout
@@ -300,15 +287,15 @@ export default function CartPage() {
 
               {/* Features */}
               <div className="mt-6 space-y-2">
-                <div className="flex items-center gap-3 text-sm text-gray-600">
+                <div className="flex items-center gap-3 text-[13.5px] md:text-sm text-gray-600">
                   <Truck className="w-4 h-4 text-green-500" />
                   <span>Free Shipping on orders above ₹499</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm text-gray-600">
+                <div className="flex items-center gap-3 text-[13.5px] md:text-sm text-gray-600">
                   <ShieldCheck className="w-4 h-4 text-green-500" />
                   <span>Secure Payment</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm text-gray-600">
+                <div className="flex items-center gap-3 text-[13.5px] md:text-sm text-gray-600">
                   <RotateCcw className="w-4 h-4 text-green-500" />
                   <span>Easy Returns</span>
                 </div>

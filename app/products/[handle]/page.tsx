@@ -791,8 +791,8 @@ export default function ProductDetailPage() {
             {/* Left Column - Images (5 cols) */}
             <div className="lg:col-span-5">
               <div className="flex gap-3">
-                {/* Thumbnail column */}
-                <div className="flex flex-col gap-2 w-16 md:w-20 flex-shrink-0">
+                {/* Thumbnail column with vertical scroll */}
+                <div className="flex flex-col gap-2 w-16 md:w-20 flex-shrink-0 max-h-[400px] md:max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                   {images.map((img: any, index: number) => (
                     <button
                       key={index}
@@ -812,7 +812,7 @@ export default function ProductDetailPage() {
                   {/* 360 View button */}
                   <button
                     onClick={() => setShow360View(true)}
-                    className="w-16 h-16 md:w-20 md:h-20 rounded-lg border-2 border-gray-200 hover:border-[#D32F2F] flex flex-col items-center justify-center gap-1 transition bg-white"
+                    className="w-16 h-16 md:w-20 md:h-20 rounded-lg border-2 border-gray-200 hover:border-[#D32F2F] flex flex-col items-center justify-center gap-1 transition bg-white flex-shrink-0"
                   >
                     <Rotate3d className="w-5 h-5 text-gray-600" />
                     <span className="text-[8px] text-gray-500 font-medium">360° View</span>
@@ -855,8 +855,8 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
-              {/* Trust badges row */}
-              <div className="grid grid-cols-3 gap-2 mt-4">
+              {/* Trust badges row - moved up 70px */}
+              <div className="grid grid-cols-3 gap-2 mt-[-10px] relative z-10">
                 <div className="bg-white rounded-xl p-2 md:p-3 text-center shadow-sm border border-gray-100 flex flex-col items-center gap-1">
                   <Truck className="w-5 h-5 text-blue-500" />
                   <span className="text-[13.5px] md:text-[13px] font-bold text-gray-700">Free Shipping</span>
@@ -872,6 +872,29 @@ export default function ProductDetailPage() {
                   <Shield className="w-5 h-5 text-purple-500" />
                   <span className="text-[13.5px] md:text-[13px] font-bold text-gray-700">Secure</span>
                   <span className="text-[11.5px] md:text-[11px] text-gray-500">Payments</span>
+                </div>
+              </div>
+
+              {/* Delivery Timeline - moved below trust badges */}
+              <div className="bg-white rounded-xl p-3 md:p-4 mt-4 shadow-sm border border-gray-100">
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-col items-center gap-1 flex-1">
+                    <Package className="w-5 h-5 text-blue-500" />
+                    <span className="text-[12.5px] md:text-[13px] font-bold text-gray-700">{deliveryDates.orderDate}</span>
+                    <span className="text-[10.5px] md:text-[11px] text-gray-500">Order Placed</span>
+                  </div>
+                  <div className="w-8 md:w-12 h-0.5 bg-gray-200" />
+                  <div className="flex flex-col items-center gap-1 flex-1">
+                    <Truck className="w-5 h-5 text-orange-500" />
+                    <span className="text-[12.5px] md:text-[13px] font-bold text-gray-700">{deliveryDates.dispatchRange}</span>
+                    <span className="text-[10.5px] md:text-[11px] text-gray-500">Dispatched</span>
+                  </div>
+                  <div className="w-8 md:w-12 h-0.5 bg-gray-200" />
+                  <div className="flex flex-col items-center gap-1 flex-1">
+                    <Check className="w-5 h-5 text-green-500" />
+                    <span className="text-[12.5px] md:text-[13px] font-bold text-gray-700">{deliveryDates.deliveryRange}</span>
+                    <span className="text-[10.5px] md:text-[11px] text-gray-500">Delivery</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -919,11 +942,6 @@ export default function ProductDetailPage() {
                   )}
                 </div>
                 <p className="text-[13.5px] md:text-[13px] text-gray-500 mt-0.5">Inclusive of all taxes</p>
-                {selectedVariantTitle && (
-                  <p className="text-[11px] md:text-[12px] text-gray-400 mt-0.5">
-                    Selected: {selectedVariantTitle} • {currentStock} in stock
-                  </p>
-                )}
               </div>
 
               {/* Why Kids Love This - Using data from image */}
@@ -1096,8 +1114,6 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
-             
-
               {/* Add to Cart & Buy Now - Uses selectedVariant */}
               <div className="flex flex-col sm:flex-row gap-2 md:gap-3 mb-3 md:mb-4">
                 <button
@@ -1132,29 +1148,6 @@ export default function ProductDetailPage() {
                   <Zap className="w-4 h-4 md:w-5 md:h-5" />
                   {currentStock === 0 ? 'Out of Stock' : 'Buy Now'}
                 </button>
-              </div>
-
-              {/* Delivery Timeline - Dynamic Dates */}
-              <div className="bg-white rounded-xl p-3 md:p-4 mb-3 md:mb-4 shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between">
-                  <div className="flex flex-col items-center gap-1 flex-1">
-                    <Package className="w-5 h-5 text-blue-500" />
-                    <span className="text-[12.5px] md:text-[13px] font-bold text-gray-700">{deliveryDates.orderDate}</span>
-                    <span className="text-[10.5px] md:text-[11px] text-gray-500">Order Placed</span>
-                  </div>
-                  <div className="w-8 md:w-12 h-0.5 bg-gray-200" />
-                  <div className="flex flex-col items-center gap-1 flex-1">
-                    <Truck className="w-5 h-5 text-orange-500" />
-                    <span className="text-[12.5px] md:text-[13px] font-bold text-gray-700">{deliveryDates.dispatchRange}</span>
-                    <span className="text-[10.5px] md:text-[11px] text-gray-500">Dispatched</span>
-                  </div>
-                  <div className="w-8 md:w-12 h-0.5 bg-gray-200" />
-                  <div className="flex flex-col items-center gap-1 flex-1">
-                    <Check className="w-5 h-5 text-green-500" />
-                    <span className="text-[12.5px] md:text-[13px] font-bold text-gray-700">{deliveryDates.deliveryRange}</span>
-                    <span className="text-[10.5px] md:text-[11px] text-gray-500">Delivery</span>
-                  </div>
-                </div>
               </div>
 
               {/* Share Button */}
@@ -1317,7 +1310,7 @@ export default function ProductDetailPage() {
           )}
 
           {/* Trust Stats */}
-          <div className="mt-8 md:mt-12 bg-[#D32F2F] text-white rounded-2xl p-4 md:p-6">
+          {/* <div className="mt-8 md:mt-12 bg-[#D32F2F] text-white rounded-2xl p-4 md:p-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 text-center">
               <div>
                 <div className="text-xl md:text-3xl font-bold font-comic">25K+</div>
@@ -1336,7 +1329,7 @@ export default function ProductDetailPage() {
                 <div className="text-[12.5px] md:text-[14px] opacity-80">Rating</div>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -1479,6 +1472,21 @@ export default function ProductDetailPage() {
         /* Prevent text selection while dragging 360 view */
         .cursor-grabbing * {
           user-select: none !important;
+        }
+        /* Custom scrollbar for thumbnail */
+        .scrollbar-thin::-webkit-scrollbar {
+          width: 3px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+          background: #d1d5db;
+          border-radius: 10px;
+        }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+          background: #9ca3af;
         }
       `}</style>
     </div>

@@ -44,7 +44,7 @@ interface Product {
 type TabType = 'trending' | 'new-arrivals' | 'best-sellers'
 
 const ageCategories = [
-  { name: '0-2 Years', image: '/age1.png' },
+  { name: '1-3 Years', image: '/age1.png' },
   { name: '2-4 Years', image: '/age2.png' },
   { name: '4-6 Years', image: '/age3.png' },
   { name: '6-8 Years', image: '/age4.png' },

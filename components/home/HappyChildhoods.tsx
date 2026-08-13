@@ -6,14 +6,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 export default function HappyChildhoods() {
-  // Countdown Timer
-  const [timeLeft, setTimeLeft] = useState({
-    days: 2,
-    hours: 14,
-    minutes: 26,
-    seconds: 48
-  })
-
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
@@ -23,34 +15,12 @@ export default function HappyChildhoods() {
     return () => window.removeEventListener('resize', checkMobile)
   }, [])
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(prev => {
-        let { days, hours, minutes, seconds } = prev
-        seconds -= 1
-        if (seconds < 0) { seconds = 59; minutes -= 1 }
-        if (minutes < 0) { minutes = 59; hours -= 1 }
-        if (hours < 0) { hours = 23; days -= 1 }
-        if (days < 0) { days = 2; hours = 14; minutes = 26; seconds = 48 }
-        return { days, hours, minutes, seconds }
-      })
-    }, 1000)
-    return () => clearInterval(timer)
-  }, [])
-
   const features = [
     { text: 'Creativity', color: '#000000', bg: '#E8EAF6' },
     { text: 'Motor Skills', color: '#000000', bg: '#E8EAF6' },
     { text: 'Logical Thinking', color: '#000000', bg: '#E3F2FD' },
     { text: 'Hand-Eye Coordination', color: '#000000', bg: '#FFF3E0' },
     { text: 'Problem Solving', color: '#000000', bg: '#FFF8E1' },
-  ]
-
-  const timerBoxes = [
-    { value: timeLeft.days, label: 'Days' },
-    { value: timeLeft.hours, label: 'Hours' },
-    { value: timeLeft.minutes, label: 'Mins' },
-    { value: timeLeft.seconds, label: 'Secs' },
   ]
 
   return (
@@ -128,15 +98,15 @@ export default function HappyChildhoods() {
         </div>
       </div>
 
-      {/* ========== BOTTOM RED OFFER BAR - Moved Down by 100px ========== */}
+      {/* ========== BOTTOM RED OFFER BAR - Reduced Width ========== */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
         viewport={{ once: true }}
-        className="relative z-30 px-3 md:px-4 pb-4 mt-[100px] md:mt-[120px]"
+        className="relative z-30 px-3 md:px-4 pb-4 mt-[100px] md:mt-[120px] flex justify-center"
       >
-        <div className="bg-gradient-to-r from-[#E53935] via-[#EF5350] to-[#E53935] rounded-2xl md:rounded-3xl px-4 md:px-6 py-4 md:py-5 overflow-hidden shadow-2xl">
+        <div className="bg-gradient-to-r from-[#E53935] via-[#EF5350] to-[#E53935] rounded-2xl md:rounded-3xl px-4 md:px-6 py-4 md:py-5 overflow-hidden shadow-2xl w-full max-w-[90%] md:max-w-[85%] lg:max-w-[80%]">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 md:gap-6">
 
             {/* LEFT: Offer Text + Shop Now */}
@@ -165,27 +135,6 @@ export default function HappyChildhoods() {
                   </button>
                 </Link>
               </div>
-            </div>
-
-            {/* CENTER: Countdown Timer */}
-            <div className="flex items-center gap-1 md:gap-2">
-              {timerBoxes.map((box, i) => (
-                <div key={box.label} className="flex items-center gap-1 md:gap-2">
-                  <div className="text-center">
-                    <div className="bg-white rounded-lg md:rounded-xl px-2 py-1 md:px-4 md:py-2 min-w-[38px] md:min-w-[60px]">
-                      <span className="text-base md:text-2xl lg:text-3xl font-extrabold text-gray-800 tabular-nums">
-                        {String(box.value).padStart(2, '0')}
-                      </span>
-                    </div>
-                    <span className="text-white/70 text-[7px] md:text-[10px] font-medium mt-0.5 uppercase tracking-wide block">
-                      {box.label}
-                    </span>
-                  </div>
-                  {i < timerBoxes.length - 1 && (
-                    <span className="text-white text-base md:text-2xl font-bold mb-3 md:mb-4">:</span>
-                  )}
-                </div>
-              ))}
             </div>
 
             {/* RIGHT: Elephant Image */}

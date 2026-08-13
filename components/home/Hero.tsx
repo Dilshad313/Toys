@@ -61,7 +61,7 @@ export default function Hero() {
             {/* Stats Section & Button */}
             <div className="pt-36 md:pt-0 transform translate-y-4 md:translate-y-0">
               {/* Stats Section */}
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
@@ -83,7 +83,7 @@ export default function Hero() {
                   <div className="text-base md:text-3xl font-bold text-[#D32F2F]">1M+</div>
                   <div className="text-[8px] md:text-sm text-gray-600 font-medium">Orders</div>
                 </div>
-              </motion.div>
+              </motion.div> */}
 
               {/* Shop Collections Button */}
               <motion.div

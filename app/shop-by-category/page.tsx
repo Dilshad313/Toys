@@ -54,6 +54,7 @@ function ShopByCategoryContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const categoryHandle = searchParams.get('category')
+  const ageQuery = searchParams.get('age')
 
   const [collections, setCollections] = useState<Collection[]>([])
   const [selectedCollection, setSelectedCollection] = useState<Collection | null>(null)
@@ -68,6 +69,14 @@ function ShopByCategoryContent() {
   const [popupProduct, setPopupProduct] = useState<Product | null>(null)
   const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false)
   const { addToCart } = useCart()
+
+  const ageMap: Record<string, string> = {
+    '1-3-years': '1-3 Years',
+    '2-4-years': '2-4 Years',
+    '4-6-years': '4-6 Years',
+    '6-8-years': '6-8 Years',
+    '8+-years': '8+ Years',
+  }
 
   // 1. Fetch all collections from Shopify on mount
   useEffect(() => {
@@ -101,7 +110,14 @@ function ShopByCategoryContent() {
 
         setCollections(list)
 
-        if (list.length > 0) {
+        if (ageQuery && ageMap[ageQuery]) {
+          // If viewing an age category, set a virtual collection
+          setSelectedCollection({
+            id: `age-${ageQuery}`,
+            title: `Age: ${ageMap[ageQuery]}`,
+            handle: `age-${ageQuery}`
+          })
+        } else if (list.length > 0) {
           let found = list[0]
           if (categoryHandle) {
             const matched = list.find((c: Collection) => c.handle === categoryHandle)
@@ -125,39 +141,68 @@ function ShopByCategoryContent() {
     }
 
     fetchCollections()
-  }, [categoryHandle, router])
+  }, [categoryHandle, ageQuery, router])
 
-  // 2. Fetch products inside the selected collection
+  // 2. Fetch products inside the selected collection or by age
   useEffect(() => {
-    const fetchProductsForCollection = async () => {
+    const fetchProducts = async () => {
       if (!selectedCollection) return
 
       try {
         setLoadingProducts(true)
         setError(null)
-        const response = await fetch(`/api/collections/${selectedCollection.handle}?first=50`)
-        const result = await response.json()
-
-        console.log('Products API response:', result)
-
-        let fetchedProducts: Product[] = []
         
-        if (result.success && result.data?.products?.edges) {
-          fetchedProducts = result.data.products.edges.map((edge: any) => edge.node)
-        } else if (result.data?.collectionByHandle?.products?.edges) {
-          fetchedProducts = result.data.collectionByHandle.products.edges.map((edge: any) => edge.node)
-        }
+        // Check if it's an age-based virtual collection
+        if (selectedCollection.id.startsWith('age-')) {
+          const ageKey = selectedCollection.id.replace('age-', '')
+          const ageLabel = ageMap[ageKey]
+          
+          if (ageLabel) {
+            // Fetch all products and filter by age variant
+            const response = await fetch('/api/products?first=100')
+            const result = await response.json()
+            
+            let allProducts: Product[] = []
+            if (result.success && result.data?.products?.edges) {
+              allProducts = result.data.products.edges.map((edge: any) => edge.node)
+            }
+            
+            // Filter products that have the age as a variant option
+            const filteredProducts = allProducts.filter(p => {
+              return p.variants?.edges?.some(vEdge => {
+                const title = vEdge.node.title || ''
+                return title.includes(ageLabel)
+              })
+            })
+            
+            setProducts(filteredProducts)
+          }
+        } else {
+          // Normal category fetch
+          const response = await fetch(`/api/collections/${selectedCollection.handle}?first=50`)
+          const result = await response.json()
 
-        setProducts(fetchedProducts)
+          console.log('Products API response:', result)
+
+          let fetchedProducts: Product[] = []
+          
+          if (result.success && result.data?.products?.edges) {
+            fetchedProducts = result.data.products.edges.map((edge: any) => edge.node)
+          } else if (result.data?.collectionByHandle?.products?.edges) {
+            fetchedProducts = result.data.collectionByHandle.products.edges.map((edge: any) => edge.node)
+          }
+
+          setProducts(fetchedProducts)
+        }
       } catch (err) {
-        console.error('Error fetching products for collection:', err)
-        setError('Failed to load products for this category.')
+        console.error('Error fetching products:', err)
+        setError('Failed to load products.')
       } finally {
         setLoadingProducts(false)
       }
     }
 
-    fetchProductsForCollection()
+    fetchProducts()
   }, [selectedCollection])
 
   const handleCategorySelect = (collection: Collection) => {

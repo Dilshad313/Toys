@@ -253,7 +253,7 @@ export default function Reviews() {
         )}
 
         {/* Trust Badges */}
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
+        {/* <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
           <div className="text-center bg-white rounded-xl p-4 shadow-sm">
             <div className="text-2xl font-bold text-[#D32F2F] font-comic">4.9 ★</div>
             <div className="text-xs text-gray-500">Average Rating</div>
@@ -270,7 +270,7 @@ export default function Reviews() {
             <div className="text-2xl font-bold text-[#D32F2F] font-comic">98%</div>
             <div className="text-xs text-gray-500">Satisfaction Rate</div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       <style jsx global>{`
