@@ -41,6 +41,10 @@ const GET_PRODUCTS = `
                 }
                 availableForSale
                 quantityAvailable
+                selectedOptions {
+                  name
+                  value
+                }
               }
             }
           }

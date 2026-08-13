@@ -45,6 +45,10 @@ interface Product {
         price: { amount: string }
         compareAtPrice?: { amount: string }
         availableForSale: boolean
+        selectedOptions?: Array<{
+          name: string
+          value: string
+        }>
       }
     }>
   }
@@ -172,7 +176,22 @@ function ShopByCategoryContent() {
             const filteredProducts = allProducts.filter(p => {
               return p.variants?.edges?.some(vEdge => {
                 const title = vEdge.node.title || ''
-                return title.includes(ageLabel)
+                // Check variant title first (case-insensitive)
+                if (title.toLowerCase().includes(ageLabel.toLowerCase())) {
+                  return true
+                }
+                // Check variant selectedOptions (e.g. Recommended age group or Age)
+                if (vEdge.node.selectedOptions) {
+                  return vEdge.node.selectedOptions.some(opt => {
+                    const optName = opt.name.toLowerCase()
+                    const optVal = opt.value.toLowerCase()
+                    // Check if name is "recommended age group" or contains "age"
+                    const nameMatches = optName.includes('age') || optName.includes('group')
+                    const valMatches = optVal.includes(ageLabel.toLowerCase()) || ageLabel.toLowerCase().includes(optVal)
+                    return nameMatches && valMatches
+                  })
+                }
+                return false
               })
             })
             
