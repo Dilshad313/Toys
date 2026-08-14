@@ -17,8 +17,8 @@ interface Review {
 const reviews: Review[] = [
   {
     id: 1,
-    name: 'Priya Sharma',
-    location: 'Mumbai, India',
+    name: 'Priya Rajendran',
+    location: 'Chennai, Tamil Nadu',
     text: 'Absolutely love the quality of toys! My son is obsessed with the RC car. The delivery was super fast and the packaging was beautiful. Highly recommend Athvi Toys!',
     image: '/review1.png',
     rating: 5,
@@ -26,8 +26,8 @@ const reviews: Review[] = [
   },
   {
     id: 2,
-    name: 'Amit Patel',
-    location: 'Delhi, India',
+    name: 'Karthik Subramanian',
+    location: 'Coimbatore, Tamil Nadu',
     text: 'Best place to buy toys online. The educational toys are amazing and my daughter has learned so much. Customer service is excellent and very responsive.',
     image: '/review2.png',
     rating: 5,
@@ -35,8 +35,8 @@ const reviews: Review[] = [
   },
   {
     id: 3,
-    name: 'Sneha Reddy',
-    location: 'Bangalore, India',
+    name: 'Meenakshi Sundaram',
+    location: 'Madurai, Tamil Nadu',
     text: 'Great variety of toys at affordable prices. The soft toys are so cute and cuddly. My niece absolutely loved the teddy bear I gifted her. Will definitely order again!',
     image: '/review3.png',
     rating: 5,
@@ -44,8 +44,8 @@ const reviews: Review[] = [
   },
   {
     id: 4,
-    name: 'Vikram Singh',
-    location: 'Chennai, India',
+    name: 'Senthil Kumar',
+    location: 'Salem, Tamil Nadu',
     text: 'Excellent quality products and fast shipping. The wooden toys are beautifully crafted and safe for kids. Very happy with my purchase!',
     image: '/review1.png',
     rating: 5,
@@ -53,8 +53,8 @@ const reviews: Review[] = [
   },
   {
     id: 5,
-    name: 'Ananya Iyer',
-    location: 'Hyderabad, India',
+    name: 'Divya Krishnan',
+    location: 'Tiruchirappalli, Tamil Nadu',
     text: 'I love shopping at Athvi Toys! The collection is amazing and the prices are reasonable. My kids love every toy I buy from here.',
     image: '/review2.png',
     rating: 5,

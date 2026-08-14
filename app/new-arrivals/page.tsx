@@ -47,7 +47,7 @@ interface Product {
   }>
 }
 
-export default function BestSellersPage() {
+export default function NewArrivalsPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [addingToCart, setAddingToCart] = useState<string | null>(null)
@@ -71,13 +71,13 @@ export default function BestSellersPage() {
     localStorage.setItem('wishlist', JSON.stringify(wishlistItems))
   }, [wishlistItems])
 
-  // Fetch products - Best Sellers (sorted by inventory/tags)
+  // Fetch products - New Arrivals (sorted by created date)
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true)
 
-        console.log('🔄 Fetching Best Sellers...')
+        console.log('🔄 Fetching New Arrivals...')
 
         const response = await fetch('/api/products?first=50')
         const result = await response.json()
@@ -87,30 +87,17 @@ export default function BestSellersPage() {
           allProducts = result.data.products.edges.map((edge: any) => edge.node)
         }
 
-        // Filter for available products and sort by best-seller tags
-        const bestSellers = allProducts
+        // Filter for available products and sort by creation date (newest first)
+        const newArrivals = allProducts
           .filter(p => p.availableForSale !== false)
           .sort((a, b) => {
-            // Check for best-seller tags
-            const aHasTag = a.tags?.some(tag => 
-              ['bestseller', 'best-seller', 'top-seller', 'popular', 'best'].includes(tag.toLowerCase())
-            ) || false
-            const bHasTag = b.tags?.some(tag => 
-              ['bestseller', 'best-seller', 'top-seller', 'popular', 'best'].includes(tag.toLowerCase())
-            ) || false
-
-            // Products with best-seller tags come first
-            if (aHasTag && !bHasTag) return -1
-            if (!aHasTag && bHasTag) return 1
-
-            // Then sort by inventory (higher inventory = more popular)
-            const aInventory = a.totalInventory || 0
-            const bInventory = b.totalInventory || 0
-            return bInventory - aInventory
+            const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
+            const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
+            return dateB - dateA
           })
 
-        setProducts(bestSellers)
-        console.log(`✅ Found ${bestSellers.length} best sellers`)
+        setProducts(newArrivals)
+        console.log(`✅ Found ${newArrivals.length} new arrivals`)
 
       } catch (error) {
         console.error('Error fetching products:', error)
@@ -164,11 +151,15 @@ export default function BestSellersPage() {
     return { price, compareAt, imageUrl, variantId, discount }
   }
 
-  // Check if product has best-seller tag
-  const isBestSeller = (product: Product) => {
-    return product.tags?.some(tag => 
-      ['bestseller', 'best-seller', 'top-seller', 'popular', 'best'].includes(tag.toLowerCase())
-    ) || false
+  // Format date
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return ''
+    try {
+      const date = new Date(dateString)
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    } catch {
+      return ''
+    }
   }
 
   if (loading) {
@@ -176,10 +167,10 @@ export default function BestSellersPage() {
       <div className="container mx-auto px-4 py-16">
         <div className="mb-8">
           <h1 className="text-3xl md:text-5xl font-bold font-comic text-[#D32F2F]">
-            🏆 Best Sellers
+            ✨ New Arrivals
           </h1>
           <p className="text-gray-600 mt-2 font-comic text-base md:text-lg">
-            Our most popular toys loved by kids everywhere
+            Discover the latest toys added to our collection
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
@@ -202,10 +193,10 @@ export default function BestSellersPage() {
           className="mb-8"
         >
           <h1 className="text-3xl md:text-5xl font-bold font-comic text-[#D32F2F] flex items-center gap-3">
-            🏆 Best Sellers
+            ✨ New Arrivals
           </h1>
           <p className="text-gray-600 mt-2 font-comic text-base md:text-lg">
-            Our most popular toys loved by kids everywhere
+            Discover the latest toys added to our collection
           </p>
           <p className="text-gray-400 text-sm mt-1">
             {products.length} products found
@@ -216,9 +207,9 @@ export default function BestSellersPage() {
         {products.length === 0 ? (
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-8 text-center max-w-2xl mx-auto">
             <div className="text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-bold text-gray-700 mb-2">No best sellers yet</h3>
+            <h3 className="text-xl font-bold text-gray-700 mb-2">No new arrivals yet</h3>
             <p className="text-gray-500">
-              Check back soon for our top-selling products!
+              Check back soon for new products!
             </p>
             <Link 
               href="/collections" 
@@ -233,7 +224,12 @@ export default function BestSellersPage() {
               const { price, compareAt, imageUrl, variantId, discount } = getProductDetails(product)
               const isAdding = addingToCart === product.id
               const isInWishlist = wishlistItems.includes(product.id)
-              const hasBestSellerTag = isBestSeller(product)
+              const createdDate = formatDate(product.createdAt)
+
+              // Check if product has "new" tag
+              const hasNewTag = product.tags?.some(tag => 
+                ['new', 'new-arrival', 'fresh', 'just-in'].includes(tag.toLowerCase())
+              )
 
               return (
                 <motion.div
@@ -254,15 +250,15 @@ export default function BestSellersPage() {
                         e.currentTarget.src = '/placeholder.jpg'
                       }}
                     />
-                    {/* Best Seller Badge */}
-                    {hasBestSellerTag && (
-                      <span className="absolute top-2 left-2 bg-yellow-500 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-full z-10 flex items-center gap-1">
-                        <span className="text-sm">⭐</span> BEST SELLER
+                    {/* New Badge */}
+                    {(hasNewTag || i < 4) && (
+                      <span className="absolute top-2 left-2 bg-blue-500 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-full z-10">
+                        NEW
                       </span>
                     )}
                     {discount > 0 && (
                       <span className="absolute top-2 left-2 bg-green-500 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-full z-10"
-                        style={{ marginLeft: hasBestSellerTag ? '90px' : '0px' }}
+                        style={{ marginLeft: (hasNewTag || i < 4) ? '58px' : '0px' }}
                       >
                         {discount}% OFF
                       </span>
@@ -280,10 +276,10 @@ export default function BestSellersPage() {
                         }`} 
                       />
                     </button>
-                    {/* Popularity Badge */}
-                    {i < 3 && (
+                    {/* Date Badge */}
+                    {createdDate && (
                       <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[8px] md:text-[10px] px-2 py-0.5 rounded-full">
-                        🏆 #{i + 1} Best Seller
+                        🗓️ {createdDate}
                       </div>
                     )}
                   </div>
@@ -310,9 +306,9 @@ export default function BestSellersPage() {
                     <div className="flex items-center gap-1 mt-1">
                       <div className="flex items-center text-yellow-400">
                         <Star className="w-2.5 h-2.5 md:w-3 md:h-3 fill-current" />
-                        <span className="text-gray-700 text-[9px] md:text-xs ml-0.5">4.9</span>
+                        <span className="text-gray-700 text-[9px] md:text-xs ml-0.5">4.8</span>
                       </div>
-                      <span className="text-gray-400 text-[8px] md:text-[10px]">(1.2K)</span>
+                      <span className="text-gray-400 text-[8px] md:text-[10px]">(245)</span>
                     </div>
 
                     {/* Price */}

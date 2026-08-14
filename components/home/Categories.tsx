@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { ShoppingCart, Star, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ShoppingCart, Star, ChevronLeft, ChevronRight, Heart } from 'lucide-react'
 import { useCart } from '@/context/CartContext'
 
 interface Product {
@@ -39,16 +39,22 @@ interface Product {
   createdAt?: string
   totalInventory?: number
   availableForSale?: boolean
+  metafields?: Array<{
+    namespace: string
+    key: string
+    value: string
+    type: string
+  }>
 }
 
 type TabType = 'trending' | 'new-arrivals' | 'best-sellers'
 
 const ageCategories = [
-  { name: '1-3 Years', image: '/age1.png' },
-  { name: '2-4 Years', image: '/age2.png' },
-  { name: '4-6 Years', image: '/age3.png' },
-  { name: '6-8 Years', image: '/age4.png' },
-  { name: '8+ Years', image: '/age5.png' },
+  { name: '1-3 Years', image: '/age1.png', ageKey: '1-3-years' },
+  { name: '2-4 Years', image: '/age2.png', ageKey: '2-4-years' },
+  { name: '4-6 Years', image: '/age3.png', ageKey: '4-6-years' },
+  { name: '6-8 Years', image: '/age4.png', ageKey: '6-8-years' },
+  { name: '8+ Years', image: '/age5.png', ageKey: 'teens' },
 ]
 
 export default function Categories() {
@@ -56,9 +62,27 @@ export default function Categories() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [addingToCart, setAddingToCart] = useState<string | null>(null)
+  const [wishlistItems, setWishlistItems] = useState<string[]>([])
   const { addToCart } = useCart()
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const ageScrollRef = useRef<HTMLDivElement>(null)
+
+  // Load wishlist from localStorage
+  useEffect(() => {
+    const savedWishlist = localStorage.getItem('wishlist')
+    if (savedWishlist) {
+      try {
+        setWishlistItems(JSON.parse(savedWishlist))
+      } catch (e) {
+        console.error('Error loading wishlist:', e)
+      }
+    }
+  }, [])
+
+  // Save wishlist to localStorage
+  useEffect(() => {
+    localStorage.setItem('wishlist', JSON.stringify(wishlistItems))
+  }, [wishlistItems])
 
   // Fetch products based on active tab
   useEffect(() => {
@@ -161,6 +185,20 @@ export default function Categories() {
     }
   }
 
+  // Toggle wishlist
+  const toggleWishlist = (productId: string, e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    setWishlistItems(prev => {
+      if (prev.includes(productId)) {
+        return prev.filter(id => id !== productId)
+      } else {
+        return [...prev, productId]
+      }
+    })
+  }
+
   const getProductDetails = (product: Product) => {
     const variant = product.variants?.edges?.[0]?.node
     const price = variant?.price?.amount || '0'
@@ -234,14 +272,14 @@ export default function Categories() {
           </h2>
         </motion.div>
 
-        {/* Tabs */}
+        {/* Tabs - Added cursor-pointer */}
         <div className="flex justify-center mb-6 md:mb-10">
           <div className="inline-flex bg-gray-100 rounded-full p-1 gap-1 flex-wrap justify-center">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`relative px-4 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-base font-semibold transition-all duration-300 ${
+                className={`relative px-4 md:px-8 py-2 md:py-3 rounded-full text-sm md:text-base font-semibold transition-all duration-300 cursor-pointer ${
                   activeTab === tab.id
                     ? 'text-white'
                     : 'text-gray-500 hover:text-gray-700'
@@ -289,7 +327,7 @@ export default function Categories() {
               <div className="hidden md:flex absolute -left-2 top-1/2 -translate-y-1/2 z-10">
                 <button
                   onClick={scrollLeft}
-                  className="bg-white rounded-full shadow-lg p-2 hover:bg-gray-50 transition border border-gray-200"
+                  className="bg-white rounded-full shadow-lg p-2 hover:bg-gray-50 transition border border-gray-200 cursor-pointer"
                 >
                   <ChevronLeft className="w-5 h-5 text-gray-600" />
                 </button>
@@ -297,7 +335,7 @@ export default function Categories() {
               <div className="hidden md:flex absolute -right-2 top-1/2 -translate-y-1/2 z-10">
                 <button
                   onClick={scrollRight}
-                  className="bg-white rounded-full shadow-lg p-2 hover:bg-gray-50 transition border border-gray-200"
+                  className="bg-white rounded-full shadow-lg p-2 hover:bg-gray-50 transition border border-gray-200 cursor-pointer"
                 >
                   <ChevronRight className="w-5 h-5 text-gray-600" />
                 </button>
@@ -315,6 +353,7 @@ export default function Categories() {
                 {products.slice(0, 8).map((product, i) => {
                   const { price, compareAt, imageUrl, variantId, discount } = getProductDetails(product)
                   const isAdding = addingToCart === product.id
+                  const isInWishlist = wishlistItems.includes(product.id)
 
                   // Check if product has specific tags for the active tab
                   const hasTrendingTag = product.tags?.some(tag => 
@@ -341,46 +380,60 @@ export default function Categories() {
                       className="min-w-[45vw] md:min-w-0 bg-white rounded-xl md:rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden group border border-gray-100 hover:border-[#D32F2F] flex flex-col h-full"
                     >
                       {/* Product Image - Fixed aspect ratio */}
-                      <Link href={`/products/${product.handle}`}>
-                        <div className="relative overflow-hidden aspect-square">
-                          <img
-                            src={imageUrl}
-                            alt={product.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
-                            onError={(e) => {
-                              e.currentTarget.src = '/placeholder.jpg'
-                            }}
+                      <div className="relative overflow-hidden aspect-square">
+                        <img
+                          src={imageUrl}
+                          alt={product.title}
+                          className="w-full h-full object-cover group-hover:scale-110 transition duration-500 cursor-pointer"
+                          onClick={() => window.location.href = `/products/${product.handle}`}
+                          onError={(e) => {
+                            e.currentTarget.src = '/placeholder.jpg'
+                          }}
+                        />
+                        {discount > 0 && (
+                          <span className="absolute top-2 left-2 bg-green-500 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-full">
+                            {discount}% OFF
+                          </span>
+                        )}
+                        {productBadge && (
+                          <span className={`absolute top-2 left-2 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-full ${
+                            activeTab === 'trending' ? 'bg-orange-500' :
+                            activeTab === 'new-arrivals' ? 'bg-blue-500' :
+                            'bg-yellow-500'
+                          }`}
+                          style={{ marginLeft: discount > 0 ? '64px' : '0px' }}
+                          >
+                            {productBadge}
+                          </span>
+                        )}
+                        {/* Wishlist Icon - Top Right */}
+                        <button
+                          onClick={(e) => toggleWishlist(product.id, e)}
+                          className="absolute top-2 right-2 bg-white/90 hover:bg-white rounded-full p-1.5 shadow-md transition hover:scale-110 z-20"
+                        >
+                          <Heart 
+                            className={`w-4 h-4 transition ${
+                              isInWishlist 
+                                ? 'fill-[#D32F2F] text-[#D32F2F]' 
+                                : 'text-gray-600 hover:text-[#D32F2F]'
+                            }`} 
                           />
-                          {discount > 0 && (
-                            <span className="absolute top-2 right-2 bg-green-500 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-full">
-                              {discount}% OFF
-                            </span>
-                          )}
-                          {productBadge && (
-                            <span className={`absolute top-2 left-2 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-full ${
-                              activeTab === 'trending' ? 'bg-orange-500' :
-                              activeTab === 'new-arrivals' ? 'bg-blue-500' :
-                              'bg-yellow-500'
-                            }`}>
-                              {productBadge}
-                            </span>
-                          )}
-                        </div>
-                      </Link>
+                        </button>
+                      </div>
 
                       {/* Product Details - Fixed height with flex column */}
                       <div className="p-2 md:p-4 flex flex-col flex-1">
-                        {/* Title - STRICTLY 2 LINES ONLY with fixed min-height */}
+                        {/* Title - STRICTLY 2 LINES ONLY with fixed min-height - INCREASED SIZE */}
                         <Link href={`/products/${product.handle}`}>
                           <h3 
-                            className="font-semibold text-[14px] md:text-sm text-gray-900 hover:text-[#D32F2F] transition leading-tight"
+                            className="font-semibold text-[15.5px] md:text-[16.5px] text-gray-900 hover:text-[#D32F2F] transition leading-tight cursor-pointer"
                             style={{
                               display: '-webkit-box',
                               WebkitLineClamp: 2,
                               WebkitBoxOrient: 'vertical',
                               overflow: 'hidden',
                               textOverflow: 'ellipsis',
-                              maxHeight: '2.8em',
+                              maxHeight: '3em',
                             }}
                           >
                             {product.title}
@@ -396,13 +449,13 @@ export default function Categories() {
                           <span className="text-gray-400 text-[9px] md:text-xs">(245)</span>
                         </div>
 
-                        {/* Price - Fixed height */}
+                        {/* Price - Fixed height - INCREASED SIZE */}
                         <div className="flex items-center gap-1.5 mt-1 md:mt-2 flex-wrap h-5 md:h-7">
-                          <span className="text-sm md:text-lg font-bold text-[#D32F2F] font-comic">
+                          <span className="text-[15.5px] md:text-[19.5px] font-bold text-[#D32F2F] font-comic">
                             Rs. {parseFloat(price).toFixed(2)}
                           </span>
                           {compareAt && (
-                            <span className="text-gray-400 line-through text-[10px] md:text-xs">
+                            <span className="text-gray-400 line-through text-[11px] md:text-[13.5px]">
                               Rs. {parseFloat(compareAt).toFixed(2)}
                             </span>
                           )}
@@ -418,7 +471,7 @@ export default function Categories() {
                           <button
                             onClick={() => handleAddToCart(variantId, product.id)}
                             disabled={!variantId || isAdding}
-                            className="w-full py-2 md:py-2.5 rounded-lg bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-xs md:text-sm font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] md:min-h-[42px]"
+                            className="w-full py-2 md:py-2.5 rounded-lg bg-[#D32F2F] hover:bg-[#B71C1C] text-white text-xs md:text-sm font-semibold transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] md:min-h-[42px] cursor-pointer"
                           >
                             {isAdding ? (
                               <>
@@ -467,7 +520,7 @@ export default function Categories() {
                 <div className="hidden md:flex absolute -left-4 top-1/2 -translate-y-1/2 z-10">
                   <button
                     onClick={ageScrollLeft}
-                    className="bg-white rounded-full shadow-lg p-2 hover:bg-gray-50 transition border border-gray-200"
+                    className="bg-white rounded-full shadow-lg p-2 hover:bg-gray-50 transition border border-gray-200 cursor-pointer"
                   >
                     <ChevronLeft className="w-5 h-5 text-gray-600" />
                   </button>
@@ -475,7 +528,7 @@ export default function Categories() {
                 <div className="hidden md:flex absolute -right-4 top-1/2 -translate-y-1/2 z-10">
                   <button
                     onClick={ageScrollRight}
-                    className="bg-white rounded-full shadow-lg p-2 hover:bg-gray-50 transition border border-gray-200"
+                    className="bg-white rounded-full shadow-lg p-2 hover:bg-gray-50 transition border border-gray-200 cursor-pointer"
                   >
                     <ChevronRight className="w-5 h-5 text-gray-600" />
                   </button>
@@ -493,7 +546,7 @@ export default function Categories() {
                       transition={{ delay: i * 0.1 }}
                       className="flex flex-col items-center group cursor-pointer flex-shrink-0"
                     >
-                      <Link href={`/shop-by-category?age=${cat.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                      <Link href={`/shop-by-category?age=${cat.ageKey}`}>
                         {/* ROUND Image Container */}
                         <div className="relative w-24 h-24 md:w-32 md:h-32 lg:w-40 lg:h-40 rounded-full overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group-hover:scale-110 border-4 border-white/30 group-hover:border-[#FFD700]">
                           <img
@@ -531,7 +584,7 @@ export default function Categories() {
                         })
                       }
                     }}
-                    className="rounded-full transition-all w-1.5 md:w-2 h-1.5 md:h-2 bg-white/40 hover:bg-white/60"
+                    className="rounded-full transition-all w-1.5 md:w-2 h-1.5 md:h-2 bg-white/40 hover:bg-white/60 cursor-pointer"
                     aria-label={`Go to age category ${index + 1}`}
                   />
                 ))}
@@ -562,7 +615,8 @@ export default function Categories() {
         .font-comic {
           font-family: 'Baloo 2', 'Comic Neue', cursive;
         }
-      `}</style>
+      `}
+      </style>
     </section>
   )
 }

@@ -26,6 +26,32 @@ const GET_PRODUCTS = `
               }
             }
           }
+          media(first: 5) {
+            edges {
+              node {
+                mediaContentType
+                alt
+                previewImage {
+                  url
+                  altText
+                }
+                ... on Video {
+                  sources {
+                    url
+                    mimeType
+                    format
+                    height
+                    width
+                  }
+                }
+                ... on ExternalVideo {
+                  embedUrl
+                  originUrl
+                  host
+                }
+              }
+            }
+          }
           variants(first: 10) {
             edges {
               node {
@@ -69,6 +95,10 @@ const GET_PRODUCTS = `
             type
           }
           shopByAge: metafield(namespace: "custom", key: "shop_by_age") {
+            value
+            type
+          }
+          videoUrl: metafield(namespace: "custom", key: "video_url") {
             value
             type
           }

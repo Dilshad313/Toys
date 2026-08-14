@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, User, Menu, X, Heart, ChevronDown, Home, Search } from 'lucide-react'
+import { ShoppingCart, Menu, X, Heart, ChevronDown, Home, Search } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '@/context/CartContext'
 import SearchBar from './SearchBar'
@@ -11,21 +11,36 @@ import SearchBar from './SearchBar'
 const navItems = [
   { name: 'Home', href: '/' },
   { name: 'All Products', href: '/collections' },
-  { name: 'Shop by Category', href: '/shop-by-category' },
+  { name: 'Shop by Category', href: '/shop-by-category', hasDropdown: true },
   { name: 'Shop By Age', href: '/categories' },
   { name: 'Offers', href: '/category-cards' },
-  { name: 'New Arrivals', href: '/categories' },
-  { name: 'Best Sellers', href: '/categories' },
+  { name: 'New Arrivals', href: '/new-arrivals' },
+  { name: 'Best Sellers', href: '/best-sellers' },
   { name: 'Trending', href: '/trending' },
   { name: 'About', href: '/about' },
   { name: 'Blog', href: '/blog' },
   { name: 'Contact Us', href: '/contact' },
 ]
 
+interface CollectionItem {
+  id: string
+  title: string
+  handle: string
+}
+
+interface CollectionEdge {
+  node: CollectionItem
+}
+
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
+  const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false)
+  const [isMobileCategoryOpen, setIsMobileCategoryOpen] = useState(false)
+  const [categoryItems, setCategoryItems] = useState<CollectionItem[]>([])
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true)
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const { totalItems } = useCart()
 
   useEffect(() => {
@@ -34,6 +49,41 @@ export default function Header() {
     }
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  useEffect(() => {
+    const fetchCollections = async () => {
+      try {
+        setIsLoadingCategories(true)
+        const response = await fetch('/api/collections?first=50')
+        const result = await response.json()
+
+        if (result.success && result.data?.collections) {
+          const collections = (result.data.collections as CollectionEdge[])
+            .map((edge) => edge.node)
+            .filter((collection) => collection?.id && collection?.title && collection?.handle)
+
+          setCategoryItems(collections)
+        }
+      } catch (error) {
+        console.error('Error loading header collections:', error)
+      } finally {
+        setIsLoadingCategories(false)
+      }
+    }
+
+    fetchCollections()
+  }, [])
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsCategoryDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
   // Close search on escape key
@@ -73,27 +123,42 @@ export default function Header() {
             <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
-              <span className="text-sm">🇮🇳</span> Shipping Across India
-            </span>
-            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
-              <span className="text-sm">💬</span> 24/7 WhatsApp Support
-            </span>
-            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
-              <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
-            </span>
-            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
-              <span className="text-sm">🇮🇳</span> Shipping Across India
-            </span>
+            <div className="flex items-center justify-center gap-2">
+              <img 
+                src="/svg/india-flag.svg" 
+                alt="India" 
+                className="w-6 h-4 object-cover block"
+              />
+              <span>Shipping Across India</span>
+            </div>
             <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
             <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
+            <div className="flex items-center justify-center gap-2">
+              <img 
+                src="/svg/india-flag.svg" 
+                alt="India" 
+                className="w-6 h-4 object-cover block"
+              />
+              <span>Shipping Across India</span>
+            </div>
             <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
-              <span className="text-sm">🇮🇳</span> Shipping Across India
+              <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
+            <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
+              <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
+            </span>
+            <div className="flex items-center justify-center gap-2">
+              <img 
+                src="/svg/india-flag.svg" 
+                alt="India" 
+                className="w-6 h-4 object-cover block"
+              />
+              <span>Shipping Across India</span>
+            </div>
             <span className="inline-flex items-center gap-2 font-medium" style={{ fontSize: '15px' }}>
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
@@ -159,17 +224,71 @@ export default function Header() {
 
                   {/* Desktop: Navigation Links - SINGLE LINE - INCREASED TEXT SIZE */}
                   <nav className="hidden lg:flex items-center justify-center gap-3 xl:gap-6 overflow-x-auto max-w-full px-2 scrollbar-hide">
-                    {navItems.map((item) => (
-                      <Link
-                        key={item.name}
-                        href={item.href}
-                        className={`transition text-sm xl:text-base font-bold whitespace-nowrap ${
-                          isScrolled ? 'text-gray-700 hover:text-[#D32F2F]' : 'text-gray-700 hover:text-[#D32F2F]'
-                        }`}
-                      >
-                        {item.name}
-                      </Link>
-                    ))}
+                    {navItems.map((item) => {
+                      if (item.hasDropdown) {
+                        return (
+                          <div
+                            key={item.name}
+                            ref={dropdownRef}
+                            className="relative"
+                            onMouseEnter={() => setIsCategoryDropdownOpen(true)}
+                            onMouseLeave={() => setIsCategoryDropdownOpen(false)}
+                          >
+                            <Link
+                              href={item.href}
+                              className={`transition text-sm xl:text-base font-bold whitespace-nowrap flex items-center gap-1 ${
+                                isScrolled ? 'text-gray-700 hover:text-[#D32F2F]' : 'text-gray-700 hover:text-[#D32F2F]'
+                              }`}
+                              onClick={() => setIsCategoryDropdownOpen(false)}
+                            >
+                              {item.name}
+                              <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isCategoryDropdownOpen ? 'rotate-180' : ''}`} />
+                            </Link>
+                            
+                            {/* Dropdown Menu */}
+                            <AnimatePresence>
+                              {isCategoryDropdownOpen && (
+                                <motion.div
+                                  initial={{ opacity: 0, y: -10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -10 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="absolute left-0 mt-2 w-64 max-h-[420px] overflow-y-auto bg-white rounded-xl shadow-xl border border-gray-100 py-2"
+                                >
+                                  {isLoadingCategories ? (
+                                    <div className="px-4 py-2.5 text-sm text-gray-500">Loading collections...</div>
+                                  ) : categoryItems.length > 0 ? (
+                                    categoryItems.map((cat) => (
+                                      <Link
+                                        key={cat.id}
+                                        href={`/shop-by-category?category=${cat.handle}`}
+                                        className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-[#D32F2F]/10 hover:text-[#D32F2F] transition-colors"
+                                        onClick={() => setIsCategoryDropdownOpen(false)}
+                                      >
+                                        {cat.title}
+                                      </Link>
+                                    ))
+                                  ) : (
+                                    <div className="px-4 py-2.5 text-sm text-gray-500">No collections found</div>
+                                  )}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        )
+                      }
+                      return (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          className={`transition text-sm xl:text-base font-bold whitespace-nowrap ${
+                            isScrolled ? 'text-gray-700 hover:text-[#D32F2F]' : 'text-gray-700 hover:text-[#D32F2F]'
+                          }`}
+                        >
+                          {item.name}
+                        </Link>
+                      )
+                    })}
                   </nav>
                 </div>
 
@@ -231,20 +350,66 @@ export default function Header() {
               {/* Mobile Menu */}
               {isMenuOpen && (
                 <div className="lg:hidden py-4 border-t border-gray-100 bg-white">
-                  {navItems.map((item, index) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className={`block py-3 transition px-4 hover:text-[#FF6B35] ${
-                        index === 0
-                          ? 'text-[#FF6B35] font-semibold border-b border-gray-50'
-                          : 'text-gray-700'
-                      }`}
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
+                  {navItems.map((item, index) => {
+                    if (item.hasDropdown) {
+                      return (
+                        <div key={item.name}>
+                          <Link
+                            href={item.href}
+                            className="flex items-center justify-between w-full py-3 px-4 text-gray-700 hover:text-[#FF6B35] transition"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <span>{item.name}</span>
+                            <ChevronDown className="w-4 h-4" />
+                          </Link>
+                          <button
+                            onClick={() => setIsMobileCategoryOpen(!isMobileCategoryOpen)}
+                            className="flex items-center justify-between w-full py-2 px-8 text-sm text-gray-500 hover:text-[#FF6B35] transition"
+                          >
+                            <span>Browse Categories</span>
+                            <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isMobileCategoryOpen ? 'rotate-180' : ''}`} />
+                          </button>
+                          {isMobileCategoryOpen && (
+                            <div className="bg-gray-50">
+                              {isLoadingCategories ? (
+                                <div className="py-2.5 px-8 text-sm text-gray-500">Loading collections...</div>
+                              ) : categoryItems.length > 0 ? (
+                                categoryItems.map((cat) => (
+                                  <Link
+                                    key={cat.id}
+                                    href={`/shop-by-category?category=${cat.handle}`}
+                                    className="block py-2.5 px-8 text-sm text-gray-600 hover:text-[#FF6B35] hover:bg-gray-100 transition"
+                                    onClick={() => {
+                                      setIsMenuOpen(false)
+                                      setIsMobileCategoryOpen(false)
+                                    }}
+                                  >
+                                    {cat.title}
+                                  </Link>
+                                ))
+                              ) : (
+                                <div className="py-2.5 px-8 text-sm text-gray-500">No collections found</div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    }
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={`block py-3 transition px-4 hover:text-[#FF6B35] ${
+                          index === 0
+                            ? 'text-[#FF6B35] font-semibold border-b border-gray-50'
+                            : 'text-gray-700'
+                        }`}
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {item.name}
+                      </Link>
+                    )
+                  })}
                 </div>
               )}
             </div>

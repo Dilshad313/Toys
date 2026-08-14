@@ -856,7 +856,7 @@ export default function ProductDetailPage() {
               </div>
 
               {/* Trust badges row - moved up 70px */}
-              <div className="grid grid-cols-3 gap-2 mt-[-10px] relative z-10">
+              <div className="grid grid-cols-3 gap-2 relative z-10">
                 <div className="bg-white rounded-xl p-2 md:p-3 text-center shadow-sm border border-gray-100 flex flex-col items-center gap-1">
                   <Truck className="w-5 h-5 text-blue-500" />
                   <span className="text-[13.5px] md:text-[13px] font-bold text-gray-700">Free Shipping</span>

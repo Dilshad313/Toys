@@ -247,9 +247,9 @@ export default function WoodenToys() {
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold mb-6 font-comic text-[#D32F2F]">🪵 Wooden Toys</h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="bg-white rounded-xl h-64 animate-pulse shadow-md" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <div key={i} className="bg-white rounded-xl h-80 animate-pulse shadow-md" />
             ))}
           </div>
         </div>
@@ -313,185 +313,153 @@ export default function WoodenToys() {
             </div>
           </div>
 
-          {/* Horizontal Scroll Container */}
-          <div className="relative">
-            {/* Scroll Buttons */}
-            <button
-              onClick={scrollLeft}
-              className={`absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg hover:shadow-xl text-gray-600 hover:text-[#D32F2F] w-10 h-10 rounded-full flex items-center justify-center transition ${
-                canScrollLeft ? 'opacity-100' : 'opacity-0 pointer-events-none'
-              } -ml-4 hidden md:flex`}
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            
-            <button
-              onClick={scrollRight}
-              className={`absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white shadow-lg hover:shadow-xl text-gray-600 hover:text-[#D32F2F] w-10 h-10 rounded-full flex items-center justify-center transition ${
-                canScrollRight ? 'opacity-100' : 'opacity-0 pointer-events-none'
-              } -mr-4 hidden md:flex`}
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+          {/* Grid Layout - 4 columns on desktop */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {products.slice(0, 8).map((product, i) => {
+              const price = getProductPrice(product)
+              const compareAt = getCompareAtPrice(product)
+              const imageUrl = getProductImage(product)
+              const variantId = getVariantId(product)
+              const isAdding = addingToCart === product.id
+              const isAdded = addedToCart === product.id
+              const inWishlist = isInWishlist(product.id)
+              
+              let discount = 0
+              if (compareAt && parseFloat(compareAt) > parseFloat(price)) {
+                discount = Math.round(((parseFloat(compareAt) - parseFloat(price)) / parseFloat(compareAt)) * 100)
+              }
 
-            {/* Scrollable Products - MOBILE: 2 products full visible */}
-            <div
-              ref={scrollContainerRef}
-              className="flex gap-3 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory scroll-smooth"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-              onScroll={checkScroll}
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-            >
-              {products.slice(0, 12).map((product, i) => {
-                const price = getProductPrice(product)
-                const compareAt = getCompareAtPrice(product)
-                const imageUrl = getProductImage(product)
-                const variantId = getVariantId(product)
-                const isAdding = addingToCart === product.id
-                const isAdded = addedToCart === product.id
-                const inWishlist = isInWishlist(product.id)
-                
-                let discount = 0
-                if (compareAt && parseFloat(compareAt) > parseFloat(price)) {
-                  discount = Math.round(((parseFloat(compareAt) - parseFloat(price)) / parseFloat(compareAt)) * 100)
-                }
-
-                return (
-                  <motion.div
-                    key={product.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: i * 0.05 }}
-                    className="flex-shrink-0 w-[45vw] sm:w-[200px] md:w-[240px] lg:w-[260px] snap-start"
+              return (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: i * 0.05 }}
+                  className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden group border border-gray-100 hover:border-[#D32F2F] flex flex-col relative h-full"
+                >
+                  {/* Wishlist Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      toggleWishlist(product.id)
+                    }}
+                    className="absolute top-2 right-2 z-10 bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-md hover:shadow-lg transition hover:scale-110"
                   >
-                    <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden group border border-gray-100 hover:border-[#D32F2F] flex flex-col relative h-full">
-                      {/* Wishlist Button */}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          toggleWishlist(product.id)
+                    <Heart
+                      className={`w-4 h-4 transition-colors ${
+                        inWishlist 
+                          ? 'fill-[#D32F2F] text-[#D32F2F]' 
+                          : 'text-gray-400 hover:text-[#D32F2F]'
+                      }`}
+                    />
+                  </button>
+
+                  {/* Product Image - INCREASED SIZE */}
+                  <Link href={`/products/${product.handle}`}>
+                    <div className="relative overflow-hidden cursor-pointer">
+                      <img
+                        src={imageUrl}
+                        alt={product.title}
+                        className="w-full h-48 sm:h-56 md:h-64 lg:h-72 object-cover group-hover:scale-110 transition duration-500"
+                        onError={(e) => {
+                          e.currentTarget.src = '/placeholder.jpg'
                         }}
-                        className="absolute top-2 right-2 z-10 bg-white/90 backdrop-blur-sm p-1.5 rounded-full shadow-md hover:shadow-lg transition hover:scale-110"
+                      />
+                      {discount > 0 && (
+                        <span className="absolute top-2 left-2 bg-green-500 text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded-full">
+                          {discount}% OFF
+                        </span>
+                      )}
+                    </div>
+                  </Link>
+
+                  {/* Product Details - INCREASED SIZE */}
+                  <Link href={`/products/${product.handle}`} className="flex-1">
+                    <div className="p-3 md:p-4 flex flex-col flex-1 cursor-pointer">
+                      <h3 
+                        className="font-semibold text-[15px] sm:text-base md:text-lg hover:text-[#FF6B35] transition font-comic leading-tight"
+                        style={{
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          maxHeight: '3.2em',
+                        }}
                       >
-                        <Heart
-                          className={`w-4 h-4 transition-colors ${
-                            inWishlist 
-                              ? 'fill-[#D32F2F] text-[#D32F2F]' 
-                              : 'text-gray-400 hover:text-[#D32F2F]'
-                          }`}
-                        />
-                      </button>
-
-                      {/* Product Image */}
-                      <Link href={`/products/${product.handle}`}>
-                        <div className="relative overflow-hidden cursor-pointer">
-                          <img
-                            src={imageUrl}
-                            alt={product.title}
-                            className="w-full h-36 sm:h-44 md:h-52 lg:h-56 object-cover group-hover:scale-110 transition duration-500"
-                            onError={(e) => {
-                              e.currentTarget.src = '/placeholder.jpg'
-                            }}
-                          />
-                          {discount > 0 && (
-                            <span className="absolute top-2 left-2 bg-green-500 text-white text-[9px] md:text-[10px] font-bold px-2 py-1 rounded-full">
-                              {discount}% OFF
-                            </span>
-                          )}
+                        {product.title}
+                      </h3>
+                      
+                      <div className="flex items-center gap-1 mt-1.5">
+                        <div className="flex items-center text-yellow-400">
+                          <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 fill-current" />
+                          <span className="text-gray-700 ml-0.5 text-[10px] sm:text-xs md:text-sm">4.8</span>
                         </div>
-                      </Link>
-
-                      {/* Product Details */}
-                      <Link href={`/products/${product.handle}`} className="flex-1">
-                        <div className="p-2.5 md:p-3 flex flex-col flex-1 cursor-pointer">
-                          <h3 
-                            className="font-semibold text-[14px] sm:text-xs md:text-sm hover:text-[#FF6B35] transition font-comic leading-tight"
-                            style={{
-                              display: '-webkit-box',
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: 'vertical',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              maxHeight: '2.8em',
-                            }}
-                          >
-                            {product.title}
-                          </h3>
-                          
-                          <div className="flex items-center gap-1 mt-1.5">
-                            <div className="flex items-center text-yellow-400">
-                              <Star className="w-2.5 h-2.5 sm:w-3 sm:h-3 md:w-3.5 md:h-3.5 fill-current" />
-                              <span className="text-gray-700 ml-0.5 text-[9px] sm:text-[10px] md:text-xs">4.8</span>
-                            </div>
-                            <span className="text-gray-400 text-[8px] sm:text-[9px] md:text-[10px]">(245)</span>
-                          </div>
-                          
-                          <div className="flex items-center gap-1.5 mt-1.5">
-                            <span className="text-sm sm:text-base md:text-lg font-bold text-[#D32F2F] font-comic">
-                              ₹{parseFloat(price).toFixed(2)}
-                            </span>
-                            {compareAt && (
-                              <span className="text-gray-400 line-through text-[8px] sm:text-[9px] md:text-[10px]">
-                                ₹{parseFloat(compareAt).toFixed(2)}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </Link>
-
-                      {/* Single Centered Add to Cart Button - REMOVED BUY NOW */}
-                      <div className="p-2.5 md:p-3 pt-0">
-                        <AnimatePresence mode="wait">
-                          {isAdded ? (
-                            <motion.button
-                              key="added"
-                              initial={{ scale: 0.8, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 0.8, opacity: 0 }}
-                              className="w-full py-2.5 md:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base bg-green-500 text-white flex items-center justify-center gap-2 cursor-default"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                              <span>Added to Cart</span>
-                            </motion.button>
-                          ) : isAdding ? (
-                            <motion.button
-                              key="adding"
-                              initial={{ scale: 0.8, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 0.8, opacity: 0 }}
-                              className="w-full py-2.5 md:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base bg-[#D32F2F] text-white flex items-center justify-center gap-2 opacity-70 cursor-wait"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                              <span>Adding...</span>
-                            </motion.button>
-                          ) : (
-                            <motion.button
-                              key="add"
-                              initial={{ scale: 1, opacity: 1 }}
-                              whileHover={{ scale: 1.02 }}
-                              whileTap={{ scale: 0.95 }}
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                handleAddToCart(variantId, product.id, product)
-                              }}
-                              disabled={!variantId}
-                              className="w-full py-2.5 md:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base bg-[#D32F2F] hover:bg-[#B71C1C] text-white transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-                              <span>Add to Cart</span>
-                            </motion.button>
-                          )}
-                        </AnimatePresence>
+                        <span className="text-gray-400 text-[9px] sm:text-[10px] md:text-xs">(245)</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-1.5 mt-1.5">
+                        <span className="text-[16px] sm:text-lg md:text-xl font-bold text-[#D32F2F] font-comic">
+                          ₹{parseFloat(price).toFixed(2)}
+                        </span>
+                        {compareAt && (
+                          <span className="text-gray-400 line-through text-[10px] sm:text-[11px] md:text-xs">
+                            ₹{parseFloat(compareAt).toFixed(2)}
+                          </span>
+                        )}
                       </div>
                     </div>
-                  </motion.div>
-                )
-              })}
-            </div>
+                  </Link>
+
+                  {/* Single Centered Add to Cart Button - INCREASED SIZE */}
+                  <div className="p-3 md:p-4 pt-0">
+                    <AnimatePresence mode="wait">
+                      {isAdded ? (
+                        <motion.button
+                          key="added"
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.8, opacity: 0 }}
+                          className="w-full py-2.5 md:py-3 rounded-lg font-semibold text-sm md:text-base bg-green-500 text-white flex items-center justify-center gap-2 cursor-default"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                          <span>Added to Cart</span>
+                        </motion.button>
+                      ) : isAdding ? (
+                        <motion.button
+                          key="adding"
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0.8, opacity: 0 }}
+                          className="w-full py-2.5 md:py-3 rounded-lg font-semibold text-sm md:text-base bg-[#D32F2F] text-white flex items-center justify-center gap-2 opacity-70 cursor-wait"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          <span>Adding...</span>
+                        </motion.button>
+                      ) : (
+                        <motion.button
+                          key="add"
+                          initial={{ scale: 1, opacity: 1 }}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleAddToCart(variantId, product.id, product)
+                          }}
+                          disabled={!variantId}
+                          className="w-full py-2.5 md:py-3 rounded-lg font-semibold text-sm md:text-base bg-[#D32F2F] hover:bg-[#B71C1C] text-white transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
+                          <span>Add to Cart</span>
+                        </motion.button>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </motion.div>
+              )
+            })}
           </div>
 
           {/* ✅ View All Button */}

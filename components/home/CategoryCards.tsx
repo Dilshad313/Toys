@@ -13,7 +13,7 @@ const categories = [
     image: '/soft-toys.png',
     bgColor: 'bg-[#FFF3E0]',
     textColor: 'text-[#E65100]',
-    href: '#'
+    href: '/shop-by-category?category=soft-toys'
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ const categories = [
     image: '/rc-cars.png',
     bgColor: 'bg-[#E3F2FD]',
     textColor: 'text-[#1565C0]',
-    href: '#'
+    href: '/shop-by-category?category=rc-cars'
   },
   {
     id: 3,
@@ -31,7 +31,7 @@ const categories = [
     image: '/educational.png',
     bgColor: 'bg-[#F3E5F5]',
     textColor: 'text-[#7B1FA2]',
-    href: '#'
+    href: '/shop-by-category?category=educational-toys'
   },
 ]
 

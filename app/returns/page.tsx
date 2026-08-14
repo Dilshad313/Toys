@@ -50,7 +50,7 @@ export default function ReturnsPage() {
                 <RotateCcw className="w-7 h-7 text-green-500" />
               </div>
               <h3 className="font-bold text-gray-800 text-lg">Easy Returns</h3>
-              <p className="text-gray-500 text-sm">Within 7 days of delivery</p>
+              <p className="text-gray-500 text-sm">Within 5 days of delivery</p>
             </motion.div>
 
             <motion.div
@@ -101,7 +101,7 @@ export default function ReturnsPage() {
                   <div>
                     <h3 className="font-bold text-gray-800">Return Window</h3>
                     <ul className="text-gray-600 text-sm space-y-1 mt-1">
-                      <li>• Returns accepted within <span className="font-semibold">7 days</span> of delivery</li>
+                      <li>• Returns accepted within <span className="font-semibold">5 days</span> of delivery</li>
                       <li>• Items must be in original condition with packaging</li>
                       <li>• Unboxing video required for all returns</li>
                     </ul>
@@ -163,7 +163,7 @@ export default function ReturnsPage() {
                     <h3 className="font-bold text-gray-800">Return Conditions</h3>
                     <ul className="text-gray-600 text-sm space-y-1 mt-1">
                       <li>• Items must be unused and in original packaging</li>
-                      <li>• Return window: <span className="font-semibold">7 days</span> from delivery</li>
+                      <li>• Return window: <span className="font-semibold">5 days</span> from delivery</li>
                       <li>• Unboxing video is <span className="font-semibold text-red-500">mandatory</span></li>
                       <li>• No returns on clearance or sale items</li>
                     </ul>

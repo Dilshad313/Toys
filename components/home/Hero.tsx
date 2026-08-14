@@ -112,27 +112,42 @@ export default function Hero() {
             <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
-            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
-              <span className="text-sm">🇮🇳</span> Shipping Across India
-            </span>
-            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
-              <span className="text-sm">💬</span> 24/7 WhatsApp Support
-            </span>
-            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
-              <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
-            </span>
-            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
-              <span className="text-sm">🇮🇳</span> Shipping Across India
-            </span>
+            <div className="flex items-center justify-center gap-2">
+              <img 
+                src="/svg/india-flag.svg" 
+                alt="India" 
+                className="w-6 h-4 object-cover block"
+              />
+              <span>Shipping Across India</span>
+            </div>
             <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
             <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
             </span>
+            <div className="flex items-center justify-center gap-2">
+              <img 
+                src="/svg/india-flag.svg" 
+                alt="India" 
+                className="w-6 h-4 object-cover block"
+              />
+              <span>Shipping Across India</span>
+            </div>
             <span className="inline-flex items-center gap-2 text-[15px] font-medium">
-              <span className="text-sm">🇮🇳</span> Shipping Across India
+              <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
+            <span className="inline-flex items-center gap-2 text-[15px] font-medium">
+              <span className="text-sm">🚚</span> Free Shipping on Orders above ₹499
+            </span>
+            <div className="flex items-center justify-center gap-2">
+              <img 
+                src="/svg/india-flag.svg" 
+                alt="India" 
+                className="w-6 h-4 object-cover block"
+              />
+              <span>Shipping Across India</span>
+            </div>
             <span className="inline-flex items-center gap-2 text-[15px] font-medium">
               <span className="text-sm">💬</span> 24/7 WhatsApp Support
             </span>
