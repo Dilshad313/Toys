@@ -55,13 +55,13 @@ export default function HappyChildhoods() {
       <div className="relative z-20 container mx-auto px-4 py-8 md:py-12">
         <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10">
 
-          {/* LEFT: Text Content */}
+          {/* LEFT: Text Content - Moved 500px to the right */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="w-full md:w-[45%] text-left order-2 md:order-1"
+            className="w-full md:w-[45%] text-left order-2 md:order-1 md:ml-[180px] md:mt-[90px]"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-blue-800 leading-[1.05] mb-4 md:mb-6 drop-shadow-lg">
               Every Toy<br />Develops
