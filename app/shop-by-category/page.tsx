@@ -45,6 +45,10 @@ interface Product {
         price: { amount: string }
         compareAtPrice?: { amount: string }
         availableForSale: boolean
+        selectedOptions?: Array<{
+          name: string
+          value: string
+        }>
       }
     }>
   }
@@ -72,11 +76,19 @@ function ShopByCategoryContent() {
   const { addToCart } = useCart()
 
   const ageMap: Record<string, string> = {
-    '1-3-years': '1-3 Years',
-    '2-4-years': '2-4 Years',
-    '4-6-years': '4-6 Years',
-    '6-8-years': '6-8 Years',
-    '8+-years': '8+ Years',
+    '1-3': '1-3 Years',
+    '2-4': '2-4 Years',
+    '4-6': '4-6 Years',
+    '6-8': '6-8 Years',
+    '8+': '8+ Years',
+  }
+
+  const ageDisplayMap: Record<string, string> = {
+    '1-3': '1-3 Years',
+    '2-4': '2-4 Years',
+    '4-6': '4-6 Years',
+    '6-8': '6-8 Years',
+    '8+': '8+ Years',
   }
 
   // 1. Fetch all collections from Shopify on mount
@@ -115,7 +127,7 @@ function ShopByCategoryContent() {
           // If viewing an age category, set a virtual collection
           setSelectedCollection({
             id: `age-${ageQuery}`,
-            title: `Age: ${ageMap[ageQuery]}`,
+            title: `Age: ${ageDisplayMap[ageQuery]}`,
             handle: `age-${ageQuery}`
           })
         } else if (list.length > 0) {
@@ -172,7 +184,22 @@ function ShopByCategoryContent() {
             const filteredProducts = allProducts.filter(p => {
               return p.variants?.edges?.some(vEdge => {
                 const title = vEdge.node.title || ''
-                return title.includes(ageLabel)
+                // Check variant title first (case-insensitive)
+                if (title.toLowerCase().includes(ageLabel.toLowerCase())) {
+                  return true
+                }
+                // Check variant selectedOptions (e.g. Recommended age group or Age)
+                if (vEdge.node.selectedOptions) {
+                  return vEdge.node.selectedOptions.some(opt => {
+                    const optName = opt.name.toLowerCase()
+                    const optVal = opt.value.toLowerCase()
+                    // Check if name is "recommended age group" or contains "age"
+                    const nameMatches = optName.includes('age') || optName.includes('group')
+                    const valMatches = optVal.includes(ageLabel.toLowerCase()) || ageLabel.toLowerCase().includes(optVal)
+                    return nameMatches && valMatches
+                  })
+                }
+                return false
               })
             })
             
