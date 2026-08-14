@@ -320,23 +320,7 @@ export default function Header() {
                 <SearchBar onProductSelect={handleProductSelect} />
               </div>
 
-              {/* Quick Suggestions */}
-              <div className="px-4 pb-4">
-                <p className="text-xs text-gray-400 font-medium mb-2">Popular Searches:</p>
-                <div className="flex flex-wrap gap-2">
-                  {['Educational Toys', 'RC Cars', 'Soft Toys', 'Puzzles', 'Building Blocks', 'Musical Toys'].map((tag) => (
-                    <button
-                      key={tag}
-                      className="px-3 py-1 bg-gray-100 hover:bg-[#7B2FBE]/10 text-gray-600 hover:text-[#7B2FBE] text-xs rounded-full transition"
-                      onClick={() => {
-                        setIsSearchOpen(false)
-                      }}
-                    >
-                      {tag}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              
             </motion.div>
           </motion.div>
         )}
