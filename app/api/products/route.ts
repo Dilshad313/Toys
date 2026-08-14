@@ -48,6 +48,30 @@ const GET_PRODUCTS = `
               }
             }
           }
+          ageGroup: metafield(namespace: "custom", key: "age_group") {
+            value
+            type
+          }
+          recommendedAgeGroup: metafield(namespace: "custom", key: "recommended_age_group") {
+            value
+            type
+          }
+          recommendedAge: metafield(namespace: "custom", key: "recommended_age") {
+            value
+            type
+          }
+          ageRange: metafield(namespace: "custom", key: "age_range") {
+            value
+            type
+          }
+          age: metafield(namespace: "custom", key: "age") {
+            value
+            type
+          }
+          shopByAge: metafield(namespace: "custom", key: "shop_by_age") {
+            value
+            type
+          }
           tags
           availableForSale
         }
@@ -61,6 +85,18 @@ const GET_PRODUCTS = `
 `
 
 // ✅ Export GET method
+interface ProductsResponse {
+  products?: {
+    edges?: unknown[]
+  }
+}
+
+const getErrorMessage = (error: unknown) =>
+  error instanceof Error ? error.message : 'Failed to fetch products'
+
+const getErrorStack = (error: unknown) =>
+  error instanceof Error ? error.stack : undefined
+
 export async function GET(request: Request) {
   console.log('📦 Products API called')
   
@@ -71,7 +107,7 @@ export async function GET(request: Request) {
 
     console.log(`📦 Fetching ${first} products, category: ${category || 'all'}`)
 
-    const data = await shopifyFetch<any>({
+    const data = await shopifyFetch<ProductsResponse>({
       query: GET_PRODUCTS,
       variables: { first },
     })
@@ -84,13 +120,13 @@ export async function GET(request: Request) {
       data,
       productCount,
     })
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('❌ Products API error:', error)
     return NextResponse.json(
       { 
         success: false, 
-        error: error.message || 'Failed to fetch products',
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+        error: getErrorMessage(error),
+        stack: process.env.NODE_ENV === 'development' ? getErrorStack(error) : undefined,
       },
       { status: 500 }
     )

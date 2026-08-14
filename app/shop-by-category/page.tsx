@@ -52,7 +52,142 @@ interface Product {
       }
     }>
   }
+  options?: Array<{
+    name: string
+    values: string[]
+  }>
   tags: string[]
+  ageGroup?: ProductMetafield | null
+  recommendedAgeGroup?: ProductMetafield | null
+  recommendedAge?: ProductMetafield | null
+  ageRange?: ProductMetafield | null
+  age?: ProductMetafield | null
+  shopByAge?: ProductMetafield | null
+}
+
+interface ProductMetafield {
+  value: string
+  type?: string
+}
+
+interface ShopifyEdge<T> {
+  node: T
+}
+
+type CollectionApiEdge = ShopifyEdge<Collection> | Collection
+type ProductApiEdge = ShopifyEdge<Product>
+
+const getCollectionFromEdge = (edge: CollectionApiEdge): Collection => {
+  if ('node' in edge) {
+    return {
+      id: edge.node.id,
+      title: edge.node.title,
+      handle: edge.node.handle,
+      description: edge.node.description,
+      image: edge.node.image,
+    }
+  }
+
+  return {
+    id: edge.id,
+    title: edge.title,
+    handle: edge.handle,
+    description: edge.description,
+    image: edge.image,
+  }
+}
+
+const AGE_OPTIONS: Record<string, string> = {
+  '1-3': '1-3 Years',
+  '1-3-years': '1-3 Years',
+  '2-4': '2-4 Years',
+  '2-4-years': '2-4 Years',
+  '4-6': '4-6 Years',
+  '4-6-years': '4-6 Years',
+  '6-8': '6-8 Years',
+  '6-8-years': '6-8 Years',
+  '8+': '8+ Years',
+  '8+-years': '8+ Years',
+}
+
+const normalizeAgeToken = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/&amp;/g, '&')
+    .replace(/\byears?\b/g, '')
+    .replace(/\bmonths?\b/g, 'months')
+    .replace(/\s+to\s+/g, '-')
+    .replace(/[\u2013\u2014]/g, '-')
+    .replace(/\s+/g, '')
+    .trim()
+
+const parseMetafieldValues = (value?: string | null): string[] => {
+  if (!value) return []
+
+  try {
+    const parsed = JSON.parse(value)
+    if (Array.isArray(parsed)) {
+      return parsed.flatMap((item) => parseMetafieldValues(String(item)))
+    }
+    if (typeof parsed === 'string') {
+      return [parsed]
+    }
+  } catch {
+    // Shopify stores single-line text metafields as raw strings.
+  }
+
+  return value
+    .split(/[,|/]/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
+const productMatchesAge = (product: Product, ageLabel: string) => {
+  const wanted = normalizeAgeToken(ageLabel)
+  const candidates: string[] = []
+
+  const ageMetafields = [
+    product.ageGroup,
+    product.recommendedAgeGroup,
+    product.recommendedAge,
+    product.ageRange,
+    product.age,
+    product.shopByAge,
+  ]
+
+  ageMetafields.forEach((metafield) => {
+    candidates.push(...parseMetafieldValues(metafield?.value))
+  })
+
+  product.options?.forEach((option) => {
+    if (option.name.toLowerCase().includes('age')) {
+      candidates.push(...option.values)
+    }
+  })
+
+  product.tags?.forEach((tag) => candidates.push(tag))
+
+  product.variants?.edges?.forEach((vEdge) => {
+    const variant = vEdge.node
+    candidates.push(variant.title)
+    variant.selectedOptions?.forEach((option) => {
+      if (
+        option.name.toLowerCase().includes('age') ||
+        option.name.toLowerCase().includes('group')
+      ) {
+        candidates.push(option.value)
+      }
+    })
+  })
+
+  return candidates.some((candidate) => {
+    const normalized = normalizeAgeToken(candidate)
+    return Boolean(normalized) && (
+      normalized === wanted ||
+      normalized.includes(wanted) ||
+      wanted.includes(normalized)
+    )
+  })
 }
 
 function ShopByCategoryContent() {
@@ -75,21 +210,10 @@ function ShopByCategoryContent() {
   const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false)
   const { addToCart } = useCart()
 
-  const ageMap: Record<string, string> = {
-    '1-3': '1-3 Years',
-    '2-4': '2-4 Years',
-    '4-6': '4-6 Years',
-    '6-8': '6-8 Years',
-    '8+': '8+ Years',
-  }
-
-  const ageDisplayMap: Record<string, string> = {
-    '1-3': '1-3 Years',
-    '2-4': '2-4 Years',
-    '4-6': '4-6 Years',
-    '6-8': '6-8 Years',
-    '8+': '8+ Years',
-  }
+  const normalizedAgeQuery = ageQuery
+    ? ageQuery.toLowerCase().replace(/\s+/g, '-').replace(/-?years?$/, '-years')
+    : null
+  const selectedAgeLabel = normalizedAgeQuery ? AGE_OPTIONS[normalizedAgeQuery] : null
 
   // 1. Fetch all collections from Shopify on mount
   useEffect(() => {
@@ -104,31 +228,19 @@ function ShopByCategoryContent() {
         let list: Collection[] = []
         
         if (result.success && result.data?.collections) {
-          list = result.data.collections.map((edge: any) => ({
-            id: edge.node?.id || edge.id,
-            title: edge.node?.title || edge.title,
-            handle: edge.node?.handle || edge.handle,
-            description: edge.node?.description || edge.description,
-            image: edge.node?.image || edge.image,
-          }))
+          list = (result.data.collections as CollectionApiEdge[]).map(getCollectionFromEdge)
         } else if (result.data?.collections?.edges) {
-          list = result.data.collections.edges.map((edge: any) => ({
-            id: edge.node.id,
-            title: edge.node.title,
-            handle: edge.node.handle,
-            description: edge.node.description,
-            image: edge.node.image,
-          }))
+          list = (result.data.collections.edges as CollectionApiEdge[]).map(getCollectionFromEdge)
         }
 
         setCollections(list)
 
-        if (ageQuery && ageMap[ageQuery]) {
+        if (normalizedAgeQuery && selectedAgeLabel) {
           // If viewing an age category, set a virtual collection
           setSelectedCollection({
-            id: `age-${ageQuery}`,
-            title: `Age: ${ageDisplayMap[ageQuery]}`,
-            handle: `age-${ageQuery}`
+            id: `age-${normalizedAgeQuery}`,
+            title: `Age: ${selectedAgeLabel}`,
+            handle: `age-${normalizedAgeQuery}`
           })
         } else if (list.length > 0) {
           let found = list[0]
@@ -154,7 +266,7 @@ function ShopByCategoryContent() {
     }
 
     fetchCollections()
-  }, [categoryHandle, ageQuery, router])
+  }, [categoryHandle, normalizedAgeQuery, selectedAgeLabel, router])
 
   // 2. Fetch products inside the selected collection or by age
   useEffect(() => {
@@ -168,40 +280,19 @@ function ShopByCategoryContent() {
         // Check if it's an age-based virtual collection
         if (selectedCollection.id.startsWith('age-')) {
           const ageKey = selectedCollection.id.replace('age-', '')
-          const ageLabel = ageMap[ageKey]
+          const ageLabel = AGE_OPTIONS[ageKey]
           
           if (ageLabel) {
-            // Fetch all products and filter by age variant
+            // Fetch all products and filter by Shopify age group fields.
             const response = await fetch('/api/products?first=100')
             const result = await response.json()
             
             let allProducts: Product[] = []
             if (result.success && result.data?.products?.edges) {
-              allProducts = result.data.products.edges.map((edge: any) => edge.node)
+              allProducts = (result.data.products.edges as ProductApiEdge[]).map((edge) => edge.node)
             }
             
-            // Filter products that have the age as a variant option
-            const filteredProducts = allProducts.filter(p => {
-              return p.variants?.edges?.some(vEdge => {
-                const title = vEdge.node.title || ''
-                // Check variant title first (case-insensitive)
-                if (title.toLowerCase().includes(ageLabel.toLowerCase())) {
-                  return true
-                }
-                // Check variant selectedOptions (e.g. Recommended age group or Age)
-                if (vEdge.node.selectedOptions) {
-                  return vEdge.node.selectedOptions.some(opt => {
-                    const optName = opt.name.toLowerCase()
-                    const optVal = opt.value.toLowerCase()
-                    // Check if name is "recommended age group" or contains "age"
-                    const nameMatches = optName.includes('age') || optName.includes('group')
-                    const valMatches = optVal.includes(ageLabel.toLowerCase()) || ageLabel.toLowerCase().includes(optVal)
-                    return nameMatches && valMatches
-                  })
-                }
-                return false
-              })
-            })
+            const filteredProducts = allProducts.filter((product) => productMatchesAge(product, ageLabel))
             
             setProducts(filteredProducts)
           }
@@ -215,9 +306,9 @@ function ShopByCategoryContent() {
           let fetchedProducts: Product[] = []
           
           if (result.success && result.data?.products?.edges) {
-            fetchedProducts = result.data.products.edges.map((edge: any) => edge.node)
+            fetchedProducts = (result.data.products.edges as ProductApiEdge[]).map((edge) => edge.node)
           } else if (result.data?.collectionByHandle?.products?.edges) {
-            fetchedProducts = result.data.collectionByHandle.products.edges.map((edge: any) => edge.node)
+            fetchedProducts = (result.data.collectionByHandle.products.edges as ProductApiEdge[]).map((edge) => edge.node)
           }
 
           setProducts(fetchedProducts)
@@ -403,7 +494,7 @@ function ShopByCategoryContent() {
                 <div className="text-6xl mb-4">🔍</div>
                 <h3 className="text-xl font-bold text-gray-700 mb-2">No products found</h3>
                 <p className="text-gray-500">
-                  We couldn't find any products in this category yet.
+                  We couldn&apos;t find any products in this category yet.
                   <br />
                   Check back soon for new arrivals!
                 </p>
