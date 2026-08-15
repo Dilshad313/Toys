@@ -1015,7 +1015,7 @@ export default function ProductDetailPage() {
               {/* ─── CHECK DELIVERY TIME ───────────────────────────── */}
               <div className="bg-white rounded-xl p-4 mt-4 shadow-sm border border-gray-100">
                 <div className="flex items-center gap-2 mb-3">
-                  <MapPin className="w-4 h-4 text-purple-500" />
+                  <MapPin className="w-4 h-4 text-purple-500 flex-shrink-0" />
                   <h3 className="font-bold text-purple-700 text-[15.5px]">Check Delivery Time</h3>
                 </div>
                 <div className="flex gap-2">
@@ -1031,13 +1031,13 @@ export default function ProductDetailPage() {
                       }
                     }}
                     placeholder="Enter Pincode"
-                    className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-[15.5px] focus:outline-none focus:border-purple-500"
+                    className="flex-1 min-w-0 border border-gray-300 rounded-lg px-3 py-2 text-[15.5px] focus:outline-none focus:border-purple-500"
                     disabled={deliveryStatus === 'checking'}
                   />
                   <button 
                     onClick={handleCheckDelivery} 
                     disabled={deliveryStatus === 'checking' || pincode.length !== 6}
-                    className="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-lg text-[15.5px] font-semibold transition flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-[15.5px] font-semibold transition flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap flex-shrink-0"
                   >
                     {deliveryStatus === 'checking' ? (
                       <><div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Checking</>
@@ -1049,12 +1049,12 @@ export default function ProductDetailPage() {
 
                 {deliveryStatus === 'available' && (
                   <div className="mt-2 text-[15.5px] text-green-600 font-medium flex items-center gap-1">
-                    <Check className="w-4 h-4" /> Delivery available to {pincode}! Estimated 3-5 days
+                    <Check className="w-4 h-4 flex-shrink-0" /> Delivery available to {pincode}! Estimated 3-5 days
                   </div>
                 )}
                 {deliveryStatus === 'unavailable' && (
                   <div className="mt-2 text-[15.5px] text-red-600 font-medium flex items-center gap-1">
-                    <X className="w-4 h-4" /> Delivery not available to {pincode} yet.
+                    <X className="w-4 h-4 flex-shrink-0" /> Delivery not available to {pincode} yet.
                   </div>
                 )}
 
@@ -1066,7 +1066,7 @@ export default function ProductDetailPage() {
                   ].map((item, i) => (
                     <div key={i} className="flex flex-col items-center gap-1 flex-1">
                       <item.icon className={`w-5 h-5 ${i === 0 ? 'text-blue-500' : i === 1 ? 'text-orange-500' : 'text-green-500'}`} />
-                      <span className="text-[13.5px] font-bold text-gray-700">{item.date}</span>
+                      <span className="text-[11.5px] font-bold text-gray-700">{item.date}</span>
                       <span className="text-[11.5px] text-gray-500">{item.label}</span>
                     </div>
                   ))}
