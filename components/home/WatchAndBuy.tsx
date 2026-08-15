@@ -15,6 +15,7 @@ interface VideoProduct {
   variantId: string
   isEmbed: boolean
   previewImage?: string
+  price?: string
 }
 
 interface ShopifyProduct {
@@ -23,6 +24,12 @@ interface ShopifyProduct {
   handle: string
   productType?: string
   vendor?: string
+  priceRange?: {
+    minVariantPrice?: {
+      amount: string
+      currencyCode: string
+    }
+  }
   images?: {
     edges?: Array<{
       node: {
@@ -60,6 +67,12 @@ interface ShopifyProduct {
   }
 }
 
+const FALLBACK_VIDEOS = [
+  'https://assets.mixkit.co/videos/preview/mixkit-child-playing-with-a-toy-car-40762-large.mp4',
+  'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-child-playing-with-building-blocks-40763-large.mp4',
+  'https://assets.mixkit.co/videos/preview/mixkit-little-girl-playing-with-a-wooden-toy-40764-large.mp4',
+]
+
 const getMetafieldVideoUrl = (value?: string) => {
   if (!value) return null
 
@@ -86,7 +99,7 @@ const getYouTubeEmbedUrl = (url: string) => {
   return url
 }
 
-const getProductVideoDetails = (product: ShopifyProduct) => {
+const getProductVideoDetails = (product: ShopifyProduct, index: number) => {
   const mediaEdges = product.media?.edges || []
   for (const edge of mediaEdges) {
     const media = edge.node
@@ -122,11 +135,15 @@ const getProductVideoDetails = (product: ShopifyProduct) => {
     }
   }
 
-  return null
+  return {
+    videoUrl: FALLBACK_VIDEOS[index % FALLBACK_VIDEOS.length],
+    isEmbed: false,
+    previewImage: product.images?.edges?.[0]?.node?.url,
+  }
 }
 
-const mapProductToVideoProduct = (product: ShopifyProduct): VideoProduct | null => {
-  const videoDetails = getProductVideoDetails(product)
+const mapProductToVideoProduct = (product: ShopifyProduct, index: number): VideoProduct | null => {
+  const videoDetails = getProductVideoDetails(product, index)
   const variant = product.variants?.edges
     ?.map((edge) => edge.node)
     .find((node) => node.availableForSale) || product.variants?.edges?.[0]?.node
@@ -142,6 +159,7 @@ const mapProductToVideoProduct = (product: ShopifyProduct): VideoProduct | null 
     variantId: variant.id,
     isEmbed: videoDetails.isEmbed,
     previewImage: videoDetails.previewImage,
+    price: product.priceRange?.minVariantPrice?.amount,
   }
 }
 
@@ -181,7 +199,7 @@ export default function WatchAndBuy() {
 
         if (result.success && result.data?.products?.edges) {
           const products = result.data.products.edges
-            .map((edge: { node: ShopifyProduct }) => mapProductToVideoProduct(edge.node))
+            .map((edge: { node: ShopifyProduct }, index: number) => mapProductToVideoProduct(edge.node, index))
             .filter((product: VideoProduct | null): product is VideoProduct => Boolean(product))
 
           setVideoProducts(products)

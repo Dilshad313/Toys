@@ -26,7 +26,7 @@ const GET_PRODUCTS = `
               }
             }
           }
-          media(first: 5) {
+          media(first: 20) {
             edges {
               node {
                 mediaContentType
