@@ -119,8 +119,9 @@ export default function Footer() {
               <h4 className="text-[#EB001B] font-bold text-lg md:text-xl mb-3 md:mb-4 font-comic">Shop</h4>
               <ul className="space-y-1.5 md:space-y-2 text-sm md:text-base">
                 <li><Link href="/collections" className="text-black font-bold hover:text-[#FAC310] transition">All Toys</Link></li>
-                <li><Link href="/category-cards" className="text-black font-bold hover:text-[#FAC310] transition">New Arrivals</Link></li>
+                <li><Link href="/new-arrivals" className="text-black font-bold hover:text-[#FAC310] transition">New Arrivals</Link></li>
                 <li><Link href="/best-sellers" className="text-black font-bold hover:text-[#FAC310] transition">Best Sellers</Link></li>
+                <li><Link href="/trending" className="text-black font-bold hover:text-[#FAC310] transition">Trending</Link></li>
               </ul>
             </div>
 
