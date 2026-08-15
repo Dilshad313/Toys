@@ -248,30 +248,32 @@ export default function Header() {
                             {/* Dropdown Menu */}
                             <AnimatePresence>
                               {isCategoryDropdownOpen && (
-                                <motion.div
-                                  initial={{ opacity: 0, y: -10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, y: -10 }}
-                                  transition={{ duration: 0.2 }}
-                                  className="absolute left-0 mt-2 w-64 max-h-[420px] overflow-y-auto bg-white rounded-xl shadow-xl border border-gray-100 py-2"
-                                >
-                                  {isLoadingCategories ? (
-                                    <div className="px-4 py-2.5 text-sm text-gray-500">Loading collections...</div>
-                                  ) : categoryItems.length > 0 ? (
-                                    categoryItems.map((cat) => (
-                                      <Link
-                                        key={cat.id}
-                                        href={`/shop-by-category?category=${cat.handle}`}
-                                        className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-[#D32F2F]/10 hover:text-[#D32F2F] transition-colors"
-                                        onClick={() => setIsCategoryDropdownOpen(false)}
-                                      >
-                                        {cat.title}
-                                      </Link>
-                                    ))
-                                  ) : (
-                                    <div className="px-4 py-2.5 text-sm text-gray-500">No collections found</div>
-                                  )}
-                                </motion.div>
+                                <div className="absolute left-0 top-full pt-2 w-64 z-50">
+                                  <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="max-h-[420px] overflow-y-auto bg-white rounded-xl shadow-xl border border-gray-100 py-2"
+                                  >
+                                    {isLoadingCategories ? (
+                                      <div className="px-4 py-2.5 text-sm text-gray-500">Loading collections...</div>
+                                    ) : categoryItems.length > 0 ? (
+                                      categoryItems.map((cat) => (
+                                        <Link
+                                          key={cat.id}
+                                          href={`/shop-by-category?category=${cat.handle}`}
+                                          className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-[#D32F2F]/10 hover:text-[#D32F2F] transition-colors"
+                                          onClick={() => setIsCategoryDropdownOpen(false)}
+                                        >
+                                          {cat.title}
+                                        </Link>
+                                      ))
+                                    ) : (
+                                      <div className="px-4 py-2.5 text-sm text-gray-500">No collections found</div>
+                                    )}
+                                  </motion.div>
+                                </div>
                               )}
                             </AnimatePresence>
                           </div>

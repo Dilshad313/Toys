@@ -9,16 +9,34 @@ import { useCart } from '@/context/CartContext'
 interface VideoProduct {
   id: string
   title: string
+  handle: string
   videoUrl: string
   category: string
   variantId: string
+  isEmbed: boolean
+  previewImage?: string
+  price?: string
 }
 
 interface ShopifyProduct {
   id: string
   title: string
+  handle: string
   productType?: string
   vendor?: string
+  priceRange?: {
+    minVariantPrice?: {
+      amount: string
+      currencyCode: string
+    }
+  }
+  images?: {
+    edges?: Array<{
+      node: {
+        url: string
+      }
+    }>
+  }
   videoUrl?: {
     value: string
   } | null
@@ -34,15 +52,26 @@ interface ShopifyProduct {
     edges?: Array<{
       node: {
         mediaContentType: string
+        alt?: string
+        previewImage?: {
+          url: string
+        }
         sources?: Array<{
           url: string
           mimeType?: string
           format?: string
         }>
+        embedUrl?: string
       }
     }>
   }
 }
+
+const FALLBACK_VIDEOS = [
+  'https://assets.mixkit.co/videos/preview/mixkit-child-playing-with-a-toy-car-40762-large.mp4',
+  'https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-child-playing-with-building-blocks-40763-large.mp4',
+  'https://assets.mixkit.co/videos/preview/mixkit-little-girl-playing-with-a-wooden-toy-40764-large.mp4',
+]
 
 const getMetafieldVideoUrl = (value?: string) => {
   if (!value) return null
@@ -60,32 +89,77 @@ const getMetafieldVideoUrl = (value?: string) => {
   return value
 }
 
-const getProductVideoUrl = (product: ShopifyProduct) => {
-  const videoMedia = product.media?.edges
-    ?.map((edge) => edge.node)
-    .find((media) => media.mediaContentType === 'VIDEO' && media.sources?.length)
-
-  const mp4Source = videoMedia?.sources?.find((source) =>
-    source.mimeType?.includes('mp4') || source.format?.toLowerCase() === 'mp4'
-  )
-
-  return mp4Source?.url || videoMedia?.sources?.[0]?.url || getMetafieldVideoUrl(product.videoUrl?.value)
+const getYouTubeEmbedUrl = (url: string) => {
+  if (url.includes('youtube.com/embed/')) return url
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/
+  const match = url.match(regExp)
+  if (match && match[2].length === 11) {
+    return `https://www.youtube.com/embed/${match[2]}?autoplay=1`
+  }
+  return url
 }
 
-const mapProductToVideoProduct = (product: ShopifyProduct): VideoProduct | null => {
-  const videoUrl = getProductVideoUrl(product)
+const getProductVideoDetails = (product: ShopifyProduct, index: number) => {
+  const mediaEdges = product.media?.edges || []
+  for (const edge of mediaEdges) {
+    const media = edge.node
+    if (media.mediaContentType === 'VIDEO' && media.sources?.length) {
+      const mp4Source = media.sources.find(
+        (source) => source.mimeType?.includes('mp4') || source.format?.toLowerCase() === 'mp4'
+      ) || media.sources[0]
+      if (mp4Source?.url) {
+        return {
+          videoUrl: mp4Source.url,
+          isEmbed: false,
+          previewImage: media.previewImage?.url || product.images?.edges?.[0]?.node?.url,
+        }
+      }
+    } else if (media.mediaContentType === 'EXTERNAL_VIDEO') {
+      if (media.embedUrl) {
+        return {
+          videoUrl: getYouTubeEmbedUrl(media.embedUrl),
+          isEmbed: true,
+          previewImage: media.previewImage?.url || product.images?.edges?.[0]?.node?.url,
+        }
+      }
+    }
+  }
+
+  const mfUrl = getMetafieldVideoUrl(product.videoUrl?.value)
+  if (mfUrl) {
+    const isEmbed = mfUrl.includes('youtube') || mfUrl.includes('youtu.be') || mfUrl.includes('vimeo')
+    return {
+      videoUrl: isEmbed ? getYouTubeEmbedUrl(mfUrl) : mfUrl,
+      isEmbed,
+      previewImage: product.images?.edges?.[0]?.node?.url,
+    }
+  }
+
+  return {
+    videoUrl: FALLBACK_VIDEOS[index % FALLBACK_VIDEOS.length],
+    isEmbed: false,
+    previewImage: product.images?.edges?.[0]?.node?.url,
+  }
+}
+
+const mapProductToVideoProduct = (product: ShopifyProduct, index: number): VideoProduct | null => {
+  const videoDetails = getProductVideoDetails(product, index)
   const variant = product.variants?.edges
     ?.map((edge) => edge.node)
     .find((node) => node.availableForSale) || product.variants?.edges?.[0]?.node
 
-  if (!videoUrl || !variant?.id) return null
+  if (!videoDetails || !variant?.id) return null
 
   return {
     id: product.id,
     title: product.title,
-    videoUrl,
+    handle: product.handle,
+    videoUrl: videoDetails.videoUrl,
     category: product.productType || product.vendor || 'Featured Toy',
     variantId: variant.id,
+    isEmbed: videoDetails.isEmbed,
+    previewImage: videoDetails.previewImage,
+    price: product.priceRange?.minVariantPrice?.amount,
   }
 }
 
@@ -125,7 +199,7 @@ export default function WatchAndBuy() {
 
         if (result.success && result.data?.products?.edges) {
           const products = result.data.products.edges
-            .map((edge: { node: ShopifyProduct }) => mapProductToVideoProduct(edge.node))
+            .map((edge: { node: ShopifyProduct }, index: number) => mapProductToVideoProduct(edge.node, index))
             .filter((product: VideoProduct | null): product is VideoProduct => Boolean(product))
 
           setVideoProducts(products)
@@ -284,97 +358,125 @@ export default function WatchAndBuy() {
       <div key={product.id} className="flex-shrink-0 w-[280px] md:w-[320px] snap-start">
         <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition overflow-hidden border border-gray-100">
           <div className="relative bg-black aspect-video">
-            {showPosterVideo && (
-              <div className="absolute inset-0 z-10">
-                <video
-                  ref={(el) => {
-                    if (el) videoRefs.current[product.id] = el
-                  }}
+            {product.isEmbed ? (
+              isPlayingVideo ? (
+                <iframe
+                  src={product.videoUrl}
                   className="w-full h-full object-cover"
-                  onLoadedMetadata={() => handleLoadedMetadata(product.id)}
-                  onCanPlay={() => handleCanPlay(product.id)}
-                  onTimeUpdate={() => handleTimeUpdate(product.id)}
-                  onEnded={() => resetEndedVideo(product.id)}
-                  playsInline
-                  preload="auto"
-                  muted={isMutedVideo}
-                >
-                  <source src={product.videoUrl} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-                <div className="absolute inset-0 bg-black/20" />
-              </div>
-            )}
-
-            {!showPosterVideo && (
-              <video
-                ref={(el) => {
-                  if (el) videoRefs.current[product.id] = el
-                }}
-                className="w-full h-full object-cover"
-                onTimeUpdate={() => handleTimeUpdate(product.id)}
-                onEnded={() => resetEndedVideo(product.id)}
-                playsInline
-                preload="auto"
-                muted={isMutedVideo}
-              >
-                <source src={product.videoUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            )}
-
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none z-10" />
-
-            <button
-              onClick={() => togglePlay(product.id)}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/40 transition-all duration-300 hover:scale-110 border border-white/30 z-20"
-            >
-              {isPlayingVideo ? (
-                <Pause className="w-5 h-5 md:w-6 md:h-6 text-white" />
-              ) : (
-                <Play className="w-5 h-5 md:w-6 md:h-6 text-white ml-0.5" />
-              )}
-            </button>
-
-            <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent z-20">
-              <div
-                className="w-full h-1 bg-white/30 rounded-full cursor-pointer mb-1.5"
-                onClick={(e) => handleProgressClick(e, product.id)}
-              >
-                <div
-                  className="h-full bg-[#D32F2F] rounded-full transition-all"
-                  style={{ width: `${videoProgress}%` }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
                 />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <button onClick={() => togglePlay(product.id)} className="text-white hover:text-[#D32F2F] transition p-0.5">
-                    {isPlayingVideo ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+              ) : (
+                <div className="relative w-full h-full">
+                  <img
+                    src={product.previewImage || '/placeholder.jpg'}
+                    alt={product.title}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/30" />
+                  <button
+                    onClick={() => setIsPlaying(product.id)}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/30 backdrop-blur-md flex items-center justify-center hover:bg-white/50 transition-all border border-white/40 z-20"
+                  >
+                    <Play className="w-5 h-5 md:w-6 md:h-6 text-white ml-0.5" />
                   </button>
-                  <button onClick={() => toggleMute(product.id)} className="text-white hover:text-[#D32F2F] transition p-0.5">
-                    {isMutedVideo ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
-                  </button>
-                  <span className="text-white text-[10px] font-medium">
-                    {formatTime(videoCurrentTime)} / {formatTime(videoDuration)}
-                  </span>
                 </div>
+              )
+            ) : (
+              <>
+                {showPosterVideo && (
+                  <div className="absolute inset-0 z-10">
+                    <video
+                      ref={(el) => {
+                        if (el) videoRefs.current[product.id] = el
+                      }}
+                      className="w-full h-full object-cover"
+                      onLoadedMetadata={() => handleLoadedMetadata(product.id)}
+                      onCanPlay={() => handleCanPlay(product.id)}
+                      onTimeUpdate={() => handleTimeUpdate(product.id)}
+                      onEnded={() => resetEndedVideo(product.id)}
+                      playsInline
+                      preload="auto"
+                      muted={isMutedVideo}
+                    >
+                      <source src={product.videoUrl} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                    <div className="absolute inset-0 bg-black/20" />
+                  </div>
+                )}
+
+                {!showPosterVideo && (
+                  <video
+                    ref={(el) => {
+                      if (el) videoRefs.current[product.id] = el
+                    }}
+                    className="w-full h-full object-cover"
+                    onTimeUpdate={() => handleTimeUpdate(product.id)}
+                    onEnded={() => resetEndedVideo(product.id)}
+                    playsInline
+                    preload="auto"
+                    muted={isMutedVideo}
+                  >
+                    <source src={product.videoUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                )}
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none z-10" />
+
                 <button
-                  onClick={() => {
-                    const video = videoRefs.current[product.id]
-                    if (video) {
-                      if (document.fullscreenElement) {
-                        document.exitFullscreen()
-                      } else {
-                        video.requestFullscreen()
-                      }
-                    }
-                  }}
-                  className="text-white hover:text-[#D32F2F] transition p-0.5"
+                  onClick={() => togglePlay(product.id)}
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center hover:bg-white/40 transition-all duration-300 hover:scale-110 border border-white/30 z-20"
                 >
-                  <Maximize className="w-3.5 h-3.5" />
+                  {isPlayingVideo ? (
+                    <Pause className="w-5 h-5 md:w-6 md:h-6 text-white" />
+                  ) : (
+                    <Play className="w-5 h-5 md:w-6 md:h-6 text-white ml-0.5" />
+                  )}
                 </button>
-              </div>
-            </div>
+
+                <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent z-20">
+                  <div
+                    className="w-full h-1 bg-white/30 rounded-full cursor-pointer mb-1.5"
+                    onClick={(e) => handleProgressClick(e, product.id)}
+                  >
+                    <div
+                      className="h-full bg-[#D32F2F] rounded-full transition-all"
+                      style={{ width: `${videoProgress}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => togglePlay(product.id)} className="text-white hover:text-[#D32F2F] transition p-0.5">
+                        {isPlayingVideo ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+                      </button>
+                      <button onClick={() => toggleMute(product.id)} className="text-white hover:text-[#D32F2F] transition p-0.5">
+                        {isMutedVideo ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                      </button>
+                      <span className="text-white text-[10px] font-medium">
+                        {formatTime(videoCurrentTime)} / {formatTime(videoDuration)}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        const video = videoRefs.current[product.id]
+                        if (video) {
+                          if (document.fullscreenElement) {
+                            document.exitFullscreen()
+                          } else {
+                            video.requestFullscreen()
+                          }
+                        }
+                      }}
+                      className="text-white hover:text-[#D32F2F] transition p-0.5"
+                    >
+                      <Maximize className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
 
             <div className="absolute top-3 left-3 z-20 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full">
               <span className="text-white text-xs font-medium">{product.category}</span>
