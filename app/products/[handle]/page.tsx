@@ -64,6 +64,24 @@ interface Product {
       }
     }>
   }
+  media?: {
+    edges: Array<{
+      node: {
+        mediaContentType: string
+        alt: string | null
+        previewImage?: {
+          url: string
+          altText: string | null
+        }
+        sources?: Array<{
+          url: string
+          mimeType?: string
+          format?: string
+        }>
+        embedUrl?: string
+      }
+    }>
+  }
   variants: {
     edges: Array<{
       node: {
@@ -694,7 +712,26 @@ export default function ProductDetailPage() {
   const currentComparePrice = getCurrentComparePrice()
   const discount = currentComparePrice ? Math.round(((parseFloat(currentComparePrice) - parseFloat(currentPrice)) / parseFloat(currentComparePrice)) * 100) : 0
   const variant = product.variants?.edges?.find((e: any) => e.node.id === selectedVariant)?.node
-  const images = product.images?.edges?.map((e: any) => e.node) || []
+  // Construct gallery items including media videos if present
+  const rawImages = product.images?.edges?.map((e: any) => e.node) || []
+  const mediaVideos = product.media?.edges
+    ?.map((e: any) => e.node)
+    .filter((m: any) => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO') || []
+
+  // Combine media into gallery
+  const galleryItems: Array<{ type: 'image' | 'video'; url: string; previewUrl?: string; altText: string | null }> = [
+    ...rawImages.map((img: any) => ({ type: 'image' as const, url: img.url, previewUrl: img.url, altText: img.altText })),
+    ...mediaVideos.map((m: any) => {
+      const videoSource = m.sources?.find((s: any) => s.mimeType?.includes('mp4') || s.format?.toLowerCase() === 'mp4')?.url || m.sources?.[0]?.url
+      return {
+        type: 'video' as const,
+        url: videoSource || m.embedUrl || '',
+        previewUrl: m.previewImage?.url || rawImages[0]?.url || '/placeholder.jpg',
+        altText: m.alt || 'Product Video'
+      }
+    })
+  ]
+  const images = rawImages // keep backward compatible reference if needed
   const deliveryDates = getDeliveryDates() // Dynamic dates
   const selectedVariantTitle = getSelectedVariantTitle()
   const currentStock = variant?.quantityAvailable || 0
@@ -793,7 +830,7 @@ export default function ProductDetailPage() {
               <div className="flex gap-3">
                 {/* Thumbnail column with vertical scroll */}
                 <div className="flex flex-col gap-2 w-16 md:w-20 flex-shrink-0 max-h-[400px] md:max-h-[500px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                  {images.map((img: any, index: number) => (
+                  {galleryItems.map((item: any, index: number) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}
@@ -801,10 +838,10 @@ export default function ProductDetailPage() {
                         selectedImage === index ? 'border-[#D32F2F]' : 'border-gray-200 hover:border-gray-400'
                       }`}
                     >
-                      <img src={img.url} alt={img.altText || ''} className="w-full h-full object-cover" />
-                      {hasVideo && index === 1 && (
+                      <img src={item.type === 'video' ? item.previewUrl : item.url} alt={item.altText || ''} className="w-full h-full object-cover" />
+                      {item.type === 'video' && (
                         <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                          <Video className="w-5 h-5 text-white" />
+                          <Play className="w-5 h-5 text-white fill-white" />
                         </div>
                       )}
                     </button>
@@ -819,34 +856,46 @@ export default function ProductDetailPage() {
                   </button>
                 </div>
 
-                {/* Main image - Square with reduced height */}
+                {/* Main image / video display */}
                 <div className="flex-1 relative bg-white rounded-2xl overflow-hidden shadow-md aspect-square max-h-[400px] md:max-h-[500px]">
-                  <img
-                    src={images[selectedImage]?.url || '/placeholder.jpg'}
-                    alt={product.title}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
+                  {galleryItems[selectedImage]?.type === 'video' ? (
+                    <video
+                      controls
+                      autoPlay
+                      className="w-full h-full object-cover"
+                      poster={galleryItems[selectedImage].previewUrl}
+                      src={galleryItems[selectedImage].url}
+                    >
+                      Your browser does not support video playback.
+                    </video>
+                  ) : (
+                    <img
+                      src={galleryItems[selectedImage]?.url || '/placeholder.jpg'}
+                      alt={product.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  )}
                   
                   <button
                     onClick={toggleWishlist}
-                    className="absolute top-3 right-3 mt-8 bg-white/90 backdrop-blur p-2 rounded-full shadow-lg hover:shadow-xl transition"
+                    className="absolute top-3 right-3 mt-8 bg-white/90 backdrop-blur p-2 rounded-full shadow-lg hover:shadow-xl transition z-10"
                   >
                     <Heart className={`w-5 h-5 ${isWishlist ? 'fill-[#D32F2F] text-[#D32F2F]' : 'text-gray-400'}`} />
                   </button>
 
-                  {/* Image navigation arrows */}
-                  {images.length > 1 && (
+                  {/* Image/Video navigation arrows */}
+                  {galleryItems.length > 1 && (
                     <>
                       <button
-                        onClick={() => setSelectedImage(prev => prev > 0 ? prev - 1 : images.length - 1)}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur p-1.5 rounded-full shadow-md hover:bg-white transition"
+                        onClick={() => setSelectedImage(prev => prev > 0 ? prev - 1 : galleryItems.length - 1)}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur p-1.5 rounded-full shadow-md hover:bg-white transition z-10"
                       >
                         <ChevronLeft className="w-4 h-4 text-gray-600" />
                       </button>
                       <button
-                        onClick={() => setSelectedImage(prev => prev < images.length - 1 ? prev + 1 : 0)}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur p-1.5 rounded-full shadow-md hover:bg-white transition"
+                        onClick={() => setSelectedImage(prev => prev < galleryItems.length - 1 ? prev + 1 : 0)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 bg-white/80 backdrop-blur p-1.5 rounded-full shadow-md hover:bg-white transition z-10"
                       >
                         <ChevronRight className="w-4 h-4 text-gray-600" />
                       </button>
@@ -1000,15 +1049,29 @@ export default function ProductDetailPage() {
                         document.addEventListener('mouseup', onMouseUp)
                       }}
                     >
-                      {product.variants.edges.map((edge: any) => {
+                      {(() => {
+                        const seenColors = new Set<string>()
+                        const uniqueVariantEdges: any[] = []
+                        for (const edge of product.variants.edges) {
+                          const v = edge.node
+                          const colorVal = v.selectedOptions?.find((opt: any) =>
+                            opt.name.toLowerCase().includes('color') || opt.name.toLowerCase().includes('colour')
+                          )?.value || v.title
+                          if (!seenColors.has(colorVal)) {
+                            seenColors.add(colorVal)
+                            uniqueVariantEdges.push(edge)
+                          }
+                        }
+                        return uniqueVariantEdges
+                      })().map((edge: any) => {
                         const v = edge.node
                         const colorValue = v.selectedOptions?.find((opt: any) => 
                           opt.name.toLowerCase().includes('color') || opt.name.toLowerCase().includes('colour')
-                        )?.value
+                        )?.value || v.title
 
                         if (!colorValue) return null
 
-                        const isSelected = selectedOptions[colorOption.name] === colorValue
+                        const isSelected = selectedOptions[colorOption.name] === colorValue || selectedVariant === v.id
                         const variantImage = v.image?.url
                         const colorClasses = getColorClasses(colorValue)
 
@@ -1219,7 +1282,7 @@ export default function ProductDetailPage() {
           <div className="mt-8 md:mt-12 bg-white rounded-2xl shadow-md overflow-hidden">
             <div className="border-b border-gray-200 overflow-x-auto">
               <div className="flex min-w-max">
-                {['Description', 'Specifications', 'Additional Details'].map((tab, i) => (
+                {['Description', 'Specifications', 'Additional Details', 'Shipping & Delivery', 'Return & Refund'].map((tab, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveTab(i)}
@@ -1264,6 +1327,24 @@ export default function ProductDetailPage() {
                   ) : (
                     <p className="text-gray-500 text-[13.5px] md:text-[14px]">No additional details available</p>
                   )}
+                </div>
+              )}
+              {activeTab === 3 && (
+                <div className="space-y-3 text-[13.5px] md:text-[14px] text-gray-700">
+                  <h4 className="font-bold text-gray-800 text-base">Shipping & Delivery Policy</h4>
+                  <p>• <strong>Free Delivery:</strong> Available on all orders above ₹499 across India.</p>
+                  <p>• <strong>Dispatch Time:</strong> Orders are processed and dispatched within 24-48 business hours.</p>
+                  <p>• <strong>Delivery Time:</strong> Standard delivery takes 3-5 business days depending on location.</p>
+                  <p>• <strong>Tracking:</strong> Live tracking link provided via SMS and Email once dispatched.</p>
+                </div>
+              )}
+              {activeTab === 4 && (
+                <div className="space-y-3 text-[13.5px] md:text-[14px] text-gray-700">
+                  <h4 className="font-bold text-gray-800 text-base">Return & Refund Policy</h4>
+                  <p>• <strong>5 Days Return Window:</strong> Easy returns accepted within 5 days of delivery.</p>
+                  <p>• <strong>Condition:</strong> Item must be unused, in original packaging with all tags attached.</p>
+                  <p>• <strong>Unboxing Video Mandatory:</strong> A complete unboxing video is required for return claims regarding damaged or missing items.</p>
+                  <p>• <strong>Refund Process:</strong> Refunds are initiated within 48 hours after item inspection upon return.</p>
                 </div>
               )}
             </div>

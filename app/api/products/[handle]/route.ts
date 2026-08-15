@@ -25,6 +25,32 @@ const GET_PRODUCT_BY_HANDLE = `
           }
         }
       }
+      media(first: 10) {
+        edges {
+          node {
+            mediaContentType
+            alt
+            previewImage {
+              url
+              altText
+            }
+            ... on Video {
+              sources {
+                url
+                mimeType
+                format
+                height
+                width
+              }
+            }
+            ... on ExternalVideo {
+              embedUrl
+              originUrl
+              host
+            }
+          }
+        }
+      }
       variants(first: 25) {
         edges {
           node {
